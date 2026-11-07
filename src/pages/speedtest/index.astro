@@ -1,0 +1,769 @@
+---
+import BaseLayout from '@layouts/BaseLayout.astro';
+import brandsData from '../../data/brands.json';
+import speedtestContent from '../../data/speedtest-content.json';
+
+const testedBrands = brandsData.filter((b) => b.speedtestImg);
+const pageTitle = speedtestContent.meta.title;
+const pageDesc = speedtestContent.meta.description;
+
+const slugToReviewKey: Record<string, keyof typeof speedtestContent.brandReviews> = {
+  'guangsu-cloud': 'guangsu',
+  'muguang': 'muguang',
+  'feimao': 'feimao',
+  'weifeng': 'weifeng',
+  'xingdaomeng': 'xingdaomeng',
+  'ermaoyun': 'ermaoyun',
+  'weitu-cloud': 'weitu',
+  'yuzhou-cloud': 'yuzhou',
+  'u1s1': 'u1s1',
+  'lingmao-network': 'lingmao',
+  'jilian-cloud': 'jilian',
+  'guangnianti': 'guangnianti',
+  'yifanyun': 'yifanyun',
+  'sogo-cloud': 'sogo',
+  'kexin-cloud': 'kexin',
+  'sujie': 'sujie',
+  'quanqiuyun': 'quanqiuyun'
+};
+
+function formatInlineMarkdown(text: string): string {
+  if (!text) return '';
+  return text
+    .replace(/\*\*(.+?)\*\*/g, '<strong class="font-bold text-ink dark:text-white">$1</strong>')
+    .replace(/`([^`]+)`/g, '<code class="rounded bg-moss/10 dark:bg-white/10 px-1.5 py-0.5 font-mono text-[11px] text-moss dark:text-emerald-300 break-all">$1</code>')
+    .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" class="font-semibold text-moss dark:text-emerald-300 underline decoration-moss/40 underline-offset-4 hover:text-coral transition-colors">$1</a>');
+}
+
+const combinedSchema = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        { '@type': 'ListItem', position: 1, name: '首页', item: 'https://clashjichang.world/' },
+        { '@type': 'ListItem', position: 2, name: '2026 机场节点真实测速证据库', item: 'https://clashjichang.world/speedtest' }
+      ]
+    },
+    {
+      '@type': 'TechArticle',
+      headline: speedtestContent.meta.h1,
+      description: speedtestContent.meta.description,
+      datePublished: '2026-08-11',
+      dateModified: speedtestContent.meta.updatedAt,
+      author: {
+        '@type': 'Organization',
+        name: speedtestContent.meta.author,
+        url: 'https://clashjichang.world/'
+      },
+      publisher: {
+        '@type': 'Organization',
+        name: 'Clash机场评测网',
+        url: 'https://clashjichang.world/'
+      },
+      mainEntityOfPage: {
+        '@type': 'WebPage',
+        '@id': 'https://clashjichang.world/speedtest'
+      }
+    },
+    {
+      '@type': 'Dataset',
+      name: '2026 机场节点 MAI-TEST-BOT 真实测速原图与五地延迟吞吐数据集',
+      description: '包含 2026-08-11 CST 批次 17 份 1122x1402 原始测速 PNG（含 SHA256 校验）与 2026-10-19 15 家主力机场港/台/新/日/美五地延迟下载采样。',
+      temporalCoverage: '2025-06-21/2026-10-19',
+      creator: {
+        '@type': 'Organization',
+        name: speedtestContent.meta.author
+      }
+    },
+    {
+      '@type': 'FAQPage',
+      mainEntity: speedtestContent.faqs.map((item) => ({
+        '@type': 'Question',
+        name: item.q,
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: item.a
+        }
+      }))
+    }
+  ]
+};
+---
+
+<BaseLayout
+  title={pageTitle}
+  description={pageDesc}
+  schema={combinedSchema}
+>
+  <!-- Page Hero & Observatory Metadata Header -->
+  <header class="py-10 sm:py-14 border-b border-line dark:border-white/10 bg-paper/60 dark:bg-black/20">
+    <div class="container max-w-6xl">
+      <nav aria-label="Breadcrumb" class="mb-4 text-xs text-muted flex flex-wrap items-center gap-1.5">
+        <a href="/" class="hover:text-moss transition-colors">首页</a>
+        <span>/</span>
+        <span class="text-ink dark:text-white font-semibold">节点测速实测证据库</span>
+      </nav>
+
+      <div class="inline-flex flex-wrap items-center gap-2 rounded-full border border-moss/30 bg-moss/10 px-3.5 py-1 text-xs font-semibold text-moss dark:text-emerald-300 mb-4">
+        <span>测速批次：2026-08-11 CST 原图 & 2026-10-19 五地采样</span>
+        <span class="opacity-50">|</span>
+        <span>SHA256 哈希可溯源 · 零修图实证</span>
+      </div>
+
+      <h1 class="font-heading text-2xl sm:text-4xl lg:text-5xl font-black text-ink dark:text-white tracking-tight leading-tight">
+        {speedtestContent.meta.h1}
+      </h1>
+
+      <p class="mt-4 text-sm sm:text-base text-muted leading-relaxed max-w-4xl">
+        {speedtestContent.meta.description}
+      </p>
+
+      <!-- Benchmark Observatory KPI Chips -->
+      <div class="mt-7 grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
+        <div class="rounded-xl border border-line dark:border-white/10 bg-white dark:bg-[#102a2b] p-3.5">
+          <span class="text-muted block text-[11px]">测试引擎规范</span>
+          <span class="font-bold text-ink dark:text-white font-mono">MAI-TEST-BOT 2.0 / miaosu</span>
+        </div>
+        <div class="rounded-xl border border-line dark:border-white/10 bg-white dark:bg-[#102a2b] p-3.5">
+          <span class="text-muted block text-[11px]">原始实证图总数</span>
+          <span class="font-bold text-moss dark:text-emerald-400 font-mono">17 份测速原图 + 6 份实况图</span>
+        </div>
+        <div class="rounded-xl border border-line dark:border-white/10 bg-white dark:bg-[#102a2b] p-3.5">
+          <span class="text-muted block text-[11px]">五地横评样本覆盖</span>
+          <span class="font-bold text-ink dark:text-white font-mono">15 家新测 + 5 家历史统计</span>
+        </div>
+        <div class="rounded-xl border border-line dark:border-white/10 bg-white dark:bg-[#102a2b] p-3.5">
+          <span class="text-muted block text-[11px]">香港专线实测峰值</span>
+          <span class="font-bold text-coral dark:text-coral-bright font-mono">529–548 Mbps (21–27ms)</span>
+        </div>
+      </div>
+
+      <!-- Author, Verification & Update Metadata Bar -->
+      <div class="mt-6 pt-5 border-t border-line/60 dark:border-white/10 flex flex-wrap items-center gap-x-6 gap-y-2 text-xs text-muted">
+        <div class="flex items-center gap-1.5">
+          <span class="font-bold text-ink dark:text-white">维护团队：</span>
+          <span>{speedtestContent.meta.author}</span>
+        </div>
+        <div class="flex items-center gap-1.5">
+          <span class="font-bold text-ink dark:text-white">核验时间轴：</span>
+          <span class="font-mono text-moss dark:text-emerald-300">{speedtestContent.meta.verifiedAt}</span>
+        </div>
+        <div class="flex items-center gap-1.5">
+          <span class="font-bold text-ink dark:text-white">最后修订：</span>
+          <time datetime={speedtestContent.meta.updatedAt} class="font-mono">{speedtestContent.meta.updatedAt}</time>
+        </div>
+        <div class="flex items-center gap-1.5">
+          <span class="font-bold text-ink dark:text-white">阅读时长：</span>
+          <span>{speedtestContent.meta.readingTime}</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content Layout with Sidebar / Collapsible TOC -->
+  <div class="container max-w-6xl py-8 sm:py-12">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+
+      <!-- Left/Top TOC Navigation -->
+      <aside class="lg:col-span-3 lg:sticky lg:top-20 rounded-2xl border border-line dark:border-white/10 bg-white dark:bg-[#102a2b] p-4 sm:p-5 shadow-sm">
+        <details class="group lg:open" open>
+          <summary class="flex items-center justify-between cursor-pointer list-none font-heading text-sm font-black text-ink dark:text-white">
+            <span class="flex items-center gap-2">
+              <span class="inline-block w-2 h-2 rounded-full bg-moss dark:bg-emerald-400"></span>
+              测速报告章节目录 (TOC)
+            </span>
+            <span class="text-xs text-muted lg:hidden group-open:rotate-180 transition-transform">▼</span>
+          </summary>
+          <nav aria-label="页内章节导航" class="mt-3 pt-3 border-t border-line/60 dark:border-white/10">
+            <ul class="space-y-1.5 text-xs">
+              {speedtestContent.toc.map((item) => (
+                <li>
+                  <a
+                    href={`#${item.id}`}
+                    class="block py-1 px-2 rounded-lg text-muted hover:text-moss dark:hover:text-emerald-300 hover:bg-moss/5 dark:hover:bg-white/5 transition-colors leading-snug"
+                  >
+                    {item.title}
+                  </a>
+                </li>
+              ))}
+            </ul>
+            <div class="mt-4 pt-3 border-t border-line/60 dark:border-white/10 space-y-1.5">
+              <div class="text-[11px] font-bold text-ink dark:text-white">关联专题快链</div>
+              <div class="flex flex-wrap gap-1.5 text-[11px]">
+                <a href="/brands" class="rounded bg-paper dark:bg-white/10 px-2 py-1 text-moss dark:text-emerald-300 hover:underline">42家品牌库</a>
+                <a href="/ranking" class="rounded bg-paper dark:bg-white/10 px-2 py-1 text-moss dark:text-emerald-300 hover:underline">Top10榜单</a>
+                <a href="/guide" class="rounded bg-paper dark:bg-white/10 px-2 py-1 text-moss dark:text-emerald-300 hover:underline">专线拓扑原理</a>
+                <a href="/clients" class="rounded bg-paper dark:bg-white/10 px-2 py-1 text-moss dark:text-emerald-300 hover:underline">客户端下载</a>
+              </div>
+            </div>
+          </nav>
+        </details>
+      </aside>
+
+      <!-- Right Primary Article Column -->
+      <article class="lg:col-span-9 space-y-10 min-w-0">
+
+        <!-- Module 0: Direct Answer Box (核心实测结论前置) -->
+        <section id="direct-answer" class="scroll-mt-24 rounded-2xl border-2 border-moss/40 dark:border-emerald-500/40 bg-emerald-50/50 dark:bg-[#0d2625] p-5 sm:p-8 shadow-sm">
+          <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+            <span class="inline-flex items-center gap-1.5 rounded-md bg-moss px-2.5 py-1 text-[11px] font-bold text-white uppercase tracking-wider">
+              ⚡ 核心实测结论前置 · 3 分钟读懂 2026 机场真实吞吐梯度
+            </span>
+            <span class="text-[11px] font-mono text-muted">Measured Data Executive Summary</span>
+          </div>
+
+          <p class="text-xs sm:text-sm text-ink dark:text-white font-medium leading-relaxed mb-5">
+            {speedtestContent.directAnswer.summary}
+          </p>
+
+          <div class="space-y-4">
+            {speedtestContent.directAnswer.points.map((pt) => (
+              <div class="rounded-xl border border-moss/20 dark:border-white/10 bg-white/90 dark:bg-black/25 p-4 sm:p-5">
+                <h2 class="font-heading text-sm sm:text-base font-black text-moss dark:text-emerald-300 mb-2">
+                  {pt.label}
+                </h2>
+                <p class="text-xs sm:text-sm text-muted leading-relaxed">
+                  {pt.content}
+                </p>
+              </div>
+            ))}
+          </div>
+
+          <!-- Quick Jump Pills -->
+          <div class="mt-5 pt-4 border-t border-moss/20 dark:border-white/10">
+            <div class="text-xs font-bold text-ink dark:text-white mb-2.5">按核验目的快速直达数据模块：</div>
+            <div class="flex flex-wrap gap-2">
+              {speedtestContent.directAnswer.quickNav.map((nav) => (
+                <a
+                  href={nav.href}
+                  class="inline-flex items-center gap-1 rounded-xl border border-moss/30 bg-white dark:bg-white/10 px-3 py-1.5 text-xs font-bold text-moss dark:text-emerald-300 hover:bg-moss hover:text-white transition-colors"
+                >
+                  <span>{nav.text}</span>
+                </a>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <!-- Table 1: 15 Core Brands 5-Region Benchmark Comparison Table -->
+        <section id="five-region-table" class="scroll-mt-24 rounded-2xl border border-line dark:border-white/10 bg-white dark:bg-[#102a2b] p-5 sm:p-8 space-y-4">
+          <div>
+            <span class="text-xs font-bold text-moss dark:text-coral-bright uppercase tracking-wider">BENCHMARK TABLE 01 · FIVE-REGION SPEED & LATENCY</span>
+            <h2 class="font-heading text-xl sm:text-2xl font-black text-ink dark:text-white mt-1">
+              {speedtestContent.fiveRegionTable.caption}
+            </h2>
+            <p class="mt-2 text-xs text-muted leading-relaxed">
+              下表统一汇总了 2026-10-19 采样中 15 家主力机场在五个核心地区（香港、新加坡、台湾、日本、美国）的握手延迟（ms）与下载速率（Mbps），并附带实际起步价格与流媒体/AI 解锁实况。在 375px 手机视口下可左右滑动表格对比全部字段：
+            </p>
+          </div>
+
+          <div class="overflow-x-auto rounded-xl border border-line dark:border-white/10">
+            <table class="w-full text-xs text-left border-collapse min-w-[860px]">
+              <thead class="bg-paper dark:bg-black/40 border-b border-line dark:border-white/10 text-ink dark:text-white font-bold">
+                <tr>
+                  {speedtestContent.fiveRegionTable.headers.map((h) => (
+                    <th class="py-3 px-3 whitespace-nowrap">{h}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-line/50 dark:divide-white/10">
+                {speedtestContent.fiveRegionTable.rows.map((r) => (
+                  <tr class="hover:bg-paper/40 dark:hover:bg-white/5">
+                    <td class="py-3 px-3 font-bold whitespace-nowrap">
+                      <a href={`/brands/${r.slug}`} class="text-moss dark:text-emerald-300 hover:underline">
+                        {r.brand} →
+                      </a>
+                    </td>
+                    <td class="py-3 px-3 text-muted min-w-[140px]">{r.arch}</td>
+                    <td class="py-3 px-3 font-mono font-bold text-emerald-700 dark:text-emerald-300 whitespace-nowrap">{r.hk}</td>
+                    <td class="py-3 px-3 font-mono font-semibold text-ink dark:text-white whitespace-nowrap">{r.sg}</td>
+                    <td class="py-3 px-3 font-mono text-muted whitespace-nowrap">{r.tw}</td>
+                    <td class="py-3 px-3 font-mono text-muted whitespace-nowrap">{r.jp}</td>
+                    <td class="py-3 px-3 font-mono text-muted whitespace-nowrap">{r.us}</td>
+                    <td class="py-3 px-3 font-mono text-[11px] min-w-[150px]">{r.price}</td>
+                    <td class="py-3 px-3 text-muted min-w-[170px]">{r.unlock}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- Table 2 & Table 3: Manifest Audit Table & Historical Multi-Node Table -->
+        <section id="manifest-audit-table" class="scroll-mt-24 rounded-2xl border border-line dark:border-white/10 bg-white dark:bg-[#102a2b] p-5 sm:p-8 space-y-6">
+          <div>
+            <span class="text-xs font-bold text-moss dark:text-coral-bright uppercase tracking-wider">BENCHMARK TABLE 02 & 03 · PROVENANCE & HISTORICAL ARCHIVES</span>
+            <h2 class="font-heading text-xl sm:text-2xl font-black text-ink dark:text-white mt-1">
+              原始测速截图归档元数据核验表 & 历史多节点统计档案表
+            </h2>
+            <p class="mt-2 text-xs text-muted leading-relaxed">
+              为践行“专业网络测试实验室”的数据透明准则，【表 2】完整公开了 `speedtest-manifest.json` 中 17 张原图的精确生成时刻（突出标注 **21:04–22:46 晚高峰样本**）与时间戳置信度；【表 3】则单独列出 WgetCloud、白月光、山水云、CyberGuard 与灵动云的历史多节点平均值，严格区分数据批次：
+            </p>
+          </div>
+
+          <!-- Table 2 -->
+          <div>
+            <div class="text-xs font-bold text-ink dark:text-white mb-2">
+              {speedtestContent.manifestAuditTable.caption}
+            </div>
+            <div class="overflow-x-auto rounded-xl border border-line dark:border-white/10">
+              <table class="w-full text-xs text-left border-collapse min-w-[780px]">
+                <thead class="bg-paper dark:bg-black/40 border-b border-line dark:border-white/10 text-ink dark:text-white font-bold">
+                  <tr>
+                    {speedtestContent.manifestAuditTable.headers.map((h) => (
+                      <th class="py-3 px-3 whitespace-nowrap">{h}</th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-line/50 dark:divide-white/10">
+                  {speedtestContent.manifestAuditTable.rows.map((r) => (
+                    <tr class="hover:bg-paper/40 dark:hover:bg-white/5">
+                      <td class="py-3 px-3 font-bold whitespace-nowrap">
+                        <a href={`/brands/${r.slug}`} class="text-moss dark:text-emerald-300 hover:underline">{r.brand}</a>
+                      </td>
+                      <td class="py-3 px-3 font-mono text-[11px] text-muted whitespace-nowrap">{r.file}</td>
+                      <td class="py-3 px-3 font-mono text-[11px] text-ink dark:text-white whitespace-nowrap">{r.time}</td>
+                      <td class="py-3 px-3 font-semibold whitespace-nowrap">{r.period}</td>
+                      <td class="py-3 px-3 font-mono text-[11px]">{r.proto}</td>
+                      <td class="py-3 px-3 font-mono text-[11px] text-muted">{r.tool}</td>
+                      <td class="py-3 px-3 text-muted min-w-[170px]">{r.note}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Table 3 -->
+          <div id="historical-stats-table" class="pt-2">
+            <div class="text-xs font-bold text-ink dark:text-white mb-2">
+              {speedtestContent.historicalStatsTable.caption}
+            </div>
+            <div class="overflow-x-auto rounded-xl border border-line dark:border-white/10">
+              <table class="w-full text-xs text-left border-collapse min-w-[780px]">
+                <thead class="bg-paper dark:bg-black/40 border-b border-line dark:border-white/10 text-ink dark:text-white font-bold">
+                  <tr>
+                    {speedtestContent.historicalStatsTable.headers.map((h) => (
+                      <th class="py-3 px-3 whitespace-nowrap">{h}</th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-line/50 dark:divide-white/10">
+                  {speedtestContent.historicalStatsTable.rows.map((r) => (
+                    <tr class="hover:bg-paper/40 dark:hover:bg-white/5">
+                      <td class="py-3 px-3 font-bold whitespace-nowrap">
+                        <a href={`/brands/${r.slug}`} class="text-moss dark:text-emerald-300 hover:underline">{r.brand} →</a>
+                      </td>
+                      <td class="py-3 px-3 font-mono text-[11px] whitespace-nowrap">{r.date}</td>
+                      <td class="py-3 px-3 text-ink dark:text-white min-w-[140px]">{r.scale}</td>
+                      <td class="py-3 px-3 font-mono text-[11px] text-emerald-700 dark:text-emerald-300 min-w-[200px]">{r.metrics}</td>
+                      <td class="py-3 px-3 text-muted min-w-[150px]">{r.unlock}</td>
+                      <td class="py-3 px-3 text-amber-700 dark:text-amber-400 min-w-[170px]">{r.warning}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- Chapter 1: 17 Real Speedtest PNG Gallery with Individual Evidence Analysis -->
+        <section id="speedtest-gallery" class="scroll-mt-24 rounded-2xl border border-line dark:border-white/10 bg-white dark:bg-[#102a2b] p-5 sm:p-8 space-y-6">
+          <div>
+            <span class="text-xs font-bold text-moss dark:text-coral-bright uppercase tracking-wider">CHAPTER 01 · 17 RAW SPEEDTEST SCREENSHOTS</span>
+            <h2 class="font-heading text-xl sm:text-3xl font-black text-ink dark:text-white mt-1">
+              一、17 家机场 MAI-TEST-BOT 原始测速截图与单图深度评析
+            </h2>
+            <p class="mt-2 text-xs sm:text-sm text-muted leading-relaxed">
+              以下集中展示 17 家已完成 `1122×1402` 原始 PNG 测速图归档的品牌。每张卡片均附带本实验室针对该图采样时刻、显示协议、五地实测指标及适用/不适用人群的独立评析。点击图片可在新窗口打开无损大图查验每一行节点：
+            </p>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {testedBrands.map((brand) => {
+              const reviewKey = slugToReviewKey[brand.slug];
+              const review = reviewKey ? speedtestContent.brandReviews[reviewKey] : null;
+              return (
+                <div id={`test-${brand.slug}`} class="rounded-2xl border border-line dark:border-white/10 overflow-hidden bg-paper/30 dark:bg-black/20 shadow-sm flex flex-col justify-between">
+                  <div>
+                    <div class="p-4 border-b border-line/60 dark:border-white/10 flex items-center justify-between gap-2 bg-white dark:bg-[#102a2b]">
+                      <div>
+                        <span class="text-[10px] text-moss dark:text-emerald-400 font-mono font-bold block">
+                          TOP {brand.rank} · {review ? review.testedAt : '2026-08-11 CST'}
+                        </span>
+                        <h3 class="font-heading text-base sm:text-lg font-black text-ink dark:text-white">
+                          <a href={`/brands/${brand.slug}`} class="hover:text-moss transition-colors">
+                            {brand.name} 节点实测报告
+                          </a>
+                        </h3>
+                      </div>
+                      <span class="text-xs font-mono font-bold text-coral dark:text-coral-bright text-right shrink-0">
+                        {brand.priceStr}
+                      </span>
+                    </div>
+
+                    <!-- Real speedtest image -->
+                    <div class="relative bg-black/5 overflow-hidden border-b border-line/60 dark:border-white/10">
+                      <a href={brand.speedtestImg} target="_blank" rel="noopener" class="block group relative">
+                        <img
+                          src={brand.speedtestImg}
+                          alt={`${brand.name} 2026-08-11 MAI-TEST-BOT 节点测速完整原始截图 (1122x1402)`}
+                          width="1122"
+                          height="1402"
+                          class="w-full h-72 object-cover object-top transition-transform duration-300 group-hover:scale-105"
+                          loading="lazy"
+                          decoding="async"
+                        />
+                        <div class="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-white text-xs font-bold px-4 text-center">
+                          点击打开 1122×1402 原始无损 PNG 大图核验 🔍
+                        </div>
+                      </a>
+                    </div>
+
+                    <!-- Evidence Analysis Block -->
+                    <div class="p-4 space-y-2.5 text-xs">
+                      {review && (
+                        <>
+                          <div class="font-mono text-[11px] text-emerald-700 dark:text-emerald-300 bg-emerald-500/10 border border-emerald-500/20 rounded-lg px-2.5 py-1.5">
+                            <strong>实测核心数据：</strong>{review.metrics}
+                          </div>
+                          <div class="text-[11px] text-muted font-mono">
+                            <strong class="text-ink dark:text-white">图内协议与架构：</strong>{review.proto}
+                          </div>
+                          <p class="text-muted leading-relaxed" set:html={formatInlineMarkdown(review.analysis)} />
+                        </>
+                      )}
+                    </div>
+                  </div>
+
+                  <div class="p-4 pt-3 border-t border-line/50 dark:border-white/10 flex items-center justify-between gap-3 bg-white/60 dark:bg-white/5">
+                    <a
+                      href={`/brands/${brand.slug}`}
+                      class="text-xs font-bold text-moss dark:text-emerald-400 hover:underline"
+                    >
+                      查看完整套餐与评测 →
+                    </a>
+                    <a
+                      href={brand.affLink || `/brands/${brand.slug}`}
+                      target={brand.affLink ? '_blank' : undefined}
+                      rel={brand.affLink ? 'nofollow sponsored noopener' : undefined}
+                      class="rounded-xl bg-moss hover:bg-moss/90 text-white text-xs font-bold px-3.5 py-1.5 transition-colors"
+                    >
+                      查看官网套餐 ↗
+                    </a>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </section>
+
+        <!-- Chapter 2: Streaming & Multi-Node Unlock Evidence Gallery -->
+        <section id="unlock-evidence-gallery" class="scroll-mt-24 rounded-2xl border border-line dark:border-white/10 bg-white dark:bg-[#102a2b] p-5 sm:p-8 space-y-6">
+          <div>
+            <span class="text-xs font-bold text-moss dark:text-coral-bright uppercase tracking-wider">CHAPTER 02 · STREAMING & AVAILABILITY SNAPSHOTS</span>
+            <h2 class="font-heading text-xl sm:text-3xl font-black text-ink dark:text-white mt-1">
+              二、流媒体 4K、OpenAI 解锁与多节点可用性实况图证库
+            </h2>
+            <p class="mt-2 text-xs sm:text-sm text-muted leading-relaxed">
+              单看下载带宽无法判断节点能否顺利打开 ChatGPT、Claude 或观看 Netflix 非自制剧。以下展示本实验室归档的 6 份流媒体解锁矩阵与多区域节点压测实况快照（点击图片可放大查看细节）：
+            </p>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+            {speedtestContent.unlockGalleryItems.map((item) => (
+              <figure class="rounded-xl border border-line dark:border-white/10 bg-paper/40 dark:bg-black/20 overflow-hidden flex flex-col justify-between">
+                <a href={item.img} target="_blank" rel="noopener" class="block overflow-hidden bg-black/10 group relative">
+                  <img
+                    src={item.img}
+                    alt={item.title}
+                    width="800"
+                    height="600"
+                    loading="lazy"
+                    decoding="async"
+                    class="w-full h-48 object-cover object-top group-hover:scale-105 transition-transform duration-300"
+                  />
+                  <span class="absolute bottom-2 right-2 rounded bg-black/70 px-2 py-0.5 text-[10px] font-mono text-white">
+                    点击放大 🔍
+                  </span>
+                </a>
+                <figcaption class="p-4 space-y-1.5 text-xs flex-1">
+                  <div class="font-bold text-ink dark:text-white leading-snug">{item.title}</div>
+                  <p class="text-muted leading-relaxed">{item.desc}</p>
+                </figcaption>
+              </figure>
+            ))}
+          </div>
+        </section>
+
+        <!-- Chapter 3: Regional Benchmark Analysis -->
+        <section id={speedtestContent.chapters.chapter3.id} class="scroll-mt-24 rounded-2xl border border-line dark:border-white/10 bg-white dark:bg-[#102a2b] p-5 sm:p-8 space-y-6">
+          <div>
+            <span class="text-xs font-bold text-moss dark:text-coral-bright uppercase tracking-wider">{speedtestContent.chapters.chapter3.badge}</span>
+            <h2 class="font-heading text-xl sm:text-3xl font-black text-ink dark:text-white mt-1">
+              {speedtestContent.chapters.chapter3.title}
+            </h2>
+            <p class="mt-3 text-xs sm:text-sm text-muted leading-relaxed">
+              {speedtestContent.chapters.chapter3.intro}
+            </p>
+          </div>
+
+          <div class="space-y-6">
+            {speedtestContent.chapters.chapter3.subsections.map((sub) => (
+              <div id={sub.id} class="space-y-3 pt-2">
+                <h3 class="font-heading text-base sm:text-xl font-bold text-ink dark:text-white border-l-4 border-moss pl-3">
+                  {sub.title}
+                </h3>
+                {sub.paragraphs.map((p) => (
+                  <p class="text-xs sm:text-sm text-muted leading-relaxed" set:html={formatInlineMarkdown(p)} />
+                ))}
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <!-- Chapter 4: How to Read MAI-TEST-BOT Metrics -->
+        <section id={speedtestContent.chapters.chapter4.id} class="scroll-mt-24 rounded-2xl border border-line dark:border-white/10 bg-white dark:bg-[#102a2b] p-5 sm:p-8 space-y-6">
+          <div>
+            <span class="text-xs font-bold text-moss dark:text-coral-bright uppercase tracking-wider">{speedtestContent.chapters.chapter4.badge}</span>
+            <h2 class="font-heading text-xl sm:text-3xl font-black text-ink dark:text-white mt-1">
+              {speedtestContent.chapters.chapter4.title}
+            </h2>
+            <p class="mt-3 text-xs sm:text-sm text-muted leading-relaxed">
+              {speedtestContent.chapters.chapter4.intro}
+            </p>
+          </div>
+
+          <div class="space-y-6">
+            {speedtestContent.chapters.chapter4.subsections.map((sub) => (
+              <div id={sub.id} class="space-y-3 pt-2">
+                <h3 class="font-heading text-base sm:text-xl font-bold text-ink dark:text-white border-l-4 border-moss pl-3">
+                  {sub.title}
+                </h3>
+                {sub.paragraphs.map((p) => (
+                  <p class="text-xs sm:text-sm text-muted leading-relaxed" set:html={formatInlineMarkdown(p)} />
+                ))}
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <!-- Chapter 5: 5-Step DIY Local Speedtest SOP -->
+        <section id={speedtestContent.chapters.chapter5.id} class="scroll-mt-24 rounded-2xl border border-line dark:border-white/10 bg-white dark:bg-[#102a2b] p-5 sm:p-8 space-y-6">
+          <div>
+            <span class="text-xs font-bold text-moss dark:text-coral-bright uppercase tracking-wider">{speedtestContent.chapters.chapter5.badge}</span>
+            <h2 class="font-heading text-xl sm:text-3xl font-black text-ink dark:text-white mt-1">
+              {speedtestContent.chapters.chapter5.title}
+            </h2>
+            <p class="mt-3 text-xs sm:text-sm text-muted leading-relaxed">
+              {speedtestContent.chapters.chapter5.intro}
+            </p>
+          </div>
+
+          <div class="grid grid-cols-1 gap-4">
+            {speedtestContent.chapters.chapter5.steps.map((step) => (
+              <div class="rounded-xl border border-line/80 dark:border-white/10 bg-paper/40 dark:bg-black/20 p-4 sm:p-6 space-y-2">
+                <div class="flex items-center gap-2">
+                  <span class="rounded bg-moss px-2 py-0.5 font-mono text-[11px] font-bold text-white">{step.stepNum}</span>
+                  <h3 class="font-heading text-base sm:text-lg font-bold text-ink dark:text-white">{step.title}</h3>
+                </div>
+                <p class="text-xs sm:text-sm text-muted leading-relaxed" set:html={formatInlineMarkdown(step.detail)} />
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <!-- Chapter 6: Decision Branches Based on Benchmark Data -->
+        <section id="decision-path" class="scroll-mt-24 rounded-2xl border border-line dark:border-white/10 bg-white dark:bg-[#102a2b] p-5 sm:p-8 space-y-6">
+          <div>
+            <span class="text-xs font-bold text-moss dark:text-coral-bright uppercase tracking-wider">CHAPTER 06 · DATA-DRIVEN DECISION TREE</span>
+            <h2 class="font-heading text-xl sm:text-3xl font-black text-ink dark:text-white mt-1">
+              六、基于实测数据的场景化选购决策路径（3 大分支）
+            </h2>
+            <p class="mt-2 text-xs sm:text-sm text-muted leading-relaxed">
+              看完 17 张原图与五地实测表后，请根据您最看重的性能指标（香港极致峰值、新加坡/日本 AI 解锁或低预算有图验证）直接定位候选方案：
+            </p>
+          </div>
+
+          <div class="space-y-5">
+            {speedtestContent.decisionBranches.map((b) => (
+              <div id={b.id} class="rounded-xl border border-line/90 dark:border-white/10 bg-paper/40 dark:bg-black/20 p-5 space-y-3">
+                <span class="rounded-full bg-moss/15 dark:bg-emerald-500/20 px-3 py-0.5 text-xs font-bold text-moss dark:text-emerald-300 inline-block">
+                  {b.badge}
+                </span>
+                <h3 class="font-heading text-base sm:text-xl font-black text-ink dark:text-white">
+                  {b.title}
+                </h3>
+                <p class="text-xs sm:text-sm text-muted leading-relaxed">
+                  <strong class="text-ink dark:text-white">适用条件：</strong>{b.condition}
+                </p>
+                <div class="rounded-lg bg-white dark:bg-white/5 border border-line/60 dark:border-white/10 p-3 text-xs text-ink dark:text-white leading-relaxed">
+                  <strong class="text-moss dark:text-emerald-300">选品策略：</strong>{b.techChoice}
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+                  {b.recommendations.map((rec) => (
+                    <div class="rounded-lg border border-line/60 dark:border-white/10 bg-white/80 dark:bg-black/30 p-3 text-xs">
+                      <a href={`/brands/${rec.slug}`} class="font-bold text-moss dark:text-emerald-300 hover:underline text-sm">
+                        {rec.name} →
+                      </a>
+                      <p class="mt-1 text-muted leading-relaxed">{rec.note}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <!-- Chapter 7: Verified Conversion Cards -->
+        <section id="recommended-entries" class="scroll-mt-24 rounded-2xl border border-line dark:border-white/10 bg-white dark:bg-[#102a2b] p-5 sm:p-8 space-y-6">
+          <div>
+            <span class="text-xs font-bold text-moss dark:text-coral-bright uppercase tracking-wider">CHAPTER 07 · TOP MEASURED CANDIDATES</span>
+            <h2 class="font-heading text-xl sm:text-3xl font-black text-ink dark:text-white mt-1">
+              七、经双批次实测验证的代表性高分方案入口
+            </h2>
+            <p class="mt-2 text-xs sm:text-sm text-muted leading-relaxed">
+              以下三家机场同时具备 2026-08-11 原始测速图与 2026-10-19 五地采样双重证据支撑，且支持第三方通用客户端订阅导入：
+            </p>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+            {speedtestContent.conversionCards.map((card) => (
+              <div class="flex flex-col justify-between rounded-2xl border-2 border-moss/30 dark:border-emerald-500/30 bg-emerald-50/30 dark:bg-[#0d2625] p-5">
+                <div class="space-y-3">
+                  <span class="rounded-md bg-moss/15 dark:bg-emerald-500/20 px-2.5 py-0.5 text-[11px] font-bold text-moss dark:text-emerald-300 inline-block">
+                    {card.badge}
+                  </span>
+                  <h3 class="font-heading text-base sm:text-lg font-black text-ink dark:text-white">
+                    {card.name}
+                  </h3>
+                  <div class="space-y-2 text-xs leading-relaxed">
+                    <p class="text-muted">
+                      <strong class="text-ink dark:text-white">适用人群：</strong>{card.suitableFor}
+                    </p>
+                    <p class="text-ink dark:text-white font-medium bg-white/80 dark:bg-black/25 p-2.5 rounded-lg border border-line/50 dark:border-white/10">
+                      <strong class="text-moss dark:text-emerald-300">实际费用：</strong>{card.pricing}
+                    </p>
+                    <p class="text-muted">
+                      <strong class="text-amber-700 dark:text-amber-400">主要限制：</strong>{card.limitations}
+                    </p>
+                    <p class="text-[11px] font-mono text-muted">
+                      实测依据：{card.verifiedAt}
+                    </p>
+                  </div>
+                </div>
+
+                <div class="mt-4 pt-3 border-t border-line/60 dark:border-white/10 flex flex-col gap-2">
+                  <a
+                    href={card.primaryAction.href}
+                    class="w-full text-center rounded-xl bg-moss px-3 py-2 text-xs font-bold text-white hover:bg-moss/90 transition-colors"
+                  >
+                    {card.primaryAction.text}
+                  </a>
+                  <a
+                    href={card.externalAction.href}
+                    target="_blank"
+                    rel="nofollow sponsored noopener"
+                    class="w-full text-center rounded-xl border border-moss/40 bg-white dark:bg-white/10 px-3 py-2 text-xs font-bold text-moss dark:text-emerald-300 hover:bg-moss/10 transition-colors"
+                  >
+                    {card.externalAction.text}
+                  </a>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div class="rounded-xl border border-line/70 dark:border-white/10 bg-paper/50 dark:bg-black/30 p-3.5 text-[11px] text-muted leading-relaxed">
+            <strong>透明合规与推广披露：</strong>本页所有“查看官网套餐 ↗”外部链接均为推广合作链接（已统一添加 <code>rel="nofollow sponsored noopener"</code> 属性），通过链接注册可能为本站实验室带来佣金支持，但绝不影响用户支付价格（使用站内优惠码可享对应折扣）。
+          </div>
+        </section>
+
+        <!-- Chapter 8: Deep FAQ -->
+        <section id="faq" class="scroll-mt-24 rounded-2xl border border-line dark:border-white/10 bg-white dark:bg-[#102a2b] p-5 sm:p-8 space-y-6">
+          <div>
+            <span class="text-xs font-bold text-moss dark:text-coral-bright uppercase tracking-wider">CHAPTER 08 · BENCHMARK FAQ</span>
+            <h2 class="font-heading text-xl sm:text-3xl font-black text-ink dark:text-white mt-1">
+              八、测速报告常见疑问与数据边界解答 (FAQ)
+            </h2>
+            <p class="mt-2 text-xs sm:text-sm text-muted leading-relaxed">
+              针对测速单位换算、采样时间差、本地复测落差及未测品牌原因的 8 组工程解答：
+            </p>
+          </div>
+
+          <div class="space-y-4">
+            {speedtestContent.faqs.map((faq) => (
+              <details class="group rounded-xl border border-line/80 dark:border-white/10 bg-paper/40 dark:bg-black/20 p-4 sm:p-5 open:bg-white dark:open:bg-black/30 transition-colors" open>
+                <summary class="cursor-pointer list-none font-heading text-sm sm:text-base font-bold text-ink dark:text-white flex items-start justify-between gap-3">
+                  <span>{faq.q}</span>
+                  <span class="text-xs text-moss dark:text-emerald-300 group-open:rotate-180 transition-transform shrink-0 mt-1">▼</span>
+                </summary>
+                <div class="mt-3 pt-3 border-t border-line/50 dark:border-white/10 text-xs sm:text-sm text-muted leading-relaxed" set:html={formatInlineMarkdown(faq.a)} />
+              </details>
+            ))}
+          </div>
+        </section>
+
+        <!-- Chapter 9: Data Provenance, Limitations & Topic Cluster Hub -->
+        <section id={speedtestContent.dataSources.id} class="scroll-mt-24 rounded-2xl border border-line dark:border-white/10 bg-white dark:bg-[#102a2b] p-5 sm:p-8 space-y-6">
+          <div>
+            <span class="text-xs font-bold text-moss dark:text-coral-bright uppercase tracking-wider">{speedtestContent.dataSources.badge}</span>
+            <h2 class="font-heading text-xl sm:text-3xl font-black text-ink dark:text-white mt-1">
+              {speedtestContent.dataSources.title}
+            </h2>
+            <p class="mt-2 text-xs sm:text-sm text-muted leading-relaxed">
+              {speedtestContent.dataSources.intro}
+            </p>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {speedtestContent.dataSources.sources.map((src) => (
+              <div class="rounded-xl border border-line/70 dark:border-white/10 bg-paper/40 dark:bg-black/20 p-4 space-y-1.5">
+                <h3 class="font-heading text-sm font-bold text-ink dark:text-white">{src.title}</h3>
+                <p class="text-xs text-muted leading-relaxed" set:html={formatInlineMarkdown(src.detail)} />
+              </div>
+            ))}
+          </div>
+
+          <div class="space-y-3 pt-2">
+            <h3 class="font-heading text-base font-bold text-amber-700 dark:text-amber-400">
+              方法论局限性与待核实资料缺口清单
+            </h3>
+            {speedtestContent.dataSources.gaps.map((gap) => (
+              <div class="rounded-xl border border-amber-500/30 bg-amber-50/40 dark:bg-amber-950/20 p-4 text-xs space-y-1">
+                <div class="font-bold text-ink dark:text-white">{gap.label}</div>
+                <p class="text-muted leading-relaxed">{gap.content}</p>
+              </div>
+            ))}
+          </div>
+
+          <!-- Topic Cluster Internal Hub -->
+          <div class="pt-4 border-t border-line dark:border-white/10">
+            <h3 class="font-heading text-base font-bold text-ink dark:text-white mb-3">
+              延伸阅读：站内互补专题与深度评测文章
+            </h3>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 text-xs">
+              <a href="/ranking" class="rounded-xl border border-line dark:border-white/10 p-3.5 hover:border-moss transition-colors block">
+                <div class="font-bold text-moss dark:text-emerald-300">2026 机场综合排行榜 →</div>
+                <p class="text-muted mt-1">结合本页测速表现、价格梯度与运营年限评选出的 Top 10 推荐榜。</p>
+              </a>
+              <a href="/guide" class="rounded-xl border border-line dark:border-white/10 p-3.5 hover:border-moss transition-colors block">
+                <div class="font-bold text-moss dark:text-emerald-300">IEPL 专线与协议深度指南 →</div>
+                <p class="text-muted mt-1">理解为什么专线节点能跑出 22ms/529Mbps 以及如何排障 AI 解锁。</p>
+              </a>
+              <a href="/blog/guangsu-cloud-in-depth-review" class="rounded-xl border border-line dark:border-white/10 p-3.5 hover:border-moss transition-colors block">
+                <div class="font-bold text-moss dark:text-emerald-300">光速云深度实测报告 →</div>
+                <p class="text-muted mt-1">拆解 TOP 1 光速云的 12 国节点分布、147 元永久套餐与实测细节。</p>
+              </a>
+              <a href="/clients" class="rounded-xl border border-line dark:border-white/10 p-3.5 hover:border-moss transition-colors block">
+                <div class="font-bold text-moss dark:text-emerald-300">全平台代理客户端大全 →</div>
+                <p class="text-muted mt-1">获取正版 Clash Verge Rev、v2rayN、FlClash 与小火箭完成本地复测。</p>
+              </a>
+            </div>
+          </div>
+        </section>
+
+      </article>
+    </div>
+  </div>
+</BaseLayout>

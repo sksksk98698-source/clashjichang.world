@@ -1,0 +1,737 @@
+---
+import BaseLayout from '@layouts/BaseLayout.astro';
+import guideData from '../../data/guide-content.json';
+
+const pageTitle = guideData.meta.title;
+const pageDesc = guideData.meta.description;
+
+function formatInlineMarkdown(text: string): string {
+  if (!text) return '';
+  return text
+    .replace(/\*\*(.+?)\*\*/g, '<strong class="font-bold text-ink dark:text-white">$1</strong>')
+    .replace(/`([^`]+)`/g, '<code class="rounded bg-moss/10 dark:bg-white/10 px-1.5 py-0.5 font-mono text-[11px] text-moss dark:text-emerald-300">$1</code>')
+    .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" class="font-semibold text-moss dark:text-emerald-300 underline decoration-moss/40 underline-offset-4 hover:text-coral transition-colors">$1</a>');
+}
+
+const combinedSchema = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        { '@type': 'ListItem', position: 1, name: '首页', item: 'https://clashjichang.world/' },
+        { '@type': 'ListItem', position: 2, name: 'IEPL/IPLC专线与协议全解指南', item: 'https://clashjichang.world/guide' }
+      ]
+    },
+    {
+      '@type': 'TechArticle',
+      headline: guideData.meta.h1,
+      description: guideData.meta.description,
+      datePublished: '2026-08-11',
+      dateModified: guideData.meta.updatedAt,
+      author: {
+        '@type': 'Organization',
+        name: guideData.meta.author,
+        url: 'https://clashjichang.world/'
+      },
+      publisher: {
+        '@type': 'Organization',
+        name: 'Clash机场评测网',
+        url: 'https://clashjichang.world/'
+      },
+      mainEntityOfPage: {
+        '@type': 'WebPage',
+        '@id': 'https://clashjichang.world/guide'
+      },
+      proficiencyLevel: 'Beginner to Expert'
+    },
+    {
+      '@type': 'FAQPage',
+      mainEntity: guideData.faqs.map((item) => ({
+        '@type': 'Question',
+        name: item.q,
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: item.a
+        }
+      }))
+    }
+  ]
+};
+---
+
+<BaseLayout
+  title={pageTitle}
+  description={pageDesc}
+  schema={combinedSchema}
+>
+  <!-- Page Hero & Metadata Header -->
+  <header class="py-10 sm:py-14 border-b border-line dark:border-white/10 bg-paper/60 dark:bg-black/20">
+    <div class="container max-w-6xl">
+      <nav aria-label="Breadcrumb" class="mb-4 text-xs text-muted flex flex-wrap items-center gap-1.5">
+        <a href="/" class="hover:text-moss transition-colors">首页</a>
+        <span>/</span>
+        <span class="text-ink dark:text-white font-semibold">专线网络拓扑与代理协议深度指南</span>
+      </nav>
+
+      <div class="inline-flex flex-wrap items-center gap-2 rounded-full border border-moss/30 bg-moss/10 px-3.5 py-1 text-xs font-semibold text-moss dark:text-emerald-300 mb-4">
+        <span>技术深度剖析 · 专著级工程实证手册</span>
+        <span class="opacity-50">|</span>
+        <span>基于 42 家机场库与 16 份实测原图</span>
+      </div>
+
+      <h1 class="font-heading text-2xl sm:text-4xl lg:text-5xl font-black text-ink dark:text-white tracking-tight leading-tight">
+        {guideData.meta.h1}
+      </h1>
+
+      <p class="mt-4 text-sm sm:text-base text-muted leading-relaxed max-w-4xl">
+        {guideData.meta.description}
+      </p>
+
+      <!-- Author, Verification & Update Metadata Bar -->
+      <div class="mt-6 pt-5 border-t border-line/60 dark:border-white/10 flex flex-wrap items-center gap-x-6 gap-y-2 text-xs text-muted">
+        <div class="flex items-center gap-1.5">
+          <span class="font-bold text-ink dark:text-white">维护团队：</span>
+          <span>{guideData.meta.author}</span>
+        </div>
+        <div class="flex items-center gap-1.5">
+          <span class="font-bold text-ink dark:text-white">数据核实批次：</span>
+          <span class="font-mono text-moss dark:text-emerald-300">{guideData.meta.verifiedAt}</span>
+        </div>
+        <div class="flex items-center gap-1.5">
+          <span class="font-bold text-ink dark:text-white">最后修订：</span>
+          <time datetime={guideData.meta.updatedAt} class="font-mono">{guideData.meta.updatedAt}</time>
+        </div>
+        <div class="flex items-center gap-1.5">
+          <span class="font-bold text-ink dark:text-white">阅读时长：</span>
+          <span>{guideData.meta.readingTime}</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content Layout with Sidebar / Collapsible TOC -->
+  <div class="container max-w-6xl py-8 sm:py-12">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+
+      <!-- Left/Top TOC Navigation -->
+      <aside class="lg:col-span-3 lg:sticky lg:top-20 rounded-2xl border border-line dark:border-white/10 bg-white dark:bg-[#102a2b] p-4 sm:p-5 shadow-sm">
+        <details class="group lg:open" open>
+          <summary class="flex items-center justify-between cursor-pointer list-none font-heading text-sm font-black text-ink dark:text-white">
+            <span class="flex items-center gap-2">
+              <span class="inline-block w-2 h-2 rounded-full bg-moss dark:bg-emerald-400"></span>
+              全页章节目录 (TOC)
+            </span>
+            <span class="text-xs text-muted lg:hidden group-open:rotate-180 transition-transform">▼</span>
+          </summary>
+          <nav aria-label="页内章节导航" class="mt-3 pt-3 border-t border-line/60 dark:border-white/10">
+            <ul class="space-y-2 text-xs">
+              {guideData.toc.map((item) => (
+                <li>
+                  <a
+                    href={`#${item.id}`}
+                    class="block py-1 px-2 rounded-lg text-muted hover:text-moss dark:hover:text-emerald-300 hover:bg-moss/5 dark:hover:bg-white/5 transition-colors leading-snug"
+                  >
+                    {item.title}
+                  </a>
+                </li>
+              ))}
+            </ul>
+            <div class="mt-4 pt-3 border-t border-line/60 dark:border-white/10 space-y-1.5">
+              <div class="text-[11px] font-bold text-ink dark:text-white">关联专题快链</div>
+              <div class="flex flex-wrap gap-1.5 text-[11px]">
+                <a href="/brands" class="rounded bg-paper dark:bg-white/10 px-2 py-1 text-moss dark:text-emerald-300 hover:underline">42家品牌库</a>
+                <a href="/speedtest" class="rounded bg-paper dark:bg-white/10 px-2 py-1 text-moss dark:text-emerald-300 hover:underline">16份测速原图</a>
+                <a href="/ranking" class="rounded bg-paper dark:bg-white/10 px-2 py-1 text-moss dark:text-emerald-300 hover:underline">Top10榜单</a>
+                <a href="/clients" class="rounded bg-paper dark:bg-white/10 px-2 py-1 text-moss dark:text-emerald-300 hover:underline">客户端下载</a>
+              </div>
+            </div>
+          </nav>
+        </details>
+      </aside>
+
+      <!-- Right Primary Article Column -->
+      <article class="lg:col-span-9 space-y-10 min-w-0">
+
+        <!-- Module 0: Direct Answer Box (核心结论前置) -->
+        <section id="direct-answer" class="scroll-mt-24 rounded-2xl border-2 border-moss/40 dark:border-emerald-500/40 bg-emerald-50/50 dark:bg-[#0d2625] p-5 sm:p-8 shadow-sm">
+          <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+            <span class="inline-flex items-center gap-1.5 rounded-md bg-moss px-2.5 py-1 text-[11px] font-bold text-white uppercase tracking-wider">
+              ⚡ 核心结论前置 · 3 分钟看懂怎么选与怎么排障
+            </span>
+            <span class="text-[11px] font-mono text-muted">Direct Engineering Answer</span>
+          </div>
+
+          <p class="text-xs sm:text-sm text-ink dark:text-white font-medium leading-relaxed mb-5">
+            {guideData.directAnswer.summary}
+          </p>
+
+          <div class="space-y-4">
+            {guideData.directAnswer.points.map((pt) => (
+              <div class="rounded-xl border border-moss/20 dark:border-white/10 bg-white/90 dark:bg-black/25 p-4 sm:p-5">
+                <h2 class="font-heading text-sm sm:text-base font-black text-moss dark:text-emerald-300 mb-2">
+                  {pt.label}
+                </h2>
+                <p class="text-xs sm:text-sm text-muted leading-relaxed">
+                  {pt.content}
+                </p>
+              </div>
+            ))}
+          </div>
+
+          <!-- Quick Jump Pills -->
+          <div class="mt-5 pt-4 border-t border-moss/20 dark:border-white/10">
+            <div class="text-xs font-bold text-ink dark:text-white mb-2.5">按您的当前任务一键直达核心板块：</div>
+            <div class="flex flex-wrap gap-2">
+              {guideData.directAnswer.quickNav.map((nav) => (
+                <a
+                  href={nav.href}
+                  class="inline-flex items-center gap-1 rounded-lg border border-moss/30 bg-white dark:bg-white/10 px-3 py-1.5 text-xs font-semibold text-moss dark:text-emerald-300 hover:bg-moss hover:text-white transition-colors"
+                >
+                  <span>→</span>
+                  <span>{nav.text}</span>
+                </a>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <!-- Chapter 1: Network Topology & Table 1 -->
+        <section id={guideData.chapters.chapter1.id} class="scroll-mt-24 rounded-2xl border border-line dark:border-white/10 bg-white dark:bg-[#102a2b] p-5 sm:p-8 space-y-6">
+          <div>
+            <span class="text-xs font-bold text-moss dark:text-coral-bright uppercase tracking-wider">{guideData.chapters.chapter1.badge}</span>
+            <h2 class="font-heading text-xl sm:text-3xl font-black text-ink dark:text-white mt-1">
+              {guideData.chapters.chapter1.title}
+            </h2>
+            <p class="mt-3 text-xs sm:text-sm text-muted leading-relaxed">
+              {guideData.chapters.chapter1.intro}
+            </p>
+          </div>
+
+          <!-- Visual Topology Diagram -->
+          <div class="rounded-xl border border-line/80 dark:border-white/10 bg-paper/50 dark:bg-black/30 p-4 sm:p-6">
+            <div class="text-xs font-bold text-ink dark:text-white mb-4 flex items-center justify-between flex-wrap gap-2">
+              <span>图 1-1：IEPL / IPLC 专线机场“三段式”跨境网络拓扑结构示意</span>
+              <span class="text-[11px] font-mono text-moss dark:text-emerald-300">不过公网 GFW · 晚高峰零拥塞</span>
+            </div>
+            <div class="overflow-x-auto pb-2">
+              <div class="flex flex-col items-center space-y-3 min-w-[480px] font-mono text-xs text-ink dark:text-white">
+                <div class="w-full max-w-md rounded-lg border-2 border-moss bg-moss/10 px-4 py-2.5 font-bold text-moss dark:text-emerald-300 text-center">
+                  📱 第一跳起点：用户本地设备（手机 / PC / OpenWrt 软路由）
+                  <div class="text-[11px] text-muted font-sans font-normal mt-0.5">运行 Clash Verge Rev (Mihomo) / v2rayNG / Shadowrocket 客户端</div>
+                </div>
+                <div class="text-muted text-[11px]">↓ 境内运营商宽带接入（5ms–20ms，VLESS / Shadowsocks 加密）</div>
+                <div class="w-full max-w-md rounded-lg border border-line dark:border-white/20 bg-white dark:bg-[#102a2b] px-4 py-2.5 text-center">
+                  🏢 第一跳终点：国内多线 BGP 中转入口机房（深圳 / 广州 / 上海 / 江苏）
+                  <div class="text-[11px] text-muted font-sans font-normal mt-0.5">隐藏境外真实落地 IP · 电信/联通/移动三网同运营商就近入场</div>
+                </div>
+                <div class="w-full max-w-lg rounded-md bg-emerald-500/15 border border-emerald-500/40 py-2 px-3 text-center text-emerald-700 dark:text-emerald-300 font-bold text-[11px]">
+                  ⚡ 第二跳核心：[ IEPL 二层以太网专线 / IPLC 物理点对点内网光纤 ] 穿墙过境（完全隔离公网 GFW 与国际出口拥堵）
+                </div>
+                <div class="w-full max-w-md rounded-lg border border-line dark:border-white/20 bg-white dark:bg-[#102a2b] px-4 py-2.5 text-center">
+                  🌐 第三跳枢纽：境外落地机房与 IXP 交换中心（香港 HKIX / 新加坡 / 日本 / 美西）
+                  <div class="text-[11px] text-muted font-sans font-normal mt-0.5">本土 ISP 原生住宅 IP 或商业大带宽机房 + DNS 媒体分流解锁宿主机</div>
+                </div>
+                <div class="text-muted text-[11px]">↓ 纯净海外出口请求（0 丢包直达目标 ASN）</div>
+                <div class="w-full max-w-md rounded-lg border border-coral bg-coral/10 px-4 py-2.5 font-bold text-coral dark:text-coral-bright text-center">
+                  🚀 目标生产力与娱乐平台（ChatGPT / Claude / Netflix 4K / Disney+ / YouTube 8K）
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Subsections of Chapter 1 -->
+          <div class="space-y-6">
+            {guideData.chapters.chapter1.subsections.map((sub) => (
+              <div id={sub.id} class="space-y-3 pt-2">
+                <h3 class="font-heading text-base sm:text-xl font-bold text-ink dark:text-white border-l-4 border-moss pl-3">
+                  {sub.title}
+                </h3>
+                {sub.paragraphs.map((p) => (
+                  <p class="text-xs sm:text-sm text-muted leading-relaxed" set:html={formatInlineMarkdown(p)} />
+                ))}
+              </div>
+            ))}
+          </div>
+
+          <!-- Table 1: Architecture Comparison Table -->
+          <div class="pt-4">
+            <div class="text-xs font-bold text-ink dark:text-white mb-2">
+              {guideData.architectureComparisonTable.caption}
+            </div>
+            <div class="overflow-x-auto rounded-xl border border-line dark:border-white/10">
+              <table class="w-full text-xs text-left border-collapse min-w-[760px]">
+                <thead class="bg-paper dark:bg-black/40 border-b border-line dark:border-white/10 text-ink dark:text-white font-bold">
+                  <tr>
+                    {guideData.architectureComparisonTable.headers.map((h) => (
+                      <th class="py-3 px-3 whitespace-nowrap">{h}</th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-line/50 dark:divide-white/10">
+                  {guideData.architectureComparisonTable.rows.map((r) => (
+                    <tr class="hover:bg-paper/40 dark:hover:bg-white/5">
+                      <td class="py-3 px-3 font-bold text-moss dark:text-emerald-300 whitespace-nowrap">{r.type}</td>
+                      <td class="py-3 px-3 text-muted min-w-[180px]">{r.path}</td>
+                      <td class="py-3 px-3 font-semibold">{r.passGfw}</td>
+                      <td class="py-3 px-3 text-muted min-w-[150px]">{r.peakPerf}</td>
+                      <td class="py-3 px-3 font-mono text-[11px] whitespace-nowrap">{r.latency}</td>
+                      <td class="py-3 px-3 font-semibold">{r.survival}</td>
+                      <td class="py-3 px-3 font-mono text-[11px]">{r.cost}</td>
+                      <td class="py-3 px-3 text-muted min-w-[150px]">{r.scenario}</td>
+                      <td class="py-3 px-3 text-ink dark:text-white font-medium min-w-[140px]">{r.brands}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            <p class="mt-2 text-[11px] text-muted">
+              💡 手机端提示：在 375px 小屏设备上可左右滑动上方表格查看完整 9 项工程指标与代表品牌。想直接查看全部 42 家品牌的架构归类，可访问 <a href="/brands" class="text-moss dark:text-emerald-300 underline">42 家机场品牌大全</a>。
+            </p>
+          </div>
+        </section>
+
+        <!-- Chapter 2: 4-Step Verification of Dedicated Lines -->
+        <section id={guideData.chapters.chapter2.id} class="scroll-mt-24 rounded-2xl border border-line dark:border-white/10 bg-white dark:bg-[#102a2b] p-5 sm:p-8 space-y-6">
+          <div>
+            <span class="text-xs font-bold text-moss dark:text-coral-bright uppercase tracking-wider">{guideData.chapters.chapter2.badge}</span>
+            <h2 class="font-heading text-xl sm:text-3xl font-black text-ink dark:text-white mt-1">
+              {guideData.chapters.chapter2.title}
+            </h2>
+            <p class="mt-3 text-xs sm:text-sm text-muted leading-relaxed">
+              {guideData.chapters.chapter2.intro}
+            </p>
+          </div>
+
+          <div class="grid grid-cols-1 gap-4">
+            {guideData.chapters.chapter2.steps.map((step) => (
+              <div class="rounded-xl border border-line/80 dark:border-white/10 bg-paper/40 dark:bg-black/20 p-4 sm:p-6 space-y-2.5">
+                <div class="flex items-center gap-2">
+                  <span class="rounded bg-moss px-2 py-0.5 font-mono text-[11px] font-bold text-white">{step.stepNum}</span>
+                  <h3 class="font-heading text-base sm:text-lg font-bold text-ink dark:text-white">{step.title}</h3>
+                </div>
+                <p class="text-xs sm:text-sm text-muted leading-relaxed" set:html={formatInlineMarkdown(step.whatAndWhen)} />
+                <p class="text-xs sm:text-sm text-ink dark:text-white/90 leading-relaxed" set:html={formatInlineMarkdown(step.howToOperate)} />
+                <div class="rounded-lg bg-moss/10 dark:bg-emerald-950/50 border border-moss/20 p-3 text-xs text-moss dark:text-emerald-200 leading-relaxed" set:html={formatInlineMarkdown(step.criteria)} />
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <!-- Chapter 3: Proxy Protocols Comparison & Table 2 -->
+        <section id={guideData.chapters.chapter3.id} class="scroll-mt-24 rounded-2xl border border-line dark:border-white/10 bg-white dark:bg-[#102a2b] p-5 sm:p-8 space-y-6">
+          <div>
+            <span class="text-xs font-bold text-moss dark:text-coral-bright uppercase tracking-wider">{guideData.chapters.chapter3.badge}</span>
+            <h2 class="font-heading text-xl sm:text-3xl font-black text-ink dark:text-white mt-1">
+              {guideData.chapters.chapter3.title}
+            </h2>
+            <p class="mt-3 text-xs sm:text-sm text-muted leading-relaxed">
+              {guideData.chapters.chapter3.intro}
+            </p>
+          </div>
+
+          <div class="space-y-6">
+            {guideData.chapters.chapter3.subsections.map((sub) => (
+              <div id={sub.id} class="space-y-3 pt-2">
+                <h3 class="font-heading text-base sm:text-xl font-bold text-ink dark:text-white border-l-4 border-moss pl-3">
+                  {sub.title}
+                </h3>
+                {sub.paragraphs.map((p) => (
+                  <p class="text-xs sm:text-sm text-muted leading-relaxed" set:html={formatInlineMarkdown(p)} />
+                ))}
+              </div>
+            ))}
+          </div>
+
+          <!-- Table 2: Protocol Comparison Table -->
+          <div class="pt-4">
+            <div class="text-xs font-bold text-ink dark:text-white mb-2">
+              {guideData.protocolComparisonTable.caption}
+            </div>
+            <div class="overflow-x-auto rounded-xl border border-line dark:border-white/10">
+              <table class="w-full text-xs text-left border-collapse min-w-[820px]">
+                <thead class="bg-paper dark:bg-black/40 border-b border-line dark:border-white/10 text-ink dark:text-white font-bold">
+                  <tr>
+                    {guideData.protocolComparisonTable.headers.map((h) => (
+                      <th class="py-3 px-3 whitespace-nowrap">{h}</th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-line/50 dark:divide-white/10">
+                  {guideData.protocolComparisonTable.rows.map((r) => (
+                    <tr class="hover:bg-paper/40 dark:hover:bg-white/5">
+                      <td class="py-3 px-3 font-bold text-moss dark:text-emerald-300 whitespace-nowrap">{r.name}</td>
+                      <td class="py-3 px-3 text-muted min-w-[160px]">{r.layer}</td>
+                      <td class="py-3 px-3 text-muted min-w-[130px]">{r.overhead}</td>
+                      <td class="py-3 px-3 font-semibold min-w-[130px]">{r.antiBlock}</td>
+                      <td class="py-3 px-3 text-muted min-w-[130px]">{r.dedicatedFit}</td>
+                      <td class="py-3 px-3 text-muted min-w-[120px]">{r.battery}</td>
+                      <td class="py-3 px-3 text-muted min-w-[160px]">{r.compat}</td>
+                      <td class="py-3 px-3 text-ink dark:text-white min-w-[180px]">{r.conclusion}</td>
+                      <td class="py-3 px-3 text-muted min-w-[140px]">{r.brands}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- Chapter 4: Streaming 4K & AI Unlock Mechanism + Table 3 -->
+        <section id={guideData.chapters.chapter4.id} class="scroll-mt-24 rounded-2xl border border-line dark:border-white/10 bg-white dark:bg-[#102a2b] p-5 sm:p-8 space-y-6">
+          <div>
+            <span class="text-xs font-bold text-moss dark:text-coral-bright uppercase tracking-wider">{guideData.chapters.chapter4.badge}</span>
+            <h2 class="font-heading text-xl sm:text-3xl font-black text-ink dark:text-white mt-1">
+              {guideData.chapters.chapter4.title}
+            </h2>
+            <p class="mt-3 text-xs sm:text-sm text-muted leading-relaxed">
+              {guideData.chapters.chapter4.intro}
+            </p>
+          </div>
+
+          <div class="space-y-6">
+            {guideData.chapters.chapter4.subsections.map((sub) => (
+              <div id={sub.id} class="space-y-3 pt-2">
+                <h3 class="font-heading text-base sm:text-xl font-bold text-ink dark:text-white border-l-4 border-moss pl-3">
+                  {sub.title}
+                </h3>
+                {sub.paragraphs.map((p) => (
+                  <p class="text-xs sm:text-sm text-muted leading-relaxed" set:html={formatInlineMarkdown(p)} />
+                ))}
+              </div>
+            ))}
+          </div>
+
+          <!-- Table 3: Unlock Matrix Table -->
+          <div class="pt-4">
+            <div class="text-xs font-bold text-ink dark:text-white mb-2">
+              {guideData.unlockMatrixTable.caption}
+            </div>
+            <div class="overflow-x-auto rounded-xl border border-line dark:border-white/10">
+              <table class="w-full text-xs text-left border-collapse min-w-[760px]">
+                <thead class="bg-paper dark:bg-black/40 border-b border-line dark:border-white/10 text-ink dark:text-white font-bold">
+                  <tr>
+                    {guideData.unlockMatrixTable.headers.map((h) => (
+                      <th class="py-3 px-3 whitespace-nowrap">{h}</th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-line/50 dark:divide-white/10">
+                  {guideData.unlockMatrixTable.rows.map((r) => (
+                    <tr class="hover:bg-paper/40 dark:hover:bg-white/5">
+                      <td class="py-3 px-3 font-bold text-moss dark:text-emerald-300 whitespace-nowrap">{r.service}</td>
+                      <td class="py-3 px-3 font-mono text-amber-600 dark:text-amber-400 whitespace-nowrap">{r.level}</td>
+                      <td class="py-3 px-3 text-muted min-w-[160px]">{r.mechanism}</td>
+                      <td class="py-3 px-3 text-muted min-w-[160px]">{r.ipReq}</td>
+                      <td class="py-3 px-3 font-mono text-[11px] text-coral dark:text-coral-bright min-w-[150px]">{r.error}</td>
+                      <td class="py-3 px-3 text-ink dark:text-white min-w-[200px]">{r.solution}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Evidence Image from /images/unlock/ -->
+          <figure class="rounded-xl border border-line dark:border-white/10 bg-paper/40 dark:bg-black/20 p-4">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 items-center">
+              <img
+                src="/images/unlock/netflix-unlock-01.jpg"
+                alt="专线机场流媒体 Netflix 4K 与非自制剧解锁实测验证图"
+                width="800"
+                height="450"
+                loading="lazy"
+                decoding="async"
+                class="rounded-lg border border-line/60 w-full h-auto object-cover"
+              />
+              <figcaption class="text-xs text-muted space-y-2 leading-relaxed">
+                <div class="font-bold text-ink dark:text-white text-sm">实测图证：原生 IP 与 DNS 动态分流解锁实况</div>
+                <p>
+                  如左图及本站 <a href="/speedtest" class="text-moss dark:text-emerald-300 underline">真实测速与流媒体解锁图库</a> 所示，通过配置完善的 IEPL/IPLC 专线落地节点，不仅可跑满 YouTube 4K/8K 视频流，还能完整通过 Netflix 非自制剧版权校验、Disney+ 区域认证及 OpenAI API 鉴权。
+                </p>
+              </figcaption>
+            </div>
+          </figure>
+        </section>
+
+        <!-- Chapter 5: Client Kernels, TUN Mode & DNS Leak Prevention -->
+        <section id={guideData.chapters.chapter5.id} class="scroll-mt-24 rounded-2xl border border-line dark:border-white/10 bg-white dark:bg-[#102a2b] p-5 sm:p-8 space-y-6">
+          <div>
+            <span class="text-xs font-bold text-moss dark:text-coral-bright uppercase tracking-wider">{guideData.chapters.chapter5.badge}</span>
+            <h2 class="font-heading text-xl sm:text-3xl font-black text-ink dark:text-white mt-1">
+              {guideData.chapters.chapter5.title}
+            </h2>
+            <p class="mt-3 text-xs sm:text-sm text-muted leading-relaxed" set:html={formatInlineMarkdown(guideData.chapters.chapter5.intro)} />
+          </div>
+
+          <div class="space-y-6">
+            {guideData.chapters.chapter5.subsections.map((sub) => (
+              <div id={sub.id} class="space-y-3 pt-2">
+                <h3 class="font-heading text-base sm:text-xl font-bold text-ink dark:text-white border-l-4 border-moss pl-3">
+                  {sub.title}
+                </h3>
+                {sub.paragraphs.map((p) => (
+                  <p class="text-xs sm:text-sm text-muted leading-relaxed" set:html={formatInlineMarkdown(p)} />
+                ))}
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <!-- Chapter 6: Brand Architecture & Speedtest Matrix (Table 4) -->
+        <section id="brand-architecture-matrix" class="scroll-mt-24 rounded-2xl border border-line dark:border-white/10 bg-white dark:bg-[#102a2b] p-5 sm:p-8 space-y-5">
+          <div>
+            <span class="text-xs font-bold text-moss dark:text-coral-bright uppercase tracking-wider">CHAPTER 06 · VERIFIED BRAND MATRIX</span>
+            <h2 class="font-heading text-xl sm:text-3xl font-black text-ink dark:text-white mt-1">
+              六、本站主力机场品牌线路、协议与实测数据对照总表
+            </h2>
+            <p class="mt-2 text-xs sm:text-sm text-muted leading-relaxed">
+              以下将前文剖析的线路架构（IEPL/IPLC/BGP）、节点协议（VLESS/SS/Trojan）、客户端兼容模式与本站 2026-08-11 及 2026-10-19 实测数据一一映射。点击品牌名称可直接进入对应的独立评测页查看完整套餐表与原始测速图：
+            </p>
+          </div>
+
+          <div class="overflow-x-auto rounded-xl border border-line dark:border-white/10">
+            <table class="w-full text-xs text-left border-collapse min-w-[840px]">
+              <thead class="bg-paper dark:bg-black/40 border-b border-line dark:border-white/10 text-ink dark:text-white font-bold">
+                <tr>
+                  {guideData.brandMatrixTable.headers.map((h) => (
+                    <th class="py-3 px-3 whitespace-nowrap">{h}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-line/50 dark:divide-white/10">
+                {guideData.brandMatrixTable.rows.map((r) => (
+                  <tr class="hover:bg-paper/40 dark:hover:bg-white/5">
+                    <td class="py-3 px-3 font-bold whitespace-nowrap">
+                      <a href={`/brands/${r.slug}`} class="text-moss dark:text-emerald-300 hover:underline">
+                        {r.brand} →
+                      </a>
+                    </td>
+                    <td class="py-3 px-3 font-semibold text-ink dark:text-white min-w-[140px]">{r.line}</td>
+                    <td class="py-3 px-3 font-mono text-[11px] whitespace-nowrap">{r.proto}</td>
+                    <td class="py-3 px-3 text-muted min-w-[150px]">{r.clientMode}</td>
+                    <td class="py-3 px-3 font-mono text-[11px] min-w-[160px]">{r.price}</td>
+                    <td class="py-3 px-3 font-mono text-[11px] text-emerald-700 dark:text-emerald-300 min-w-[160px]">{r.speed}</td>
+                    <td class="py-3 px-3 text-muted min-w-[150px]">{r.unlock}</td>
+                    <td class="py-3 px-3 text-muted min-w-[180px]">{r.note}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          <div class="flex flex-wrap items-center justify-between gap-3 pt-2 text-xs text-muted">
+            <span>注：本表展示前 12 家代表性架构样本；其余 30 家品牌（含一翻云、SOGO云、可信云、速界、闪跃、全球云、梯子云、WgetCloud 等）均已收录于全量品牌库。</span>
+            <div class="flex flex-wrap gap-2">
+              <a href="/brands" class="font-bold text-moss dark:text-emerald-300 hover:underline">查看全部 42 家机场参数库 →</a>
+              <span>·</span>
+              <a href="/speedtest" class="font-bold text-moss dark:text-emerald-300 hover:underline">核对 16 份原始测速大图 →</a>
+            </div>
+          </div>
+        </section>
+
+        <!-- Chapter 7: Scenario-based Decision Paths -->
+        <section id="decision-path" class="scroll-mt-24 rounded-2xl border border-line dark:border-white/10 bg-white dark:bg-[#102a2b] p-5 sm:p-8 space-y-6">
+          <div>
+            <span class="text-xs font-bold text-moss dark:text-coral-bright uppercase tracking-wider">CHAPTER 07 · DECISION TREE</span>
+            <h2 class="font-heading text-xl sm:text-3xl font-black text-ink dark:text-white mt-1">
+              七、场景化选购与技术配置决策路径（5 大分支对号入座）
+            </h2>
+            <p class="mt-2 text-xs sm:text-sm text-muted leading-relaxed">
+              不同的月度预算、主力设备与业务场景对应完全不同的最优解。请根据您的实际使用条件选择下方对应的决策分支：
+            </p>
+          </div>
+
+          <div class="space-y-5">
+            {guideData.decisionBranches.map((b) => (
+              <div id={b.id} class="rounded-xl border border-line/90 dark:border-white/10 bg-paper/40 dark:bg-black/20 p-5 sm:p-6 space-y-3">
+                <div class="flex flex-wrap items-center justify-between gap-2">
+                  <span class="rounded-full bg-moss/15 dark:bg-emerald-500/20 px-3 py-0.5 text-xs font-bold text-moss dark:text-emerald-300">
+                    {b.badge}
+                  </span>
+                  <a href={b.nextAction.href} class="text-xs font-bold text-moss dark:text-emerald-300 hover:underline">
+                    {b.nextAction.text} →
+                  </a>
+                </div>
+                <h3 class="font-heading text-base sm:text-xl font-black text-ink dark:text-white">
+                  {b.title}
+                </h3>
+                <p class="text-xs sm:text-sm text-muted leading-relaxed">
+                  <strong class="text-ink dark:text-white">适用条件与限制：</strong>{b.condition}
+                </p>
+                <div class="rounded-lg bg-white dark:bg-white/5 border border-line/60 dark:border-white/10 p-3 text-xs text-ink dark:text-white leading-relaxed">
+                  <strong class="text-moss dark:text-emerald-300">技术架构与配置处方：</strong>{b.techChoice}
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+                  {b.recommendations.map((rec) => (
+                    <div class="rounded-lg border border-line/60 dark:border-white/10 bg-white/80 dark:bg-black/30 p-3 text-xs">
+                      <a href={`/brands/${rec.slug}`} class="font-bold text-moss dark:text-emerald-300 hover:underline text-sm">
+                        {rec.name} →
+                      </a>
+                      <p class="mt-1 text-muted leading-relaxed">{rec.reason}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <!-- Chapter 8: Verified Contextual Conversion Cards -->
+        <section id="recommended-solutions" class="scroll-mt-24 rounded-2xl border border-line dark:border-white/10 bg-white dark:bg-[#102a2b] p-5 sm:p-8 space-y-6">
+          <div>
+            <span class="text-xs font-bold text-moss dark:text-coral-bright uppercase tracking-wider">CHAPTER 08 · VERIFIED SOLUTIONS</span>
+            <h2 class="font-heading text-xl sm:text-3xl font-black text-ink dark:text-white mt-1">
+              八、经过核实的代表性专线方案与客户端工具入口
+            </h2>
+            <p class="mt-2 text-xs sm:text-sm text-muted leading-relaxed">
+              基于前文的线路拓扑验证与 2026-10-19 实测表现，以下整理出最具代表性的三家不同定位主力机场及全平台开源客户端官方入口。所有卡片均明确列出适用人群、真实价格、主要使用限制与最后核实日期：
+            </p>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+            {guideData.conversionCards.map((card) => (
+              <div class="flex flex-col justify-between rounded-2xl border-2 border-moss/30 dark:border-emerald-500/30 bg-emerald-50/30 dark:bg-[#0d2625] p-5 sm:p-6">
+                <div class="space-y-3">
+                  <div class="flex items-center justify-between gap-2">
+                    <span class="rounded-md bg-moss/15 dark:bg-emerald-500/20 px-2.5 py-0.5 text-[11px] font-bold text-moss dark:text-emerald-300">
+                      {card.badge}
+                    </span>
+                  </div>
+                  <h3 class="font-heading text-lg sm:text-xl font-black text-ink dark:text-white">
+                    {card.name}
+                  </h3>
+                  <div class="space-y-2 text-xs leading-relaxed">
+                    <p class="text-muted">
+                      <strong class="text-ink dark:text-white">适用人群：</strong>{card.suitableFor}
+                    </p>
+                    <p class="text-ink dark:text-white font-medium bg-white/80 dark:bg-black/25 p-2.5 rounded-lg border border-line/50 dark:border-white/10">
+                      <strong class="text-moss dark:text-emerald-300">实际费用与周期：</strong>{card.pricing}
+                    </p>
+                    <p class="text-muted">
+                      <strong class="text-amber-700 dark:text-amber-400">主要限制说明：</strong>{card.limitations}
+                    </p>
+                    <p class="text-[11px] font-mono text-muted">
+                      最后核实时间：{card.verifiedAt}
+                    </p>
+                  </div>
+                </div>
+
+                <div class="mt-5 pt-4 border-t border-line/60 dark:border-white/10 flex flex-wrap gap-2.5">
+                  <a
+                    href={card.primaryAction.href}
+                    class="flex-1 text-center rounded-xl bg-moss px-3.5 py-2.5 text-xs font-bold text-white hover:bg-moss/90 transition-colors"
+                  >
+                    {card.primaryAction.text}
+                  </a>
+                  {card.externalAction.href.startsWith('http') ? (
+                    <a
+                      href={card.externalAction.href}
+                      target="_blank"
+                      rel="nofollow sponsored noopener"
+                      class="flex-1 text-center rounded-xl border border-moss/40 bg-white dark:bg-white/10 px-3.5 py-2.5 text-xs font-bold text-moss dark:text-emerald-300 hover:bg-moss/10 transition-colors"
+                    >
+                      {card.externalAction.text}
+                    </a>
+                  ) : (
+                    <a
+                      href={card.externalAction.href}
+                      class="flex-1 text-center rounded-xl border border-moss/40 bg-white dark:bg-white/10 px-3.5 py-2.5 text-xs font-bold text-moss dark:text-emerald-300 hover:bg-moss/10 transition-colors"
+                    >
+                      {card.externalAction.text}
+                    </a>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div class="rounded-xl border border-line/70 dark:border-white/10 bg-paper/50 dark:bg-black/30 p-3.5 text-[11px] text-muted leading-relaxed">
+            <strong>透明合规与推广披露（Affiliate Disclosure）：</strong>本页外部官网入口包含经过本站核实的合作推广链接（均已按搜索引擎规范标记 <code>rel="nofollow sponsored noopener"</code>）。通过这些入口注册不会增加您的任何购买成本（配合本页提供的优惠码可享对应折扣），所获支持将用于实验室持续采购订阅及运行 <code>MAI-TEST-BOT</code> 测速节点。
+          </div>
+        </section>
+
+        <!-- Chapter 9: Deep FAQ & Boundary Questions -->
+        <section id="faq" class="scroll-mt-24 rounded-2xl border border-line dark:border-white/10 bg-white dark:bg-[#102a2b] p-5 sm:p-8 space-y-6">
+          <div>
+            <span class="text-xs font-bold text-moss dark:text-coral-bright uppercase tracking-wider">CHAPTER 09 · BOUNDARY FAQ</span>
+            <h2 class="font-heading text-xl sm:text-3xl font-black text-ink dark:text-white mt-1">
+              九、常见边界问题与排障深度解答 (FAQ)
+            </h2>
+            <p class="mt-2 text-xs sm:text-sm text-muted leading-relaxed">
+              针对正文细节之外最易影响购买决策与日常排障的 8 个边界问题，直接给出结论与操作条件：
+            </p>
+          </div>
+
+          <div class="space-y-4">
+            {guideData.faqs.map((faq) => (
+              <details class="group rounded-xl border border-line/80 dark:border-white/10 bg-paper/40 dark:bg-black/20 p-4 sm:p-5 open:bg-white dark:open:bg-black/30 transition-colors" open>
+                <summary class="cursor-pointer list-none font-heading text-sm sm:text-base font-bold text-ink dark:text-white flex items-start justify-between gap-3">
+                  <span>{faq.q}</span>
+                  <span class="text-xs text-moss dark:text-emerald-300 group-open:rotate-180 transition-transform shrink-0 mt-1">▼</span>
+                </summary>
+                <div class="mt-3 pt-3 border-t border-line/50 dark:border-white/10 text-xs sm:text-sm text-muted leading-relaxed" set:html={formatInlineMarkdown(faq.a)} />
+              </details>
+            ))}
+          </div>
+        </section>
+
+        <!-- Chapter 10: Data Sources, Testing Methodology & Gaps + Topic Cluster Internal Links -->
+        <section id={guideData.chapters.chapter10.id} class="scroll-mt-24 rounded-2xl border border-line dark:border-white/10 bg-white dark:bg-[#102a2b] p-5 sm:p-8 space-y-6">
+          <div>
+            <span class="text-xs font-bold text-moss dark:text-coral-bright uppercase tracking-wider">{guideData.chapters.chapter10.badge}</span>
+            <h2 class="font-heading text-xl sm:text-3xl font-black text-ink dark:text-white mt-1">
+              {guideData.chapters.chapter10.title}
+            </h2>
+            <p class="mt-2 text-xs sm:text-sm text-muted leading-relaxed">
+              {guideData.chapters.chapter10.intro}
+            </p>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {guideData.chapters.chapter10.sources.map((src) => (
+              <div class="rounded-xl border border-line/70 dark:border-white/10 bg-paper/40 dark:bg-black/20 p-4 space-y-1.5">
+                <h3 class="font-heading text-sm font-bold text-ink dark:text-white">{src.title}</h3>
+                <p class="text-xs text-muted leading-relaxed" set:html={formatInlineMarkdown(src.detail)} />
+              </div>
+            ))}
+          </div>
+
+          <div class="space-y-3 pt-2">
+            <h3 class="font-heading text-base font-bold text-amber-700 dark:text-amber-400">
+              当前待核实信息与客观资料缺口声明
+            </h3>
+            {guideData.chapters.chapter10.gaps.map((gap) => (
+              <div class="rounded-xl border border-amber-500/30 bg-amber-50/40 dark:bg-amber-950/20 p-4 text-xs space-y-1">
+                <div class="font-bold text-ink dark:text-white">{gap.label}</div>
+                <p class="text-muted leading-relaxed">{gap.content}</p>
+              </div>
+            ))}
+          </div>
+
+          <!-- Topic Cluster Internal Hub -->
+          <div class="pt-4 border-t border-line dark:border-white/10">
+            <h3 class="font-heading text-base font-bold text-ink dark:text-white mb-3">
+              延伸阅读：站内互补专题与深度实操文章
+            </h3>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 text-xs">
+              <a href="/blog/2026-clash-airport-selection-guide" class="rounded-xl border border-line dark:border-white/10 p-3.5 hover:border-moss transition-colors block">
+                <div class="font-bold text-moss dark:text-emerald-300">2026 机场选购避坑指南 →</div>
+                <p class="text-muted mt-1">解决按月度预算、流量梯度与防跑路原则筛选主力机场的问题。</p>
+              </a>
+              <a href="/blog/guangsu-cloud-in-depth-review" class="rounded-xl border border-line dark:border-white/10 p-3.5 hover:border-moss transition-colors block">
+                <div class="font-bold text-moss dark:text-emerald-300">光速云深度实测与套餐拆解 →</div>
+                <p class="text-muted mt-1">查看 TOP 1 主推品牌的 529Mbps 测速原图、147 元永久套餐与优缺点分析。</p>
+              </a>
+              <a href="/blog/clash-verge-rev-setup-tutorial" class="rounded-xl border border-line dark:border-white/10 p-3.5 hover:border-moss transition-colors block">
+                <div class="font-bold text-moss dark:text-emerald-300">Clash Verge Rev 保姆级配置教程 →</div>
+                <p class="text-muted mt-1">手把手完成订阅导入、Fake-IP 开启、服务模式授权与 AI 分流设置。</p>
+              </a>
+            </div>
+          </div>
+        </section>
+
+      </article>
+    </div>
+  </div>
+</BaseLayout>

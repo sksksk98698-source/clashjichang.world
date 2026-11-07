@@ -1,0 +1,719 @@
+---
+import BaseLayout from '@layouts/BaseLayout.astro';
+import freeContent from '../../data/free-content.json';
+
+const pageTitle = freeContent.meta.title;
+const pageDesc = freeContent.meta.description;
+
+function formatInlineMarkdown(text: string): string {
+  if (!text) return '';
+  return text
+    .replace(/\*\*(.+?)\*\*/g, '<strong class="font-bold text-ink dark:text-white">$1</strong>')
+    .replace(/`([^`]+)`/g, '<code class="rounded bg-moss/10 dark:bg-white/10 px-1.5 py-0.5 font-mono text-[11px] text-moss dark:text-emerald-300 break-all">$1</code>')
+    .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" class="font-semibold text-moss dark:text-emerald-300 underline decoration-moss/40 underline-offset-4 hover:text-coral transition-colors">$1</a>');
+}
+
+const combinedSchema = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        { '@type': 'ListItem', position: 1, name: '首页', item: 'https://clashjichang.world/' },
+        { '@type': 'ListItem', position: 2, name: '2026 免费Clash节点与公益资源核验', item: 'https://clashjichang.world/free' }
+      ]
+    },
+    {
+      '@type': 'TechArticle',
+      headline: freeContent.meta.h1,
+      description: freeContent.meta.description,
+      datePublished: '2026-10-19',
+      dateModified: freeContent.meta.updatedAt,
+      author: {
+        '@type': 'Organization',
+        name: freeContent.meta.author,
+        url: 'https://clashjichang.world/'
+      },
+      publisher: {
+        '@type': 'Organization',
+        name: 'Clash机场评测网',
+        url: 'https://clashjichang.world/'
+      },
+      mainEntityOfPage: {
+        '@type': 'WebPage',
+        '@id': 'https://clashjichang.world/free'
+      }
+    },
+    {
+      '@type': 'FAQPage',
+      mainEntity: freeContent.faqs.map((item) => ({
+        '@type': 'Question',
+        name: item.q,
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: item.a
+        }
+      }))
+    }
+  ]
+};
+---
+
+<BaseLayout
+  title={pageTitle}
+  description={pageDesc}
+  schema={combinedSchema}
+>
+  <!-- Page Hero Header -->
+  <header class="py-10 sm:py-14 border-b border-line dark:border-white/10 bg-paper/60 dark:bg-black/20">
+    <div class="container max-w-6xl">
+      <nav aria-label="Breadcrumb" class="mb-4 text-xs text-muted flex flex-wrap items-center gap-1.5">
+        <a href="/" class="hover:text-moss transition-colors">首页</a>
+        <span>/</span>
+        <span class="text-ink dark:text-white font-semibold">免费资源与超低成本平替核验</span>
+      </nav>
+
+      <div class="inline-flex flex-wrap items-center gap-2 rounded-full border border-moss/30 bg-moss/10 px-3.5 py-1 text-xs font-semibold text-moss dark:text-emerald-300 mb-4">
+        <span>🛡️ 安全边界与真实成本审计</span>
+        <span class="opacity-50">|</span>
+        <span>拒绝钓鱼蜜罐 · 严核 42 家试用与永久包底价</span>
+      </div>
+
+      <h1 class="font-heading text-2xl sm:text-4xl lg:text-5xl font-black text-ink dark:text-white tracking-tight leading-tight">
+        {freeContent.meta.h1}
+      </h1>
+
+      <p class="mt-4 text-sm sm:text-base text-muted leading-relaxed max-w-4xl">
+        {freeContent.meta.description}
+      </p>
+
+      <!-- KPI Chips -->
+      <div class="mt-7 grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
+        <div class="rounded-xl border border-line dark:border-white/10 bg-white dark:bg-[#102a2b] p-3.5">
+          <span class="text-muted block text-[11px]">大厂零成本首选</span>
+          <span class="font-bold text-ink dark:text-white font-mono">CF WARP / Workers 自建</span>
+        </div>
+        <div class="rounded-xl border border-line dark:border-white/10 bg-white dark:bg-[#102a2b] p-3.5">
+          <span class="text-muted block text-[11px]">商业专线试用现状</span>
+          <span class="font-bold text-amber-700 dark:text-amber-400 font-mono">一线 IEPL 均无免费试用</span>
+        </div>
+        <div class="rounded-xl border border-line dark:border-white/10 bg-white dark:bg-[#102a2b] p-3.5">
+          <span class="text-muted block text-[11px]">永久不限时包底价</span>
+          <span class="font-bold text-moss dark:text-emerald-400 font-mono">¥99/100G · 光速云 ¥147/247G</span>
+        </div>
+        <div class="rounded-xl border border-line dark:border-white/10 bg-white dark:bg-[#102a2b] p-3.5">
+          <span class="text-muted block text-[11px]">百元内年付折算</span>
+          <span class="font-bold text-coral dark:text-coral-bright font-mono">¥6.5–¥8.2/月 (日均 ¥0.22)</span>
+        </div>
+      </div>
+
+      <!-- Metadata Bar -->
+      <div class="mt-6 pt-5 border-t border-line/60 dark:border-white/10 flex flex-wrap items-center gap-x-6 gap-y-2 text-xs text-muted">
+        <div class="flex items-center gap-1.5">
+          <span class="font-bold text-ink dark:text-white">审计团队：</span>
+          <span>{freeContent.meta.author}</span>
+        </div>
+        <div class="flex items-center gap-1.5">
+          <span class="font-bold text-ink dark:text-white">核验时间：</span>
+          <span class="font-mono text-moss dark:text-emerald-300">{freeContent.meta.verifiedAt}</span>
+        </div>
+        <div class="flex items-center gap-1.5">
+          <span class="font-bold text-ink dark:text-white">最后修订：</span>
+          <time datetime={freeContent.meta.updatedAt} class="font-mono">{freeContent.meta.updatedAt}</time>
+        </div>
+        <div class="flex items-center gap-1.5">
+          <span class="font-bold text-ink dark:text-white">阅读时长：</span>
+          <span>{freeContent.meta.readingTime}</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="container max-w-6xl py-8 sm:py-12">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+
+      <!-- Left Sticky TOC -->
+      <aside class="lg:col-span-3 lg:sticky lg:top-20 rounded-2xl border border-line dark:border-white/10 bg-white dark:bg-[#102a2b] p-4 sm:p-5 shadow-sm">
+        <details class="group lg:open" open>
+          <summary class="flex items-center justify-between cursor-pointer list-none font-heading text-sm font-black text-ink dark:text-white">
+            <span class="flex items-center gap-2">
+              <span class="inline-block w-2 h-2 rounded-full bg-moss dark:bg-emerald-400"></span>
+              免费资源核验目录 (TOC)
+            </span>
+            <span class="text-xs text-muted lg:hidden group-open:rotate-180 transition-transform">▼</span>
+          </summary>
+          <nav aria-label="页内章节导航" class="mt-3 pt-3 border-t border-line/60 dark:border-white/10">
+            <ul class="space-y-1.5 text-xs">
+              {freeContent.toc.map((item) => (
+                <li>
+                  <a
+                    href={`#${item.id}`}
+                    class="block py-1 px-2 rounded-lg text-muted hover:text-moss dark:hover:text-emerald-300 hover:bg-moss/5 dark:hover:bg-white/5 transition-colors leading-snug"
+                  >
+                    {item.title}
+                  </a>
+                </li>
+              ))}
+            </ul>
+            <div class="mt-4 pt-3 border-t border-line/60 dark:border-white/10 space-y-1.5">
+              <div class="text-[11px] font-bold text-ink dark:text-white">全站核心专题矩阵</div>
+              <div class="flex flex-wrap gap-1.5 text-[11px]">
+                <a href="/tools" class="rounded bg-paper dark:bg-white/10 px-2 py-1 text-moss dark:text-emerald-300 hover:underline">梯子工具箱</a>
+                <a href="/warnings" class="rounded bg-paper dark:bg-white/10 px-2 py-1 text-moss dark:text-emerald-300 hover:underline">跑路预警雷达</a>
+                <a href="/faq" class="rounded bg-paper dark:bg-white/10 px-2 py-1 text-moss dark:text-emerald-300 hover:underline">机场百科FAQ</a>
+                <a href="/speedtest" class="rounded bg-paper dark:bg-white/10 px-2 py-1 text-moss dark:text-emerald-300 hover:underline">17份测速原图</a>
+                <a href="/brands" class="rounded bg-paper dark:bg-white/10 px-2 py-1 text-moss dark:text-emerald-300 hover:underline">42家品牌库</a>
+              </div>
+            </div>
+          </nav>
+        </details>
+      </aside>
+
+      <!-- Main Article Column -->
+      <article class="lg:col-span-9 space-y-10 min-w-0">
+
+        <!-- Module 0: Direct Answer Box -->
+        <section id="direct-answer" class="scroll-mt-24 rounded-2xl border-2 border-moss/40 dark:border-emerald-500/40 bg-emerald-50/50 dark:bg-[#0d2625] p-5 sm:p-8 shadow-sm">
+          <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+            <span class="inline-flex items-center gap-1.5 rounded-md bg-moss px-2.5 py-1 text-[11px] font-bold text-white uppercase tracking-wider">
+              ⚡ 核心核验结论前置 · 免费节点可用性、安全红线与 2 毛钱/天平替方案
+            </span>
+            <span class="text-[11px] font-mono text-muted">Free Resource Audit Summary</span>
+          </div>
+
+          <p class="text-xs sm:text-sm text-ink dark:text-white font-medium leading-relaxed mb-5">
+            {freeContent.directAnswer.summary}
+          </p>
+
+          <div class="space-y-4">
+            {freeContent.directAnswer.points.map((pt) => (
+              <div class="rounded-xl border border-moss/20 dark:border-white/10 bg-white/90 dark:bg-black/25 p-4 sm:p-5">
+                <h2 class="font-heading text-sm sm:text-base font-black text-moss dark:text-emerald-300 mb-2">
+                  {pt.label}
+                </h2>
+                <p class="text-xs sm:text-sm text-muted leading-relaxed">
+                  {pt.content}
+                </p>
+              </div>
+            ))}
+          </div>
+
+          <div class="mt-5 pt-4 border-t border-moss/20 dark:border-white/10">
+            <div class="text-xs font-bold text-ink dark:text-white mb-2.5">按需求快速跳转核验模块：</div>
+            <div class="flex flex-wrap gap-2">
+              {freeContent.directAnswer.quickNav.map((nav) => (
+                <a
+                  href={nav.href}
+                  class="inline-flex items-center gap-1 rounded-xl border border-moss/30 bg-white dark:bg-white/10 px-3 py-1.5 text-xs font-bold text-moss dark:text-emerald-300 hover:bg-moss hover:text-white transition-colors"
+                >
+                  <span>{nav.text}</span>
+                </a>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <!-- Table 1: Free Channels Verification Table -->
+        <section id="free-channels-table" class="scroll-mt-24 rounded-2xl border border-line dark:border-white/10 bg-white dark:bg-[#102a2b] p-5 sm:p-8 space-y-4">
+          <div>
+            <span class="text-xs font-bold text-moss dark:text-coral-bright uppercase tracking-wider">AUDIT TABLE 01 · VERIFIED FREE CHANNELS</span>
+            <h2 class="font-heading text-xl sm:text-2xl font-black text-ink dark:text-white mt-1">
+              {freeContent.freeChannelsTable.caption}
+            </h2>
+            <p class="mt-2 text-xs text-muted leading-relaxed">
+              下表明确区分了“大厂零成本加密隧道”、“个人免费额度自建”、“公开爬虫抓取池”与“小机场注册体验金”四类资源的领取条件、真实速率与安全边界：
+            </p>
+          </div>
+
+          <div class="overflow-x-auto rounded-xl border border-line dark:border-white/10">
+            <table class="w-full text-xs text-left border-collapse min-w-[860px]">
+              <thead class="bg-paper dark:bg-black/40 border-b border-line dark:border-white/10 text-ink dark:text-white font-bold">
+                <tr>
+                  {freeContent.freeChannelsTable.headers.map((h) => (
+                    <th class="py-3 px-3 whitespace-nowrap">{h}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-line/50 dark:divide-white/10">
+                {freeContent.freeChannelsTable.rows.map((r) => (
+                  <tr class="hover:bg-paper/40 dark:hover:bg-white/5">
+                    <td class="py-3 px-3 font-bold text-ink dark:text-white whitespace-nowrap">{r.type}</td>
+                    <td class="py-3 px-3 font-mono font-bold text-moss dark:text-emerald-300 min-w-[140px]">{r.name}</td>
+                    <td class="py-3 px-3 text-muted min-w-[160px]">{r.cond}</td>
+                    <td class="py-3 px-3 font-mono text-[11px] text-ink dark:text-white min-w-[140px]">{r.speed}</td>
+                    <td class="py-3 px-3 text-muted min-w-[150px]">{r.unlock}</td>
+                    <td class="py-3 px-3 text-amber-700 dark:text-amber-400 min-w-[160px]">{r.limit}</td>
+                    <td class="py-3 px-3 font-semibold min-w-[140px]">{r.safety}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- Table 2 & Table 3: Security Risk Matrix & Full Cost Comparison -->
+        <section id="security-risk-table" class="scroll-mt-24 rounded-2xl border border-line dark:border-white/10 bg-white dark:bg-[#102a2b] p-5 sm:p-8 space-y-6">
+          <div>
+            <span class="text-xs font-bold text-moss dark:text-coral-bright uppercase tracking-wider">AUDIT TABLE 02 & 03 · SECURITY RISKS & COST ACCOUNTING</span>
+            <h2 class="font-heading text-xl sm:text-2xl font-black text-ink dark:text-white mt-1">
+              公共免费节点 5 大安全威胁矩阵 & 免费 vs 专线平替成本核算总表
+            </h2>
+            <p class="mt-2 text-xs text-muted leading-relaxed">
+              为什么安全工程师严禁在主力电脑上直接挂载来历不明的免费 Clash 订阅？请对照【表 2】排查风险，并通过【表 3】直观对比免费折腾与 ¥6.5–¥8/月正规专线、¥99–¥147 永久包的真实账单：
+            </p>
+          </div>
+
+          <div>
+            <div class="text-xs font-bold text-ink dark:text-white mb-2">
+              {freeContent.securityRiskTable.caption}
+            </div>
+            <div class="overflow-x-auto rounded-xl border border-line dark:border-white/10">
+              <table class="w-full text-xs text-left border-collapse min-w-[820px]">
+                <thead class="bg-paper dark:bg-black/40 border-b border-line dark:border-white/10 text-ink dark:text-white font-bold">
+                  <tr>
+                    {freeContent.securityRiskTable.headers.map((h) => (
+                      <th class="py-3 px-3 whitespace-nowrap">{h}</th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-line/50 dark:divide-white/10">
+                  {freeContent.securityRiskTable.rows.map((r) => (
+                    <tr class="hover:bg-paper/40 dark:hover:bg-white/5">
+                      <td class="py-3 px-3 font-bold text-coral dark:text-coral-bright whitespace-nowrap">{r.threat}</td>
+                      <td class="py-3 px-3 text-muted min-w-[170px]">{r.principle}</td>
+                      <td class="py-3 px-3 text-ink dark:text-white min-w-[150px]">{r.scene}</td>
+                      <td class="py-3 px-3 text-amber-700 dark:text-amber-400 min-w-[150px]">{r.consequence}</td>
+                      <td class="py-3 px-3 text-emerald-700 dark:text-emerald-300 font-medium min-w-[180px]" set:html={formatInlineMarkdown(r.defense)} />
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div id="cost-comparison-table" class="pt-3">
+            <div class="text-xs font-bold text-ink dark:text-white mb-2">
+              {freeContent.costComparisonTable.caption}
+            </div>
+            <div class="overflow-x-auto rounded-xl border border-line dark:border-white/10">
+              <table class="w-full text-xs text-left border-collapse min-w-[860px]">
+                <thead class="bg-paper dark:bg-black/40 border-b border-line dark:border-white/10 text-ink dark:text-white font-bold">
+                  <tr>
+                    {freeContent.costComparisonTable.headers.map((h) => (
+                      <th class="py-3 px-3 whitespace-nowrap">{h}</th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-line/50 dark:divide-white/10">
+                  {freeContent.costComparisonTable.rows.map((r) => (
+                    <tr class="hover:bg-paper/40 dark:hover:bg-white/5">
+                      <td class="py-3 px-3 font-bold text-ink dark:text-white whitespace-nowrap">{r.dim}</td>
+                      <td class="py-3 px-3 text-muted min-w-[140px]">{r.colA}</td>
+                      <td class="py-3 px-3 text-muted min-w-[140px]">{r.colB}</td>
+                      <td class="py-3 px-3 text-amber-700 dark:text-amber-400 min-w-[150px]">{r.colC}</td>
+                      <td class="py-3 px-3 font-semibold text-emerald-700 dark:text-emerald-300 min-w-[170px]">{r.colD}</td>
+                      <td class="py-3 px-3 font-semibold text-moss dark:text-coral-bright min-w-[170px]">{r.colE}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- Interactive Widget: Free Node Time-Cost vs Low-Cost Permanent/Annual Calculator -->
+        <section id="interactive-cost-calculator" class="scroll-mt-24 rounded-2xl border-2 border-moss/40 dark:border-emerald-500/40 bg-gradient-to-br from-emerald-50/70 via-white to-paper/60 dark:from-[#102a2b] dark:to-[#071312] p-5 sm:p-8 shadow-md space-y-5">
+          <div class="flex flex-wrap items-center justify-between gap-2">
+            <div>
+              <span class="inline-flex items-center gap-1.5 rounded-md bg-moss px-2.5 py-1 text-[11px] font-bold text-white uppercase tracking-wider">
+                🧮 交互式核算工具 · 免费折腾时间成本 vs 永久包/百元专线平替计算器
+              </span>
+              <h2 class="font-heading text-lg sm:text-2xl font-black text-ink dark:text-white mt-2">
+                算一算：您每月用多少流量？买“永久包”还是“8元/月年付”更省钱？
+              </h2>
+            </div>
+          </div>
+
+          <p class="text-xs text-muted leading-relaxed">
+            拖动或输入您预计的<strong>每月翻墙流量（GB）</strong>与<strong>每次寻找免费节点耗费的时间</strong>，系统将基于站内核实的真实套餐（光速云 ¥147/247GB 永久包、二猫云 ¥99/100GB 永久包、光速云 ¥99/年、无忧链接 ¥79/年）实时计算最省钱的安全方案：
+          </p>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4 bg-white/90 dark:bg-black/30 p-4 rounded-xl border border-line dark:border-white/10">
+            <div>
+              <label for="calc-monthly-gb" class="block text-xs font-bold text-ink dark:text-white mb-1.5">
+                预计每月使用流量 (GB/月)：<span id="val-monthly-gb" class="text-moss dark:text-emerald-300 font-mono">12 GB</span>
+              </label>
+              <input
+                id="calc-monthly-gb"
+                type="range"
+                min="2"
+                max="150"
+                step="1"
+                value="12"
+                class="w-full accent-emerald-600 cursor-pointer"
+              />
+              <div class="flex justify-between text-[10px] text-muted font-mono mt-1">
+                <span>2GB (极轻度查资料)</span>
+                <span>50GB (日常主力)</span>
+                <span>150GB (重度4K)</span>
+              </div>
+            </div>
+
+            <div>
+              <label for="calc-free-mins" class="block text-xs font-bold text-ink dark:text-white mb-1.5">
+                若用免费节点，每周找节点耗时：<span id="val-free-mins" class="text-coral dark:text-coral-bright font-mono">60 分钟</span>
+              </label>
+              <input
+                id="calc-free-mins"
+                type="range"
+                min="15"
+                max="300"
+                step="15"
+                value="60"
+                class="w-full accent-emerald-600 cursor-pointer"
+              />
+              <div class="flex justify-between text-[10px] text-muted font-mono mt-1">
+                <span>15分钟/周</span>
+                <span>120分钟/周</span>
+                <span>300分钟/周</span>
+              </div>
+            </div>
+
+            <div>
+              <label for="calc-hourly-wage" class="block text-xs font-bold text-ink dark:text-white mb-1.5">
+                您的个人时间价值 (元/小时)：<span id="val-hourly-wage" class="text-ink dark:text-white font-mono">¥35/h</span>
+              </label>
+              <input
+                id="calc-hourly-wage"
+                type="range"
+                min="15"
+                max="200"
+                step="5"
+                value="35"
+                class="w-full accent-emerald-600 cursor-pointer"
+              />
+              <div class="flex justify-between text-[10px] text-muted font-mono mt-1">
+                <span>¥15/h (学生兼职)</span>
+                <span>¥50/h (白领)</span>
+                <span>¥200/h (开发者)</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs">
+            <div class="rounded-xl border border-coral/30 bg-coral/5 dark:bg-coral/10 p-4">
+              <span class="text-[11px] font-bold text-coral dark:text-coral-bright block">❌ 折腾免费节点隐性时间成本</span>
+              <span id="res-free-cost" class="font-mono text-xl font-black text-coral dark:text-coral-bright mt-1 block">¥140.0 / 月</span>
+              <span id="res-free-desc" class="text-[11px] text-muted mt-1 block">每月浪费 4.0 小时找失效节点，且面临封号风险</span>
+            </div>
+
+            <div class="rounded-xl border border-emerald-500/40 bg-emerald-500/10 p-4">
+              <span class="text-[11px] font-bold text-emerald-700 dark:text-emerald-300 block">💎 光速云 ¥147 (247GB) 永久包折算</span>
+              <span id="res-perm-cost" class="font-mono text-xl font-black text-emerald-700 dark:text-emerald-300 mt-1 block">¥7.15 / 月</span>
+              <span id="res-perm-desc" class="text-[11px] text-muted mt-1 block">247GB 可用约 20.6 个月，折合每天仅 ¥0.24</span>
+            </div>
+
+            <div class="rounded-xl border border-moss/40 bg-white dark:bg-black/30 p-4">
+              <span class="text-[11px] font-bold text-moss dark:text-emerald-400 block">👑 智能最优推荐结论</span>
+              <span id="res-best-plan" class="font-heading text-sm font-black text-ink dark:text-white mt-1 block">首选：永久不限时包 (光速云 ¥147 / 二猫云 ¥99)</span>
+              <span id="res-best-reason" class="text-[11px] text-muted mt-1 block">月均用量 ≤35GB 时，永久包无需担心月底清零，月均成本比包月更低！</span>
+            </div>
+          </div>
+
+          <script is:inline>
+            (function () {
+              const gbInput = document.getElementById('calc-monthly-gb');
+              const minsInput = document.getElementById('calc-free-mins');
+              const wageInput = document.getElementById('calc-hourly-wage');
+
+              const valGb = document.getElementById('val-monthly-gb');
+              const valMins = document.getElementById('val-free-mins');
+              const valWage = document.getElementById('val-hourly-wage');
+
+              const resFreeCost = document.getElementById('res-free-cost');
+              const resFreeDesc = document.getElementById('res-free-desc');
+              const resPermCost = document.getElementById('res-perm-cost');
+              const resPermDesc = document.getElementById('res-perm-desc');
+              const resBestPlan = document.getElementById('res-best-plan');
+              const resBestReason = document.getElementById('res-best-reason');
+
+              function updateCalc() {
+                if (!gbInput || !minsInput || !wageInput) return;
+                const gb = parseFloat(gbInput.value) || 12;
+                const minsPerWeek = parseFloat(minsInput.value) || 60;
+                const wage = parseFloat(wageInput.value) || 35;
+
+                valGb.textContent = gb + ' GB';
+                valMins.textContent = minsPerWeek + ' 分钟';
+                valWage.textContent = '¥' + wage + '/h';
+
+                const hoursPerMonth = (minsPerWeek * 4.33) / 60;
+                const freeTimeCost = hoursPerMonth * wage;
+                resFreeCost.textContent = '¥' + freeTimeCost.toFixed(0) + ' / 月 (隐性时间)';
+                resFreeDesc.textContent = '每月耗费约 ' + hoursPerMonth.toFixed(1) + ' 小时找节点，且无法稳定解锁 AI/4K';
+
+                const permMonths = 247 / gb;
+                const permMonthlyCost = 147 / permMonths;
+                resPermCost.textContent = '¥' + permMonthlyCost.toFixed(2) + ' / 月';
+                resPermDesc.textContent = '光速云 247GB 可用约 ' + permMonths.toFixed(1) + ' 个月 (日均 ¥' + (permMonthlyCost / 30).toFixed(2) + ')';
+
+                if (gb <= 14) {
+                  resBestPlan.textContent = '首选：光速云 ¥147/247GB 或 二猫云 ¥99/100GB 永久包';
+                  resBestReason.textContent = '您属于轻度/中轻度用量（' + gb + 'GB/月），买永久不过期包可用 ' + permMonths.toFixed(1) + ' 个月，月均仅 ¥' + permMonthlyCost.toFixed(1) + ' 元！';
+                } else if (gb <= 59) {
+                  resBestPlan.textContent = '首选：光速云 ¥99/年 (59G/月) 或 星岛梦/U1S1 ¥96/年';
+                  resBestReason.textContent = '每月用量 ' + gb + 'GB 刚好匹配百元内年付专线（折合固定 ¥8.0–¥8.25/月，比按量包更划算）！';
+                } else {
+                  resBestPlan.textContent = '首选：无忧链接 ¥19/月(120G) 或 光速云 ¥25/月(168G IPLC)';
+                  resBestReason.textContent = '您属于高频 4K/生产力用户（' + gb + 'GB/月），建议直接入手 120G–168G 专享大流量包月专线。';
+                }
+              }
+
+              [gbInput, minsInput, wageInput].forEach((el) => {
+                if (el) el.addEventListener('input', updateCalc);
+              });
+              updateCalc();
+            })();
+          </script>
+        </section>
+
+        <!-- Chapter 1 to Chapter 4 Deep Text Sections -->
+        {[freeContent.chapters.chapter1, freeContent.chapters.chapter2, freeContent.chapters.chapter3, freeContent.chapters.chapter4].map((chap) => (
+          <section id={chap.id} class="scroll-mt-24 rounded-2xl border border-line dark:border-white/10 bg-white dark:bg-[#102a2b] p-5 sm:p-8 space-y-6">
+            <div>
+              <span class="text-xs font-bold text-moss dark:text-coral-bright uppercase tracking-wider">{chap.badge}</span>
+              <h2 class="font-heading text-xl sm:text-3xl font-black text-ink dark:text-white mt-1">
+                {chap.title}
+              </h2>
+              <p class="mt-3 text-xs sm:text-sm text-muted leading-relaxed" set:html={formatInlineMarkdown(chap.intro)} />
+            </div>
+
+            <div class="space-y-6">
+              {chap.subsections.map((sub) => (
+                <div id={sub.id} class="space-y-3 pt-2">
+                  <h3 class="font-heading text-base sm:text-xl font-bold text-ink dark:text-white border-l-4 border-moss pl-3">
+                    {sub.title}
+                  </h3>
+                  {sub.paragraphs.map((p) => (
+                    <p class="text-xs sm:text-sm text-muted leading-relaxed" set:html={formatInlineMarkdown(p)} />
+                  ))}
+                </div>
+              ))}
+            </div>
+          </section>
+        ))}
+
+        <!-- Chapter 5: 7-Step Sandbox SOP -->
+        <section id={freeContent.chapters.chapter5.id} class="scroll-mt-24 rounded-2xl border border-line dark:border-white/10 bg-white dark:bg-[#102a2b] p-5 sm:p-8 space-y-6">
+          <div>
+            <span class="text-xs font-bold text-moss dark:text-coral-bright uppercase tracking-wider">{freeContent.chapters.chapter5.badge}</span>
+            <h2 class="font-heading text-xl sm:text-3xl font-black text-ink dark:text-white mt-1">
+              {freeContent.chapters.chapter5.title}
+            </h2>
+            <p class="mt-3 text-xs sm:text-sm text-muted leading-relaxed">
+              {freeContent.chapters.chapter5.intro}
+            </p>
+          </div>
+
+          <div class="grid grid-cols-1 gap-4">
+            {freeContent.chapters.chapter5.steps.map((step) => (
+              <div class="rounded-xl border border-line/80 dark:border-white/10 bg-paper/40 dark:bg-black/20 p-4 sm:p-6 space-y-2">
+                <div class="flex items-center gap-2">
+                  <span class="rounded bg-moss px-2 py-0.5 font-mono text-[11px] font-bold text-white">{step.stepNum}</span>
+                  <h3 class="font-heading text-base sm:text-lg font-bold text-ink dark:text-white">{step.title}</h3>
+                </div>
+                <p class="text-xs sm:text-sm text-muted leading-relaxed" set:html={formatInlineMarkdown(step.detail)} />
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <!-- Chapter 6: Decision Branches -->
+        <section id="decision-path" class="scroll-mt-24 rounded-2xl border border-line dark:border-white/10 bg-white dark:bg-[#102a2b] p-5 sm:p-8 space-y-6">
+          <div>
+            <span class="text-xs font-bold text-moss dark:text-coral-bright uppercase tracking-wider">CHAPTER 06 · BUDGET & SAFETY DECISION TREE</span>
+            <h2 class="font-heading text-xl sm:text-3xl font-black text-ink dark:text-white mt-1">
+              六、按预算与安全边界的 3 大决策路径
+            </h2>
+            <p class="mt-2 text-xs sm:text-sm text-muted leading-relaxed">
+              请根据您的真实使用频率与预算上限，对号入座选择最稳妥的落地方案：
+            </p>
+          </div>
+
+          <div class="space-y-5">
+            {freeContent.decisionBranches.map((b) => (
+              <div id={b.id} class="rounded-xl border border-line/90 dark:border-white/10 bg-paper/40 dark:bg-black/20 p-5 space-y-3">
+                <span class="rounded-full bg-moss/15 dark:bg-emerald-500/20 px-3 py-0.5 text-xs font-bold text-moss dark:text-emerald-300 inline-block">
+                  {b.badge}
+                </span>
+                <h3 class="font-heading text-base sm:text-xl font-black text-ink dark:text-white">
+                  {b.title}
+                </h3>
+                <p class="text-xs sm:text-sm text-muted leading-relaxed">
+                  <strong class="text-ink dark:text-white">适用条件：</strong>{b.condition}
+                </p>
+                <div class="rounded-lg bg-white dark:bg-white/5 border border-line/60 dark:border-white/10 p-3 text-xs text-ink dark:text-white leading-relaxed">
+                  <strong class="text-moss dark:text-emerald-300">执行路线：</strong>{b.techChoice}
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+                  {b.recommendations.map((rec) => (
+                    <div class="rounded-lg border border-line/60 dark:border-white/10 bg-white/80 dark:bg-black/30 p-3 text-xs">
+                      <a href={rec.isInternalHub ? `/${rec.slug}` : `/brands/${rec.slug}`} class="font-bold text-moss dark:text-emerald-300 hover:underline text-sm">
+                        {rec.name} →
+                      </a>
+                      <p class="mt-1 text-muted leading-relaxed">{rec.note}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <!-- Chapter 7: Conversion Cards -->
+        <section id="recommended-entries" class="scroll-mt-24 rounded-2xl border border-line dark:border-white/10 bg-white dark:bg-[#102a2b] p-5 sm:p-8 space-y-6">
+          <div>
+            <span class="text-xs font-bold text-moss dark:text-coral-bright uppercase tracking-wider">CHAPTER 07 · VERIFIED LOW-COST ALTERNATIVES</span>
+            <h2 class="font-heading text-xl sm:text-3xl font-black text-ink dark:text-white mt-1">
+              七、经实测验证的超低成本“准免费”专线平替入口
+            </h2>
+            <p class="mt-2 text-xs sm:text-sm text-muted leading-relaxed">
+              以下三家机场均提供百元内年付（折合 ¥7.4–¥8.2/月）与永久不限时流量包（¥99–¥147），且全部拥有 2026-08-11 原始测速图与 2026-10-19 五地实测数据背书：
+            </p>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+            {freeContent.conversionCards.map((card) => (
+              <div class="flex flex-col justify-between rounded-2xl border-2 border-moss/30 dark:border-emerald-500/30 bg-emerald-50/30 dark:bg-[#0d2625] p-5">
+                <div class="space-y-3">
+                  <span class="rounded-md bg-moss/15 dark:bg-emerald-500/20 px-2.5 py-0.5 text-[11px] font-bold text-moss dark:text-emerald-300 inline-block">
+                    {card.badge}
+                  </span>
+                  <h3 class="font-heading text-base sm:text-lg font-black text-ink dark:text-white">
+                    {card.name}
+                  </h3>
+                  <div class="space-y-2 text-xs leading-relaxed">
+                    <p class="text-muted">
+                      <strong class="text-ink dark:text-white">适用人群：</strong>{card.suitableFor}
+                    </p>
+                    <p class="text-ink dark:text-white font-medium bg-white/80 dark:bg-black/25 p-2.5 rounded-lg border border-line/50 dark:border-white/10">
+                      <strong class="text-moss dark:text-emerald-300">实际费用：</strong>{card.pricing}
+                    </p>
+                    <p class="text-muted">
+                      <strong class="text-amber-700 dark:text-amber-400">主要限制：</strong>{card.limitations}
+                    </p>
+                    <p class="text-[11px] font-mono text-muted">
+                      核验依据：{card.verifiedAt}
+                    </p>
+                  </div>
+                </div>
+
+                <div class="mt-4 pt-3 border-t border-line/60 dark:border-white/10 flex flex-col gap-2">
+                  <a
+                    href={card.primaryAction.href}
+                    class="w-full text-center rounded-xl bg-moss px-3 py-2 text-xs font-bold text-white hover:bg-moss/90 transition-colors"
+                  >
+                    {card.primaryAction.text}
+                  </a>
+                  <a
+                    href={card.externalAction.href}
+                    target="_blank"
+                    rel="nofollow sponsored noopener"
+                    class="w-full text-center rounded-xl border border-moss/40 bg-white dark:bg-white/10 px-3 py-2 text-xs font-bold text-moss dark:text-emerald-300 hover:bg-moss/10 transition-colors"
+                  >
+                    {card.externalAction.text}
+                  </a>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div class="rounded-xl border border-line/70 dark:border-white/10 bg-paper/50 dark:bg-black/30 p-3.5 text-[11px] text-muted leading-relaxed">
+            <strong>透明合规与推广披露：</strong>本页所有外部官网直达链接均已标注 <code>rel="nofollow sponsored noopener"</code>，通过链接注册可能为本站带来维护佣金，但绝不增加用户购买成本。
+          </div>
+        </section>
+
+        <!-- Chapter 8: FAQ -->
+        <section id="faq" class="scroll-mt-24 rounded-2xl border border-line dark:border-white/10 bg-white dark:bg-[#102a2b] p-5 sm:p-8 space-y-6">
+          <div>
+            <span class="text-xs font-bold text-moss dark:text-coral-bright uppercase tracking-wider">CHAPTER 08 · FREE RESOURCE FAQ</span>
+            <h2 class="font-heading text-xl sm:text-3xl font-black text-ink dark:text-white mt-1">
+              八、免费节点、公益资源与试用政策常见疑问解答 (FAQ)
+            </h2>
+          </div>
+
+          <div class="space-y-4">
+            {freeContent.faqs.map((faq) => (
+              <details class="group rounded-xl border border-line/80 dark:border-white/10 bg-paper/40 dark:bg-black/20 p-4 sm:p-5 open:bg-white dark:open:bg-black/30 transition-colors" open>
+                <summary class="cursor-pointer list-none font-heading text-sm sm:text-base font-bold text-ink dark:text-white flex items-start justify-between gap-3">
+                  <span>{faq.q}</span>
+                  <span class="text-xs text-moss dark:text-emerald-300 group-open:rotate-180 transition-transform shrink-0 mt-1">▼</span>
+                </summary>
+                <div class="mt-3 pt-3 border-t border-line/50 dark:border-white/10 text-xs sm:text-sm text-muted leading-relaxed" set:html={formatInlineMarkdown(faq.a)} />
+              </details>
+            ))}
+          </div>
+        </section>
+
+        <!-- Chapter 9: Provenance & Internal Topic Cluster -->
+        <section id={freeContent.dataSources.id} class="scroll-mt-24 rounded-2xl border border-line dark:border-white/10 bg-white dark:bg-[#102a2b] p-5 sm:p-8 space-y-6">
+          <div>
+            <span class="text-xs font-bold text-moss dark:text-coral-bright uppercase tracking-wider">{freeContent.dataSources.badge}</span>
+            <h2 class="font-heading text-xl sm:text-3xl font-black text-ink dark:text-white mt-1">
+              {freeContent.dataSources.title}
+            </h2>
+            <p class="mt-2 text-xs sm:text-sm text-muted leading-relaxed">
+              {freeContent.dataSources.intro}
+            </p>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {freeContent.dataSources.sources.map((src) => (
+              <div class="rounded-xl border border-line/70 dark:border-white/10 bg-paper/40 dark:bg-black/20 p-4 space-y-1.5">
+                <h3 class="font-heading text-sm font-bold text-ink dark:text-white">{src.title}</h3>
+                <p class="text-xs text-muted leading-relaxed" set:html={formatInlineMarkdown(src.detail)} />
+              </div>
+            ))}
+          </div>
+
+          <div class="space-y-3 pt-2">
+            <h3 class="font-heading text-base font-bold text-amber-700 dark:text-amber-400">
+              安全边界与资料缺口声明
+            </h3>
+            {freeContent.dataSources.gaps.map((gap) => (
+              <div class="rounded-xl border border-amber-500/30 bg-amber-50/40 dark:bg-amber-950/20 p-4 text-xs space-y-1">
+                <div class="font-bold text-ink dark:text-white">{gap.label}</div>
+                <p class="text-muted leading-relaxed">{gap.content}</p>
+              </div>
+            ))}
+          </div>
+
+          <div class="pt-4 border-t border-line dark:border-white/10">
+            <h3 class="font-heading text-base font-bold text-ink dark:text-white mb-3">
+              延伸阅读：站内互补专题枢纽
+            </h3>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 text-xs">
+              <a href="/tools" class="rounded-xl border border-line dark:border-white/10 p-3.5 hover:border-moss transition-colors block">
+                <div class="font-bold text-moss dark:text-emerald-300">🛠️ 梯子诊断与订阅工具箱 →</div>
+                <p class="mt-1 text-muted">检测 IP 欺诈分、DNS 泄露、计算流量倍率与转换订阅配置。</p>
+              </a>
+              <a href="/warnings" class="rounded-xl border border-line dark:border-white/10 p-3.5 hover:border-moss transition-colors block">
+                <div class="font-bold text-moss dark:text-emerald-300">🚨 机场跑路预警与避坑雷达 →</div>
+                <p class="mt-1 text-muted">深扒同源马甲站群、5.6元同构盘风险与跑路前兆 10 大红旗。</p>
+              </a>
+              <a href="/faq" class="rounded-xl border border-line dark:border-white/10 p-3.5 hover:border-moss transition-colors block">
+                <div class="font-bold text-moss dark:text-emerald-300">📚 机场百科全书 FAQ →</div>
+                <p class="mt-1 text-muted">涵盖选购、客户端报错、流媒体解锁与防封号的 50+ 深度问答。</p>
+              </a>
+              <a href="/speedtest" class="rounded-xl border border-line dark:border-white/10 p-3.5 hover:border-moss transition-colors block">
+                <div class="font-bold text-moss dark:text-emerald-300">📊 17份真实测速证据库 →</div>
+                <p class="mt-1 text-muted">查验 MAI-TEST-BOT 原始测速 PNG 与五地延迟吞吐横评表。</p>
+              </a>
+            </div>
+          </div>
+        </section>
+
+      </article>
+    </div>
+  </div>
+</BaseLayout>

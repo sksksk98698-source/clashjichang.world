@@ -1,0 +1,742 @@
+---
+import BaseLayout from '@layouts/BaseLayout.astro';
+import brandsData from '../../data/brands.json';
+import warningsContent from '../../data/warnings-content.json';
+
+const pageTitle = warningsContent.meta.title;
+const pageDesc = warningsContent.meta.description;
+
+function formatInlineMarkdown(text: string): string {
+  if (!text) return '';
+  return text
+    .replace(/\*\*(.+?)\*\*/g, '<strong class="font-bold text-ink dark:text-white">$1</strong>')
+    .replace(/`([^`]+)`/g, '<code class="rounded bg-moss/10 dark:bg-white/10 px-1.5 py-0.5 font-mono text-[11px] text-moss dark:text-emerald-300 break-all">$1</code>')
+    .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" class="font-semibold text-moss dark:text-emerald-300 underline decoration-moss/40 underline-offset-4 hover:text-coral transition-colors">$1</a>');
+}
+
+const combinedSchema = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        { '@type': 'ListItem', position: 1, name: '首页', item: 'https://clashjichang.world/' },
+        { '@type': 'ListItem', position: 2, name: '2026 机场跑路预警与风险避坑雷达', item: 'https://clashjichang.world/warnings' }
+      ]
+    },
+    {
+      '@type': 'TechArticle',
+      headline: warningsContent.meta.h1,
+      description: warningsContent.meta.description,
+      datePublished: '2026-10-19',
+      dateModified: warningsContent.meta.updatedAt,
+      author: {
+        '@type': 'Organization',
+        name: warningsContent.meta.author,
+        url: 'https://clashjichang.world/'
+      },
+      publisher: {
+        '@type': 'Organization',
+        name: 'Clash机场评测网',
+        url: 'https://clashjichang.world/'
+      },
+      mainEntityOfPage: {
+        '@type': 'WebPage',
+        '@id': 'https://clashjichang.world/warnings'
+      }
+    },
+    {
+      '@type': 'FAQPage',
+      mainEntity: warningsContent.faqs.map((item) => ({
+        '@type': 'Question',
+        name: item.q,
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: item.a
+        }
+      }))
+    }
+  ]
+};
+---
+
+<BaseLayout
+  title={pageTitle}
+  description={pageDesc}
+  schema={combinedSchema}
+>
+  <!-- Page Hero Header -->
+  <header class="py-10 sm:py-14 border-b border-line dark:border-white/10 bg-paper/60 dark:bg-black/20">
+    <div class="container max-w-6xl">
+      <nav aria-label="Breadcrumb" class="mb-4 text-xs text-muted flex flex-wrap items-center gap-1.5">
+        <a href="/" class="hover:text-moss transition-colors">首页</a>
+        <span>/</span>
+        <span class="text-ink dark:text-white font-semibold">机场跑路预警与避坑雷达</span>
+      </nav>
+
+      <div class="inline-flex flex-wrap items-center gap-2 rounded-full border border-coral/30 bg-coral/10 px-3.5 py-1 text-xs font-semibold text-coral dark:text-coral-bright mb-4">
+        <span>🚨 42家全库背景调查与风险审计</span>
+        <span class="opacity-50">|</span>
+        <span>深扒同源马甲 · 识别 5.6 元同构盘 · 10 大跑路红旗自测</span>
+      </div>
+
+      <h1 class="font-heading text-2xl sm:text-4xl lg:text-5xl font-black text-ink dark:text-white tracking-tight leading-tight">
+        {warningsContent.meta.h1}
+      </h1>
+
+      <p class="mt-4 text-sm sm:text-base text-muted leading-relaxed max-w-4xl">
+        {warningsContent.meta.description}
+      </p>
+
+      <!-- KPI Chips -->
+      <div class="mt-7 grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
+        <div class="rounded-xl border border-line dark:border-white/10 bg-white dark:bg-[#102a2b] p-3.5">
+          <span class="text-muted block text-[11px]">5–6 年零跑路老牌</span>
+          <span class="font-bold text-moss dark:text-emerald-400 font-mono">光速云 / 星岛梦 / 青云梯</span>
+        </div>
+        <div class="rounded-xl border border-line dark:border-white/10 bg-white dark:bg-[#102a2b] p-3.5">
+          <span class="text-muted block text-[11px]">核心同源矩阵披露</span>
+          <span class="font-bold text-ink dark:text-white font-mono">微风/飞鸟/一云梯/龙猫云</span>
+        </div>
+        <div class="rounded-xl border border-line dark:border-white/10 bg-white dark:bg-[#102a2b] p-3.5">
+          <span class="text-muted block text-[11px]">克隆同构低价预警</span>
+          <span class="font-bold text-amber-700 dark:text-amber-400 font-mono">第38–42名 (¥5.6/月盘)</span>
+        </div>
+        <div class="rounded-xl border border-line dark:border-white/10 bg-white dark:bg-[#102a2b] p-3.5">
+          <span class="text-muted block text-[11px]">最佳防失联容灾公式</span>
+          <span class="font-bold text-coral dark:text-coral-bright font-mono">主力年付 + 异构永久包</span>
+        </div>
+      </div>
+
+      <!-- Metadata Bar -->
+      <div class="mt-6 pt-5 border-t border-line/60 dark:border-white/10 flex flex-wrap items-center gap-x-6 gap-y-2 text-xs text-muted">
+        <div class="flex items-center gap-1.5">
+          <span class="font-bold text-ink dark:text-white">风控团队：</span>
+          <span>{warningsContent.meta.author}</span>
+        </div>
+        <div class="flex items-center gap-1.5">
+          <span class="font-bold text-ink dark:text-white">核验时间：</span>
+          <span class="font-mono text-moss dark:text-emerald-300">{warningsContent.meta.verifiedAt}</span>
+        </div>
+        <div class="flex items-center gap-1.5">
+          <span class="font-bold text-ink dark:text-white">最后修订：</span>
+          <time datetime={warningsContent.meta.updatedAt} class="font-mono">{warningsContent.meta.updatedAt}</time>
+        </div>
+        <div class="flex items-center gap-1.5">
+          <span class="font-bold text-ink dark:text-white">阅读时长：</span>
+          <span>{warningsContent.meta.readingTime}</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="container max-w-6xl py-8 sm:py-12">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+
+      <!-- Left Sticky TOC -->
+      <aside class="lg:col-span-3 lg:sticky lg:top-20 rounded-2xl border border-line dark:border-white/10 bg-white dark:bg-[#102a2b] p-4 sm:p-5 shadow-sm">
+        <details class="group lg:open" open>
+          <summary class="flex items-center justify-between cursor-pointer list-none font-heading text-sm font-black text-ink dark:text-white">
+            <span class="flex items-center gap-2">
+              <span class="inline-block w-2 h-2 rounded-full bg-coral"></span>
+              跑路预警章节目录 (TOC)
+            </span>
+            <span class="text-xs text-muted lg:hidden group-open:rotate-180 transition-transform">▼</span>
+          </summary>
+          <nav aria-label="页内章节导航" class="mt-3 pt-3 border-t border-line/60 dark:border-white/10">
+            <ul class="space-y-1.5 text-xs">
+              {warningsContent.toc.map((item) => (
+                <li>
+                  <a
+                    href={`#${item.id}`}
+                    class="block py-1 px-2 rounded-lg text-muted hover:text-moss dark:hover:text-emerald-300 hover:bg-moss/5 dark:hover:bg-white/5 transition-colors leading-snug"
+                  >
+                    {item.title}
+                  </a>
+                </li>
+              ))}
+            </ul>
+            <div class="mt-4 pt-3 border-t border-line/60 dark:border-white/10 space-y-1.5">
+              <div class="text-[11px] font-bold text-ink dark:text-white">全站核心专题矩阵</div>
+              <div class="flex flex-wrap gap-1.5 text-[11px]">
+                <a href="/free" class="rounded bg-paper dark:bg-white/10 px-2 py-1 text-moss dark:text-emerald-300 hover:underline">免费资源核验</a>
+                <a href="/tools" class="rounded bg-paper dark:bg-white/10 px-2 py-1 text-moss dark:text-emerald-300 hover:underline">梯子工具箱</a>
+                <a href="/faq" class="rounded bg-paper dark:bg-white/10 px-2 py-1 text-moss dark:text-emerald-300 hover:underline">机场百科FAQ</a>
+                <a href="/brands" class="rounded bg-paper dark:bg-white/10 px-2 py-1 text-moss dark:text-emerald-300 hover:underline">42家品牌库</a>
+                <a href="/speedtest" class="rounded bg-paper dark:bg-white/10 px-2 py-1 text-moss dark:text-emerald-300 hover:underline">17份测速原图</a>
+              </div>
+            </div>
+          </nav>
+        </details>
+      </aside>
+
+      <!-- Main Article Column -->
+      <article class="lg:col-span-9 space-y-10 min-w-0">
+
+        <!-- Module 0: Direct Answer Box -->
+        <section id="direct-answer" class="scroll-mt-24 rounded-2xl border-2 border-moss/40 dark:border-emerald-500/40 bg-emerald-50/50 dark:bg-[#0d2625] p-5 sm:p-8 shadow-sm">
+          <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+            <span class="inline-flex items-center gap-1.5 rounded-md bg-moss px-2.5 py-1 text-[11px] font-bold text-white uppercase tracking-wider">
+              ⚡ 核心风控结论前置 · 42家同源站群底牌、5.6元同构盘警示与跑路红旗
+            </span>
+            <span class="text-[11px] font-mono text-muted">Risk Audit Executive Summary</span>
+          </div>
+
+          <p class="text-xs sm:text-sm text-ink dark:text-white font-medium leading-relaxed mb-5">
+            {warningsContent.directAnswer.summary}
+          </p>
+
+          <div class="space-y-4">
+            {warningsContent.directAnswer.points.map((pt) => (
+              <div class="rounded-xl border border-moss/20 dark:border-white/10 bg-white/90 dark:bg-black/25 p-4 sm:p-5">
+                <h2 class="font-heading text-sm sm:text-base font-black text-moss dark:text-emerald-300 mb-2">
+                  {pt.label}
+                </h2>
+                <p class="text-xs sm:text-sm text-muted leading-relaxed">
+                  {pt.content}
+                </p>
+              </div>
+            ))}
+          </div>
+
+          <div class="mt-5 pt-4 border-t border-moss/20 dark:border-white/10">
+            <div class="text-xs font-bold text-ink dark:text-white mb-2.5">按核查需求快速直达风控模块：</div>
+            <div class="flex flex-wrap gap-2">
+              {warningsContent.directAnswer.quickNav.map((nav) => (
+                <a
+                  href={nav.href}
+                  class="inline-flex items-center gap-1 rounded-xl border border-moss/30 bg-white dark:bg-white/10 px-3 py-1.5 text-xs font-bold text-moss dark:text-emerald-300 hover:bg-moss hover:text-white transition-colors"
+                >
+                  <span>{nav.text}</span>
+                </a>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <!-- Interactive Risk Radar & 10 Red-Flag Self-Tester -->
+        <section id="interactive-risk-radar" class="scroll-mt-24 rounded-2xl border-2 border-moss/40 dark:border-emerald-500/40 bg-gradient-to-br from-emerald-50/70 via-white to-paper/60 dark:from-[#102a2b] dark:to-[#071312] p-5 sm:p-8 shadow-md space-y-6">
+          <div>
+            <span class="inline-flex items-center gap-1.5 rounded-md bg-moss px-2.5 py-1 text-[11px] font-bold text-white uppercase tracking-wider">
+              🔍 双核交互式风控雷达 · 42家机场同源/风险查询器 & 跑路前兆 10 项红旗自测表
+            </span>
+            <h2 class="font-heading text-xl sm:text-2xl font-black text-ink dark:text-white mt-2">
+              在线核查：输入或选择任意一家机场，秒查其同源派系、实测图状态与最佳买法
+            </h2>
+          </div>
+
+          <!-- Widget A: 42-Brand Risk & Lineage Instant Lookup -->
+          <div class="rounded-xl border border-line dark:border-white/10 bg-white dark:bg-black/30 p-4 sm:p-5 space-y-4">
+            <label for="radar-brand-select" class="block text-xs font-bold text-ink dark:text-white">
+              工具 ①：选择站内收录的 42 家机场品牌进行背景与风险穿透核查：
+            </label>
+            <select
+              id="radar-brand-select"
+              class="w-full rounded-xl border border-line dark:border-white/20 bg-paper/60 dark:bg-[#102a2b] px-3.5 py-2.5 text-xs sm:text-sm font-bold text-ink dark:text-white"
+            >
+              {brandsData.map((b) => (
+                <option value={b.slug} data-rank={b.rank} data-name={b.name} data-price={b.priceStr} data-line={b.lineType} data-proto={b.protocol} data-img={b.speedtestImg ? 'yes' : 'no'}>
+                  TOP {b.rank} · {b.name} ({b.priceStr})
+                </option>
+              ))}
+            </select>
+
+            <div id="radar-brand-result" class="rounded-xl border border-moss/30 bg-emerald-50/50 dark:bg-black/40 p-4 text-xs space-y-2 leading-relaxed">
+              正在加载品牌风控档案...
+            </div>
+          </div>
+
+          <!-- Widget B: 10 Red-Flag Exit-Scam Self-Tester -->
+          <div class="rounded-xl border border-line dark:border-white/10 bg-white dark:bg-black/30 p-4 sm:p-5 space-y-4">
+            <div class="flex flex-wrap items-center justify-between gap-2 border-b border-line/60 dark:border-white/10 pb-2.5">
+              <h3 class="font-heading text-sm sm:text-base font-black text-ink dark:text-white">
+                工具 ②：外部机场「跑路前兆 10 大红旗」交互自测器（勾选您遇到的症状）
+              </h3>
+              <span id="redflag-score-badge" class="rounded-full bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 px-3 py-0.5 font-mono text-xs font-bold">
+                当前命中：0 / 10 项 (安全)
+              </span>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 text-xs">
+              <label class="flex items-start gap-2 p-2.5 rounded-lg border border-line/60 dark:border-white/10 hover:bg-paper/40 cursor-pointer">
+                <input type="checkbox" class="rf-check mt-0.5 accent-coral" value="25" />
+                <span>1. 非大促日突发“1折–3折三年付/终身无限流量”清仓甩卖</span>
+              </label>
+              <label class="flex items-start gap-2 p-2.5 rounded-lg border border-line/60 dark:border-white/10 hover:bg-paper/40 cursor-pointer">
+                <input type="checkbox" class="rf-check mt-0.5 accent-coral" value="25" />
+                <span>2. 官方 Telegram 群突然开启长期「全员禁言」且踢出提问老客</span>
+              </label>
+              <label class="flex items-start gap-2 p-2.5 rounded-lg border border-line/60 dark:border-white/10 hover:bg-paper/40 cursor-pointer">
+                <input type="checkbox" class="rf-check mt-0.5 accent-coral" value="20" />
+                <span>3. 原本 25ms 的香港 IEPL 专线大面积离线，退化为 180ms+ 直连</span>
+              </label>
+              <label class="flex items-start gap-2 p-2.5 rounded-lg border border-line/60 dark:border-white/10 hover:bg-paper/40 cursor-pointer">
+                <input type="checkbox" class="rf-check mt-0.5 accent-coral" value="15" />
+                <span>4. 突然下架月付/季付选项，强制所有老用户只能续费年付</span>
+              </label>
+              <label class="flex items-start gap-2 p-2.5 rounded-lg border border-line/60 dark:border-white/10 hover:bg-paper/40 cursor-pointer">
+                <input type="checkbox" class="rf-check mt-0.5 accent-coral" value="15" />
+                <span>5. 后台工单超过 72 小时至一周完全无人响应</span>
+              </label>
+              <label class="flex items-start gap-2 p-2.5 rounded-lg border border-line/60 dark:border-white/10 hover:bg-paper/40 cursor-pointer">
+                <input type="checkbox" class="rf-check mt-0.5 accent-coral" value="15" />
+                <span>6. 支付宝/微信接口掉线，长期只接受无法追索的 USDT 充值</span>
+              </label>
+              <label class="flex items-start gap-2 p-2.5 rounded-lg border border-line/60 dark:border-white/10 hover:bg-paper/40 cursor-pointer">
+                <input type="checkbox" class="rf-check mt-0.5 accent-coral" value="20" />
+                <span>7. 要求已买年付的老用户额外补交“VIP专线通道激活费”</span>
+              </label>
+              <label class="flex items-start gap-2 p-2.5 rounded-lg border border-line/60 dark:border-white/10 hover:bg-paper/40 cursor-pointer">
+                <input type="checkbox" class="rf-check mt-0.5 accent-coral" value="10" />
+                <span>8. 套餐定价极度违背物理常识（如 ¥5.6/月同构盘要买年付）</span>
+              </label>
+              <label class="flex items-start gap-2 p-2.5 rounded-lg border border-line/60 dark:border-white/10 hover:bg-paper/40 cursor-pointer">
+                <input type="checkbox" class="rf-check mt-0.5 accent-coral" value="10" />
+                <span>9. 订阅域名被墙后超半个月不更换，且无备用防失联发布页</span>
+              </label>
+              <label class="flex items-start gap-2 p-2.5 rounded-lg border border-line/60 dark:border-white/10 hover:bg-paper/40 cursor-pointer">
+                <input type="checkbox" class="rf-check mt-0.5 accent-coral" value="10" />
+                <span>10. 原生解锁 IP 全部失效，退化为欺诈分 100 的万人骑机房 IP</span>
+              </label>
+            </div>
+
+            <div id="redflag-verdict" class="rounded-xl border border-line dark:border-white/10 bg-paper/60 dark:bg-white/5 p-3.5 text-xs font-medium text-ink dark:text-white">
+              请勾选上方您在某家机场观察到的现象，系统将自动评估跑路风险等级。
+            </div>
+          </div>
+
+          <script is:inline>
+            (function () {
+              const selectEl = document.getElementById('radar-brand-select');
+              const resultEl = document.getElementById('radar-brand-result');
+
+              const flyingBirdGroup = ['weifeng', 'firefly', 'flyingbird', 'longmaoyun', 'yinghuochong'];
+              const clone56Group = ['dalaoyun', 'shandianshu', 'yunjiexian', 'liulianyun', 'huanqiuti'];
+              const veteranGroup = ['guangsu-cloud', 'xingdaomeng', 'qingyunti', 'yinxingren', 'fatcat'];
+              const histGroup = ['wgetcloud', 'baiyueguang', 'shanshuiyun', 'cyberguard', 'lingdongyun'];
+              const new2025Group = ['u1s1', 'jilian-cloud', 'guangnianti', 'yifanyun', 'sogo-cloud', 'quanqiuyun', 'tiziyun'];
+
+              function updateBrandRadar() {
+                if (!selectEl || !resultEl) return;
+                const opt = selectEl.options[selectEl.selectedIndex];
+                const slug = selectEl.value;
+                const name = opt.getAttribute('data-name');
+                const rank = opt.getAttribute('data-rank');
+                const hasImg = opt.getAttribute('data-img') === 'yes';
+
+                let riskBadge = '🟢 实测验证 · 稳健推荐';
+                let lineageNote = '独立运营品牌（非 5.6 元同构盘）。';
+                let buyAdvice = '具备完整参数核验，支持按需选择月付、年付或永久不限时套餐。';
+
+                if (veteranGroup.includes(slug)) {
+                  riskBadge = '🛡️ 五星安全 · 2020–2021 骨灰级老牌避风港';
+                  lineageNote = slug === 'qingyunti'
+                    ? '由 2021 年初知名老牌「V4Speed」正式品牌升级而来，至今稳定运营超 5 年。'
+                    : '创设于 2020 年前后，历经 5–6 年跨周期洗牌依然稳健存续的顶级老牌。';
+                  buyAdvice = '抗风险能力位列全站最高梯队，可放心入手百元内年付（如光速云 ¥99/年、星岛梦/青云梯 ¥96/年）或永久不限时包（光速云 ¥147/247GB）。';
+                } else if (flyingBirdGroup.includes(slug)) {
+                  riskBadge = '🟢 一线专线 · 飞鸟/一云梯同源技术矩阵';
+                  lineageNote = '与【微风网络 / Firefly / FlyingBird(飞鸟) / 一云梯 / 龙猫云】属同源专线生态矩阵，共享高规格 IEPL/IPLC 与原生 IP 资源。';
+                  buyAdvice = '单买一家非常稳健高速；但若配置“双机场备份”，第二家备用请务必跨生态选择【光速云】或【二猫云】，切勿在同源矩阵内重复购买！';
+                } else if (slug === 'tntcloud') {
+                  riskBadge = '🟢 3年老牌 · 原 3A 加速器更名升级';
+                  lineageNote = '由原「3A 加速器」正式更名升级为 TNTCloud，全线 IPLC 专线不限设备数。';
+                  buyAdvice = '认准 TNTCloud 现用名，主打季付 ¥60 起周期套餐，配合 85 折优惠码性价比良好。';
+                } else if (clone56Group.includes(slug)) {
+                  riskBadge = '🟠 重点预警 · 5.6元克隆级同构低价盘';
+                  lineageNote = '与【大佬云 / 闪电鼠 / 云界线 / 榴莲云 / 环球梯】套餐定价（¥5.6/30G、¥54/年）100% 同构，且缺乏 2026-08-11 原始测速图' + (slug === 'yunjiexian' || slug === 'huanqiuti' ? '，推广链接还存在缺少 # 号异常。' : slug === 'liulianyun' ? '，且底层协议待核实。' : '。');
+                  buyAdvice = '⚠️ 严禁购买 ¥54 年付或 ¥132 两年付！最多仅限掏 ¥5.6 元买 1 个月短期尝鲜；若需年付请加 20 元选无忧链接(¥79/年)或光速云(¥99/年)。';
+                } else if (slug === 'yuzhou-cloud') {
+                  riskBadge = '🟡 资料缺口提示 · 含珍贵晚高峰实测图';
+                  lineageNote = '拥有 2026-08-11 21:04 晚高峰 VLESS 实测原图，但缺失现行完整套餐流量梯度与退款细则。';
+                  buyAdvice = '下单前请在官网后台核对最新套餐表；或直接平替选择同档位价格完全透明的光速云/U1S1。';
+                } else if (histGroup.includes(slug)) {
+                  riskBadge = '🔵 历史统计样本 · 下单前需复核实时状态';
+                  lineageNote = '站内收录为其 2025-06 至 2026-07 期间的多节点统计均值（非 2026-10-19 统一采样批次）。';
+                  buyAdvice = '如 WgetCloud 跨洋美日吞吐极强但季付 ¥297 起门槛较高，建议在官网复核最新实时节点状态后再下单。';
+                } else if (new2025Group.includes(slug)) {
+                  riskBadge = '🔵 2025–2026 高性能新锐 · 建议月付/永久包起步';
+                  lineageNote = '属于近年上线的新晋专线品牌' + (hasImg ? '，已通过本站 2026-08-11 MAI-TEST-BOT 原图实测验证。' : '。');
+                  buyAdvice = '硬件新、带宽足（如 U1S1、一翻云实测极佳），但因创设年限短于 2020 老牌，建议新客先买 ¥15–¥20 单月卡或 ¥100 永久包体验。';
+                }
+
+                resultEl.innerHTML =
+                  '<div class="font-bold text-sm text-ink dark:text-white">【TOP ' + rank + ' · ' + name + '】风控评级：<span class="text-moss dark:text-emerald-300">' + riskBadge + '</span></div>' +
+                  '<div><strong>🧬 同源与背景核实：</strong>' + lineageNote + '</div>' +
+                  '<div><strong>📊 2026 原始测速图：</strong>' + (hasImg ? '✅ 已归档 1122×1402 原始 PNG 测速图（可前往 /speedtest 查验）' : '⚠️ 暂无 2026-08-11 同批次原图（包含历史统计或待补充实测）') + '</div>' +
+                  '<div><strong>🧭 实验室选购处方：</strong>' + buyAdvice + ' <a href="/brands/' + slug + '" class="font-bold text-moss dark:text-emerald-300 underline ml-1">查看该品牌详情页 →</a></div>';
+              }
+
+              if (selectEl) selectEl.addEventListener('change', updateBrandRadar);
+              updateBrandRadar();
+
+              // Red-flag checklist logic
+              const checks = document.querySelectorAll('.rf-check');
+              const badgeEl = document.getElementById('redflag-score-badge');
+              const verdictEl = document.getElementById('redflag-verdict');
+
+              function updateRedFlags() {
+                let count = 0;
+                let score = 0;
+                checks.forEach((c) => {
+                  if (c.checked) {
+                    count++;
+                    score += parseInt(c.value, 10) || 10;
+                  }
+                });
+                if (!badgeEl || !verdictEl) return;
+                if (count === 0) {
+                  badgeEl.textContent = '当前命中：0 / 10 项 (🟢 状态健康)';
+                  badgeEl.className = 'rounded-full bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 px-3 py-0.5 font-mono text-xs font-bold';
+                  verdictEl.textContent = '✅ 尚未发现跑路红旗指标。建议日常保持“1个主力套餐 + 1个异构永久不限时备用包”的良好习惯。';
+                } else if (count <= 2 && score < 35) {
+                  badgeEl.textContent = '当前命中：' + count + ' 项 (🟡 轻度预警 · 危险分 ' + score + ')';
+                  badgeEl.className = 'rounded-full bg-amber-500/20 text-amber-700 dark:text-amber-300 px-3 py-0.5 font-mono text-xs font-bold';
+                  verdictEl.textContent = '⚠️ 已出现早期异常信号！请暂停续费年付，改为按月观察，并提前准备一份光速云(¥147)或二猫云(¥99)永久包作为退路。';
+                } else {
+                  badgeEl.textContent = '当前命中：' + count + ' 项 (🔴 极高危灵车 · 危险分 ' + score + ')';
+                  badgeEl.className = 'rounded-full bg-coral/20 text-coral dark:text-coral-bright px-3 py-0.5 font-mono text-xs font-bold';
+                  verdictEl.textContent = '🚨 一级跑路警报！该机场已高度符合卷款跑路前夕特征！请立即停止任何充值，切勿轻信清仓打折，并按下方第五章 SOP 准备迁移！';
+                }
+              }
+
+              checks.forEach((c) => c.addEventListener('change', updateRedFlags));
+            })();
+          </script>
+        </section>
+
+        <!-- Table 1: Lineage & Sister Brand Matrix -->
+        <section id="lineage-matrix-table" class="scroll-mt-24 rounded-2xl border border-line dark:border-white/10 bg-white dark:bg-[#102a2b] p-5 sm:p-8 space-y-4">
+          <div>
+            <span class="text-xs font-bold text-moss dark:text-coral-bright uppercase tracking-wider">RISK AUDIT TABLE 01 · LINEAGE & SISTER BRANDS</span>
+            <h2 class="font-heading text-xl sm:text-2xl font-black text-ink dark:text-white mt-1">
+              {warningsContent.lineageMatrixTable.caption}
+            </h2>
+            <p class="mt-2 text-xs text-muted leading-relaxed">
+              下表为您彻底理清 42 家机场中的集团派系、历史更名与同构群落，帮您在配置“双机场备份”时避开同源连坐风险：
+            </p>
+          </div>
+
+          <div class="overflow-x-auto rounded-xl border border-line dark:border-white/10">
+            <table class="w-full text-xs text-left border-collapse min-w-[840px]">
+              <thead class="bg-paper dark:bg-black/40 border-b border-line dark:border-white/10 text-ink dark:text-white font-bold">
+                <tr>
+                  {warningsContent.lineageMatrixTable.headers.map((h) => (
+                    <th class="py-3 px-3 whitespace-nowrap">{h}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-line/50 dark:divide-white/10">
+                {warningsContent.lineageMatrixTable.rows.map((r) => (
+                  <tr class="hover:bg-paper/40 dark:hover:bg-white/5">
+                    <td class="py-3 px-3 font-bold text-ink dark:text-white whitespace-nowrap">{r.group}</td>
+                    <td class="py-3 px-3 font-semibold text-moss dark:text-emerald-300 min-w-[160px]">{r.brands}</td>
+                    <td class="py-3 px-3 text-muted min-w-[180px]">{r.relation}</td>
+                    <td class="py-3 px-3 text-ink dark:text-white min-w-[160px]">{r.feature}</td>
+                    <td class="py-3 px-3 text-amber-700 dark:text-amber-400 font-medium min-w-[180px]">{r.advice}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- Table 2 & Table 3: Anomaly Audit & Veteran Safe Haven -->
+        <section id="anomaly-audit-table" class="scroll-mt-24 rounded-2xl border border-line dark:border-white/10 bg-white dark:bg-[#102a2b] p-5 sm:p-8 space-y-6">
+          <div>
+            <span class="text-xs font-bold text-moss dark:text-coral-bright uppercase tracking-wider">RISK AUDIT TABLE 02 & 03 · ANOMALIES & VETERAN HAVENS</span>
+            <h2 class="font-heading text-xl sm:text-2xl font-black text-ink dark:text-white mt-1">
+              资料缺口/格式异常预警表 & 2020–2021 五年老牌避风港核验表
+            </h2>
+          </div>
+
+          <div>
+            <div class="text-xs font-bold text-ink dark:text-white mb-2">
+              {warningsContent.anomalyAuditTable.caption}
+            </div>
+            <div class="overflow-x-auto rounded-xl border border-line dark:border-white/10">
+              <table class="w-full text-xs text-left border-collapse min-w-[840px]">
+                <thead class="bg-paper dark:bg-black/40 border-b border-line dark:border-white/10 text-ink dark:text-white font-bold">
+                  <tr>
+                    {warningsContent.anomalyAuditTable.headers.map((h) => (
+                      <th class="py-3 px-3 whitespace-nowrap">{h}</th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-line/50 dark:divide-white/10">
+                  {warningsContent.anomalyAuditTable.rows.map((r) => (
+                    <tr class="hover:bg-paper/40 dark:hover:bg-white/5">
+                      <td class="py-3 px-3 font-bold whitespace-nowrap">
+                        <a href={`/brands/${r.slug}`} class="text-moss dark:text-emerald-300 hover:underline">{r.brand} →</a>
+                      </td>
+                      <td class="py-3 px-3 font-bold whitespace-nowrap">{r.tag}</td>
+                      <td class="py-3 px-3 text-muted min-w-[190px]" set:html={formatInlineMarkdown(r.fact)} />
+                      <td class="py-3 px-3 text-ink dark:text-white min-w-[140px]">{r.impact}</td>
+                      <td class="py-3 px-3 text-emerald-700 dark:text-emerald-300 font-medium min-w-[190px]" set:html={formatInlineMarkdown(r.action)} />
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div id="veteran-safe-table" class="pt-3">
+            <div class="text-xs font-bold text-ink dark:text-white mb-2">
+              {warningsContent.veteranSafeTable.caption}
+            </div>
+            <div class="overflow-x-auto rounded-xl border border-line dark:border-white/10">
+              <table class="w-full text-xs text-left border-collapse min-w-[820px]">
+                <thead class="bg-paper dark:bg-black/40 border-b border-line dark:border-white/10 text-ink dark:text-white font-bold">
+                  <tr>
+                    {warningsContent.veteranSafeTable.headers.map((h) => (
+                      <th class="py-3 px-3 whitespace-nowrap">{h}</th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-line/50 dark:divide-white/10">
+                  {warningsContent.veteranSafeTable.rows.map((r) => (
+                    <tr class="hover:bg-paper/40 dark:hover:bg-white/5">
+                      <td class="py-3 px-3 font-bold whitespace-nowrap">
+                        <a href={`/brands/${r.slug}`} class="text-moss dark:text-emerald-300 hover:underline">{r.name} →</a>
+                      </td>
+                      <td class="py-3 px-3 font-mono font-bold text-ink dark:text-white whitespace-nowrap">{r.year}</td>
+                      <td class="py-3 px-3 text-muted min-w-[150px]">{r.arch}</td>
+                      <td class="py-3 px-3 text-ink dark:text-white min-w-[170px]">{r.proof}</td>
+                      <td class="py-3 px-3 font-semibold text-emerald-700 dark:text-emerald-300 min-w-[180px]">{r.plan}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- Chapter 1 to Chapter 4 Deep Text Sections -->
+        {[warningsContent.chapters.chapter1, warningsContent.chapters.chapter2, warningsContent.chapters.chapter3, warningsContent.chapters.chapter4].map((chap) => (
+          <section id={chap.id} class="scroll-mt-24 rounded-2xl border border-line dark:border-white/10 bg-white dark:bg-[#102a2b] p-5 sm:p-8 space-y-6">
+            <div>
+              <span class="text-xs font-bold text-moss dark:text-coral-bright uppercase tracking-wider">{chap.badge}</span>
+              <h2 class="font-heading text-xl sm:text-3xl font-black text-ink dark:text-white mt-1">
+                {chap.title}
+              </h2>
+              <p class="mt-3 text-xs sm:text-sm text-muted leading-relaxed" set:html={formatInlineMarkdown(chap.intro)} />
+            </div>
+
+            <div class="space-y-6">
+              {chap.subsections.map((sub) => (
+                <div id={sub.id} class="space-y-3 pt-2">
+                  <h3 class="font-heading text-base sm:text-xl font-bold text-ink dark:text-white border-l-4 border-moss pl-3">
+                    {sub.title}
+                  </h3>
+                  {sub.paragraphs.map((p) => (
+                    <p class="text-xs sm:text-sm text-muted leading-relaxed whitespace-pre-line" set:html={formatInlineMarkdown(p)} />
+                  ))}
+                </div>
+              ))}
+            </div>
+          </section>
+        ))}
+
+        <!-- Chapter 5: 5-Step Emergency Recovery SOP -->
+        <section id={warningsContent.chapters.chapter5.id} class="scroll-mt-24 rounded-2xl border border-line dark:border-white/10 bg-white dark:bg-[#102a2b] p-5 sm:p-8 space-y-6">
+          <div>
+            <span class="text-xs font-bold text-moss dark:text-coral-bright uppercase tracking-wider">{warningsContent.chapters.chapter5.badge}</span>
+            <h2 class="font-heading text-xl sm:text-3xl font-black text-ink dark:text-white mt-1">
+              {warningsContent.chapters.chapter5.title}
+            </h2>
+            <p class="mt-3 text-xs sm:text-sm text-muted leading-relaxed">
+              {warningsContent.chapters.chapter5.intro}
+            </p>
+          </div>
+
+          <div class="grid grid-cols-1 gap-4">
+            {warningsContent.chapters.chapter5.steps.map((step) => (
+              <div class="rounded-xl border border-line/80 dark:border-white/10 bg-paper/40 dark:bg-black/20 p-4 sm:p-6 space-y-2">
+                <div class="flex items-center gap-2">
+                  <span class="rounded bg-moss px-2 py-0.5 font-mono text-[11px] font-bold text-white">{step.stepNum}</span>
+                  <h3 class="font-heading text-base sm:text-lg font-bold text-ink dark:text-white">{step.title}</h3>
+                </div>
+                <p class="text-xs sm:text-sm text-muted leading-relaxed" set:html={formatInlineMarkdown(step.detail)} />
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <!-- Chapter 6: Decision Branches -->
+        <section id="decision-path" class="scroll-mt-24 rounded-2xl border border-line dark:border-white/10 bg-white dark:bg-[#102a2b] p-5 sm:p-8 space-y-6">
+          <div>
+            <span class="text-xs font-bold text-moss dark:text-coral-bright uppercase tracking-wider">CHAPTER 06 · RISK-ADJUSTED DECISION TREE</span>
+            <h2 class="font-heading text-xl sm:text-3xl font-black text-ink dark:text-white mt-1">
+              六、按风险承受力与容灾需求的 3 大选购分支
+            </h2>
+          </div>
+
+          <div class="space-y-5">
+            {warningsContent.decisionBranches.map((b) => (
+              <div id={b.id} class="rounded-xl border border-line/90 dark:border-white/10 bg-paper/40 dark:bg-black/20 p-5 space-y-3">
+                <span class="rounded-full bg-moss/15 dark:bg-emerald-500/20 px-3 py-0.5 text-xs font-bold text-moss dark:text-emerald-300 inline-block">
+                  {b.badge}
+                </span>
+                <h3 class="font-heading text-base sm:text-xl font-black text-ink dark:text-white">
+                  {b.title}
+                </h3>
+                <p class="text-xs sm:text-sm text-muted leading-relaxed">
+                  <strong class="text-ink dark:text-white">适用场景：</strong>{b.condition}
+                </p>
+                <div class="rounded-lg bg-white dark:bg-white/5 border border-line/60 dark:border-white/10 p-3 text-xs text-ink dark:text-white leading-relaxed" set:html={formatInlineMarkdown('<strong>风控策略：</strong>' + b.techChoice)} />
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+                  {b.recommendations.map((rec) => (
+                    <div class="rounded-lg border border-line/60 dark:border-white/10 bg-white/80 dark:bg-black/30 p-3 text-xs">
+                      <a href={`/brands/${rec.slug}`} class="font-bold text-moss dark:text-emerald-300 hover:underline text-sm">
+                        {rec.name} →
+                      </a>
+                      <p class="mt-1 text-muted leading-relaxed">{rec.note}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <!-- Chapter 7: Conversion Cards -->
+        <section id="recommended-entries" class="scroll-mt-24 rounded-2xl border border-line dark:border-white/10 bg-white dark:bg-[#102a2b] p-5 sm:p-8 space-y-6">
+          <div>
+            <span class="text-xs font-bold text-moss dark:text-coral-bright uppercase tracking-wider">CHAPTER 07 · VERIFIED SAFE HAVENS</span>
+            <h2 class="font-heading text-xl sm:text-3xl font-black text-ink dark:text-white mt-1">
+              七、经跨周期存续与实测双重验证的“避风港”机场入口
+            </h2>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+            {warningsContent.conversionCards.map((card) => (
+              <div class="flex flex-col justify-between rounded-2xl border-2 border-moss/30 dark:border-emerald-500/30 bg-emerald-50/30 dark:bg-[#0d2625] p-5">
+                <div class="space-y-3">
+                  <span class="rounded-md bg-moss/15 dark:bg-emerald-500/20 px-2.5 py-0.5 text-[11px] font-bold text-moss dark:text-emerald-300 inline-block">
+                    {card.badge}
+                  </span>
+                  <h3 class="font-heading text-base sm:text-lg font-black text-ink dark:text-white">
+                    {card.name}
+                  </h3>
+                  <div class="space-y-2 text-xs leading-relaxed">
+                    <p class="text-muted">
+                      <strong class="text-ink dark:text-white">适用人群：</strong>{card.suitableFor}
+                    </p>
+                    <p class="text-ink dark:text-white font-medium bg-white/80 dark:bg-black/25 p-2.5 rounded-lg border border-line/50 dark:border-white/10">
+                      <strong class="text-moss dark:text-emerald-300">实际费用：</strong>{card.pricing}
+                    </p>
+                    <p class="text-muted">
+                      <strong class="text-amber-700 dark:text-amber-400">主要限制：</strong>{card.limitations}
+                    </p>
+                    <p class="text-[11px] font-mono text-muted">
+                      核验依据：{card.verifiedAt}
+                    </p>
+                  </div>
+                </div>
+
+                <div class="mt-4 pt-3 border-t border-line/60 dark:border-white/10 flex flex-col gap-2">
+                  <a
+                    href={card.primaryAction.href}
+                    class="w-full text-center rounded-xl bg-moss px-3 py-2 text-xs font-bold text-white hover:bg-moss/90 transition-colors"
+                  >
+                    {card.primaryAction.text}
+                  </a>
+                  <a
+                    href={card.externalAction.href}
+                    target="_blank"
+                    rel="nofollow sponsored noopener"
+                    class="w-full text-center rounded-xl border border-moss/40 bg-white dark:bg-white/10 px-3 py-2 text-xs font-bold text-moss dark:text-emerald-300 hover:bg-moss/10 transition-colors"
+                  >
+                    {card.externalAction.text}
+                  </a>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div class="rounded-xl border border-line/70 dark:border-white/10 bg-paper/50 dark:bg-black/30 p-3.5 text-[11px] text-muted leading-relaxed">
+            <strong>透明合规与推广披露：</strong>本页外部官网直达链接均带有 <code>rel="nofollow sponsored noopener"</code> 属性，通过链接注册可能为本站带来维护佣金支持，不影响用户实际支付价格。
+          </div>
+        </section>
+
+        <!-- Chapter 8: FAQ -->
+        <section id="faq" class="scroll-mt-24 rounded-2xl border border-line dark:border-white/10 bg-white dark:bg-[#102a2b] p-5 sm:p-8 space-y-6">
+          <div>
+            <span class="text-xs font-bold text-moss dark:text-coral-bright uppercase tracking-wider">CHAPTER 08 · RISK & LINEAGE FAQ</span>
+            <h2 class="font-heading text-xl sm:text-3xl font-black text-ink dark:text-white mt-1">
+              八、机场防跑路、同源马甲与售后争议常见问答 (FAQ)
+            </h2>
+          </div>
+
+          <div class="space-y-4">
+            {warningsContent.faqs.map((faq) => (
+              <details class="group rounded-xl border border-line/80 dark:border-white/10 bg-paper/40 dark:bg-black/20 p-4 sm:p-5 open:bg-white dark:open:bg-black/30 transition-colors" open>
+                <summary class="cursor-pointer list-none font-heading text-sm sm:text-base font-bold text-ink dark:text-white flex items-start justify-between gap-3">
+                  <span>{faq.q}</span>
+                  <span class="text-xs text-moss dark:text-emerald-300 group-open:rotate-180 transition-transform shrink-0 mt-1">▼</span>
+                </summary>
+                <div class="mt-3 pt-3 border-t border-line/50 dark:border-white/10 text-xs sm:text-sm text-muted leading-relaxed" set:html={formatInlineMarkdown(faq.a)} />
+              </details>
+            ))}
+          </div>
+        </section>
+
+        <!-- Chapter 9: Provenance & Internal Topic Cluster -->
+        <section id={warningsContent.dataSources.id} class="scroll-mt-24 rounded-2xl border border-line dark:border-white/10 bg-white dark:bg-[#102a2b] p-5 sm:p-8 space-y-6">
+          <div>
+            <span class="text-xs font-bold text-moss dark:text-coral-bright uppercase tracking-wider">{warningsContent.dataSources.badge}</span>
+            <h2 class="font-heading text-xl sm:text-3xl font-black text-ink dark:text-white mt-1">
+              {warningsContent.dataSources.title}
+            </h2>
+            <p class="mt-2 text-xs sm:text-sm text-muted leading-relaxed">
+              {warningsContent.dataSources.intro}
+            </p>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {warningsContent.dataSources.sources.map((src) => (
+              <div class="rounded-xl border border-line/70 dark:border-white/10 bg-paper/40 dark:bg-black/20 p-4 space-y-1.5">
+                <h3 class="font-heading text-sm font-bold text-ink dark:text-white">{src.title}</h3>
+                <p class="text-xs text-muted leading-relaxed" set:html={formatInlineMarkdown(src.detail)} />
+              </div>
+            ))}
+          </div>
+
+          <div class="space-y-3 pt-2">
+            {warningsContent.dataSources.gaps.map((gap) => (
+              <div class="rounded-xl border border-amber-500/30 bg-amber-50/40 dark:bg-amber-950/20 p-4 text-xs space-y-1">
+                <div class="font-bold text-ink dark:text-white">{gap.label}</div>
+                <p class="text-muted leading-relaxed">{gap.content}</p>
+              </div>
+            ))}
+          </div>
+
+          <div class="pt-4 border-t border-line dark:border-white/10">
+            <h3 class="font-heading text-base font-bold text-ink dark:text-white mb-3">
+              延伸阅读：站内互补专题枢纽
+            </h3>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 text-xs">
+              <a href="/free" class="rounded-xl border border-line dark:border-white/10 p-3.5 hover:border-moss transition-colors block">
+                <div class="font-bold text-moss dark:text-emerald-300">🎁 免费资源与平替核验 →</div>
+                <p class="mt-1 text-muted">Cloudflare WARP 优选、免费节点蜜罐识别与 ¥147 永久包核算。</p>
+              </a>
+              <a href="/tools" class="rounded-xl border border-line dark:border-white/10 p-3.5 hover:border-moss transition-colors block">
+                <div class="font-bold text-moss dark:text-emerald-300">🛠️ 梯子诊断与订阅工具箱 →</div>
+                <p class="mt-1 text-muted">检测 IP 欺诈分、DNS 泄露、计算流量倍率与本地安全转换订阅。</p>
+              </a>
+              <a href="/faq" class="rounded-xl border border-line dark:border-white/10 p-3.5 hover:border-moss transition-colors block">
+                <div class="font-bold text-moss dark:text-emerald-300">📚 机场百科全书 FAQ →</div>
+                <p class="mt-1 text-muted">涵盖选购、客户端报错、流媒体解锁与防封号的 50+ 深度问答。</p>
+              </a>
+              <a href="/speedtest" class="rounded-xl border border-line dark:border-white/10 p-3.5 hover:border-moss transition-colors block">
+                <div class="font-bold text-moss dark:text-emerald-300">📊 17份真实测速证据库 →</div>
+                <p class="mt-1 text-muted">查验 MAI-TEST-BOT 原始测速 PNG 与五地延迟吞吐横评表。</p>
+              </a>
+            </div>
+          </div>
+        </section>
+
+      </article>
+    </div>
+  </div>
+</BaseLayout>

@@ -1,0 +1,545 @@
+---
+import BaseLayout from '@layouts/BaseLayout.astro';
+import faqContent from '../../data/faq-content.json';
+
+const pageTitle = faqContent.meta.title;
+const pageDesc = faqContent.meta.description;
+
+function formatInlineMarkdown(text: string): string {
+  if (!text) return '';
+  return text
+    .replace(/\*\*(.+?)\*\*/g, '<strong class="font-bold text-ink dark:text-white">$1</strong>')
+    .replace(/`([^`]+)`/g, '<code class="rounded bg-moss/10 dark:bg-white/10 px-1.5 py-0.5 font-mono text-[11px] text-moss dark:text-emerald-300 break-all">$1</code>')
+    .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" class="font-semibold text-moss dark:text-emerald-300 underline decoration-moss/40 underline-offset-4 hover:text-coral transition-colors">$1</a>');
+}
+
+const allFaqItems = faqContent.categories.flatMap((c) => c.items);
+
+const combinedSchema = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        { '@type': 'ListItem', position: 1, name: '首页', item: 'https://clashjichang.world/' },
+        { '@type': 'ListItem', position: 2, name: '2026 机场百科全书与跨境网络 FAQ', item: 'https://clashjichang.world/faq' }
+      ]
+    },
+    {
+      '@type': 'TechArticle',
+      headline: faqContent.meta.h1,
+      description: faqContent.meta.description,
+      datePublished: '2026-10-19',
+      dateModified: faqContent.meta.updatedAt,
+      author: {
+        '@type': 'Organization',
+        name: faqContent.meta.author,
+        url: 'https://clashjichang.world/'
+      },
+      publisher: {
+        '@type': 'Organization',
+        name: 'Clash机场评测网',
+        url: 'https://clashjichang.world/'
+      },
+      mainEntityOfPage: {
+        '@type': 'WebPage',
+        '@id': 'https://clashjichang.world/faq'
+      }
+    },
+    {
+      '@type': 'FAQPage',
+      mainEntity: allFaqItems.map((item) => ({
+        '@type': 'Question',
+        name: item.q,
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: item.a
+        }
+      }))
+    }
+  ]
+};
+---
+
+<BaseLayout
+  title={pageTitle}
+  description={pageDesc}
+  schema={combinedSchema}
+>
+  <!-- Page Hero Header -->
+  <header class="py-10 sm:py-14 border-b border-line dark:border-white/10 bg-paper/60 dark:bg-black/20">
+    <div class="container max-w-6xl">
+      <nav aria-label="Breadcrumb" class="mb-4 text-xs text-muted flex flex-wrap items-center gap-1.5">
+        <a href="/" class="hover:text-moss transition-colors">首页</a>
+        <span>/</span>
+        <span class="text-ink dark:text-white font-semibold">机场百科全书 FAQ (48问)</span>
+      </nav>
+
+      <div class="inline-flex flex-wrap items-center gap-2 rounded-full border border-moss/30 bg-moss/10 px-3.5 py-1 text-xs font-semibold text-moss dark:text-emerald-300 mb-4">
+        <span>📚 6 大生命周期专区 · 48 组工程级解答</span>
+        <span class="opacity-50">|</span>
+        <span>支持毫秒级关键词检索与分类过滤</span>
+      </div>
+
+      <h1 class="font-heading text-2xl sm:text-4xl lg:text-5xl font-black text-ink dark:text-white tracking-tight leading-tight">
+        {faqContent.meta.h1}
+      </h1>
+
+      <p class="mt-4 text-sm sm:text-base text-muted leading-relaxed max-w-4xl">
+        {faqContent.meta.description}
+      </p>
+
+      <!-- KPI Chips -->
+      <div class="mt-7 grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
+        <div class="rounded-xl border border-line dark:border-white/10 bg-white dark:bg-[#102a2b] p-3.5">
+          <span class="text-muted block text-[11px]">收录深度问答数</span>
+          <span class="font-bold text-moss dark:text-emerald-400 font-mono">6 大专区 · 48 组 FAQ</span>
+        </div>
+        <div class="rounded-xl border border-line dark:border-white/10 bg-white dark:bg-[#102a2b] p-3.5">
+          <span class="text-muted block text-[11px]">报错自救覆盖率</span>
+          <span class="font-bold text-ink dark:text-white font-mono">Timeout / 掉速 / AI风控</span>
+        </div>
+        <div class="rounded-xl border border-line dark:border-white/10 bg-white dark:bg-[#102a2b] p-3.5">
+          <span class="text-muted block text-[11px]">首选全能标杆</span>
+          <span class="font-bold text-ink dark:text-white font-mono">光速云 (¥99/年 · ¥147永久)</span>
+        </div>
+        <div class="rounded-xl border border-line dark:border-white/10 bg-white dark:bg-[#102a2b] p-3.5">
+          <span class="text-muted block text-[11px]">GEO 结构化标记</span>
+          <span class="font-bold text-coral dark:text-coral-bright font-mono">48 项 FAQPage Schema</span>
+        </div>
+      </div>
+
+      <!-- Metadata Bar -->
+      <div class="mt-6 pt-5 border-t border-line/60 dark:border-white/10 flex flex-wrap items-center gap-x-6 gap-y-2 text-xs text-muted">
+        <div class="flex items-center gap-1.5">
+          <span class="font-bold text-ink dark:text-white">编撰团队：</span>
+          <span>{faqContent.meta.author}</span>
+        </div>
+        <div class="flex items-center gap-1.5">
+          <span class="font-bold text-ink dark:text-white">核验时间：</span>
+          <span class="font-mono text-moss dark:text-emerald-300">{faqContent.meta.verifiedAt}</span>
+        </div>
+        <div class="flex items-center gap-1.5">
+          <span class="font-bold text-ink dark:text-white">最后修订：</span>
+          <time datetime={faqContent.meta.updatedAt} class="font-mono">{faqContent.meta.updatedAt}</time>
+        </div>
+        <div class="flex items-center gap-1.5">
+          <span class="font-bold text-ink dark:text-white">阅读时长：</span>
+          <span>{faqContent.meta.readingTime}</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="container max-w-6xl py-8 sm:py-12">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+
+      <!-- Left Sticky TOC -->
+      <aside class="lg:col-span-3 lg:sticky lg:top-20 rounded-2xl border border-line dark:border-white/10 bg-white dark:bg-[#102a2b] p-4 sm:p-5 shadow-sm">
+        <details class="group lg:open" open>
+          <summary class="flex items-center justify-between cursor-pointer list-none font-heading text-sm font-black text-ink dark:text-white">
+            <span class="flex items-center gap-2">
+              <span class="inline-block w-2 h-2 rounded-full bg-moss dark:bg-emerald-400"></span>
+              百科问答专区目录 (TOC)
+            </span>
+            <span class="text-xs text-muted lg:hidden group-open:rotate-180 transition-transform">▼</span>
+          </summary>
+          <nav aria-label="页内章节导航" class="mt-3 pt-3 border-t border-line/60 dark:border-white/10">
+            <ul class="space-y-1.5 text-xs">
+              {faqContent.toc.map((item) => (
+                <li>
+                  <a
+                    href={`#${item.id}`}
+                    class="block py-1 px-2 rounded-lg text-muted hover:text-moss dark:hover:text-emerald-300 hover:bg-moss/5 dark:hover:bg-white/5 transition-colors leading-snug"
+                  >
+                    {item.title}
+                  </a>
+                </li>
+              ))}
+            </ul>
+            <div class="mt-4 pt-3 border-t border-line/60 dark:border-white/10 space-y-1.5">
+              <div class="text-[11px] font-bold text-ink dark:text-white">全站核心专题矩阵</div>
+              <div class="flex flex-wrap gap-1.5 text-[11px]">
+                <a href="/free" class="rounded bg-paper dark:bg-white/10 px-2 py-1 text-moss dark:text-emerald-300 hover:underline">免费资源核验</a>
+                <a href="/tools" class="rounded bg-paper dark:bg-white/10 px-2 py-1 text-moss dark:text-emerald-300 hover:underline">梯子工具箱</a>
+                <a href="/warnings" class="rounded bg-paper dark:bg-white/10 px-2 py-1 text-moss dark:text-emerald-300 hover:underline">跑路预警雷达</a>
+                <a href="/clients" class="rounded bg-paper dark:bg-white/10 px-2 py-1 text-moss dark:text-emerald-300 hover:underline">客户端大全</a>
+                <a href="/guide" class="rounded bg-paper dark:bg-white/10 px-2 py-1 text-moss dark:text-emerald-300 hover:underline">专线与协议科普</a>
+              </div>
+            </div>
+          </nav>
+        </details>
+      </aside>
+
+      <!-- Main Article Column -->
+      <article class="lg:col-span-9 space-y-10 min-w-0">
+
+        <!-- Module 0: Direct Answer Box -->
+        <section id="direct-answer" class="scroll-mt-24 rounded-2xl border-2 border-moss/40 dark:border-emerald-500/40 bg-emerald-50/50 dark:bg-[#0d2625] p-5 sm:p-8 shadow-sm">
+          <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+            <span class="inline-flex items-center gap-1.5 rounded-md bg-moss px-2.5 py-1 text-[11px] font-bold text-white uppercase tracking-wider">
+              ⚡ 核心黄金法则前置 · 3 分钟打通选购、排障与 AI 解锁任督二脉
+            </span>
+            <span class="text-[11px] font-mono text-muted">Encyclopedia Executive Summary</span>
+          </div>
+
+          <p class="text-xs sm:text-sm text-ink dark:text-white font-medium leading-relaxed mb-5">
+            {faqContent.directAnswer.summary}
+          </p>
+
+          <div class="space-y-4">
+            {faqContent.directAnswer.points.map((pt) => (
+              <div class="rounded-xl border border-moss/20 dark:border-white/10 bg-white/90 dark:bg-black/25 p-4 sm:p-5">
+                <h2 class="font-heading text-sm sm:text-base font-black text-moss dark:text-emerald-300 mb-2">
+                  {pt.label}
+                </h2>
+                <p class="text-xs sm:text-sm text-muted leading-relaxed" set:html={formatInlineMarkdown(pt.content)} />
+              </div>
+            ))}
+          </div>
+
+          <div class="mt-5 pt-4 border-t border-moss/20 dark:border-white/10">
+            <div class="text-xs font-bold text-ink dark:text-white mb-2.5">按问题类型快速跳转专区：</div>
+            <div class="flex flex-wrap gap-2">
+              {faqContent.directAnswer.quickNav.map((nav) => (
+                <a
+                  href={nav.href}
+                  class="inline-flex items-center gap-1 rounded-xl border border-moss/30 bg-white dark:bg-white/10 px-3 py-1.5 text-xs font-bold text-moss dark:text-emerald-300 hover:bg-moss hover:text-white transition-colors"
+                >
+                  <span>{nav.text}</span>
+                </a>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <!-- Interactive FAQ Instant Search & Category Filter -->
+        <section id="interactive-faq-explorer" class="scroll-mt-24 rounded-2xl border-2 border-moss/40 dark:border-emerald-500/40 bg-gradient-to-br from-emerald-50/70 via-white to-paper/60 dark:from-[#102a2b] dark:to-[#071312] p-5 sm:p-8 shadow-md space-y-5">
+          <div class="flex flex-wrap items-center justify-between gap-2">
+            <div>
+              <span class="inline-flex items-center gap-1.5 rounded-md bg-moss px-2.5 py-1 text-[11px] font-bold text-white uppercase tracking-wider">
+                🔍 交互式百科检索引擎 · 6 大分类一键过滤 & 关键词实时高亮查找
+              </span>
+              <h2 class="font-heading text-lg sm:text-2xl font-black text-ink dark:text-white mt-2">
+                秒级检索 48 组工程问答（如输入：ChatGPT、Timeout、永久、小火箭、倍率、TUN）
+              </h2>
+            </div>
+            <span id="faq-match-count" class="rounded-full bg-moss/15 dark:bg-emerald-500/20 px-3 py-1 font-mono text-xs font-bold text-moss dark:text-emerald-300">
+              正在显示全部 48 组问答
+            </span>
+          </div>
+
+          <div class="flex flex-col sm:flex-row gap-3">
+            <input
+              id="faq-search-input"
+              type="search"
+              placeholder="输入关键词实时筛选问题与答案（例如：ChatGPT、Claude、Timeout、永久包、倍率、移动宽带、小火箭）..."
+              class="flex-1 rounded-xl border border-line dark:border-white/20 bg-white dark:bg-black/40 px-4 py-2.5 text-xs sm:text-sm text-ink dark:text-white focus:border-moss outline-none"
+            />
+            <button
+              id="faq-reset-btn"
+              type="button"
+              class="rounded-xl border border-moss/30 bg-white dark:bg-white/10 px-4 py-2.5 text-xs font-bold text-moss dark:text-emerald-300 hover:bg-moss hover:text-white transition-colors shrink-0"
+            >
+              重置筛选 / 展开全部
+            </button>
+          </div>
+
+          <div class="flex flex-wrap gap-2 text-xs" id="faq-category-pills">
+            <button type="button" data-cat="all" class="faq-cat-btn rounded-lg bg-moss text-white font-bold px-3 py-1.5 transition-colors">
+              全部专区 (48)
+            </button>
+            <button type="button" data-cat="cat-buying" class="faq-cat-btn rounded-lg border border-line dark:border-white/10 bg-white dark:bg-white/5 text-ink dark:text-white font-semibold px-3 py-1.5 hover:border-moss transition-colors">
+              💰 选购与倍率 (8)
+            </button>
+            <button type="button" data-cat="cat-clients" class="faq-cat-btn rounded-lg border border-line dark:border-white/10 bg-white dark:bg-white/5 text-ink dark:text-white font-semibold px-3 py-1.5 hover:border-moss transition-colors">
+              💻 客户端与苹果ID (8)
+            </button>
+            <button type="button" data-cat="cat-config" class="faq-cat-btn rounded-lg border border-line dark:border-white/10 bg-white dark:bg-white/5 text-ink dark:text-white font-semibold px-3 py-1.5 hover:border-moss transition-colors">
+              ⚙️ 分流规则与TUN (8)
+            </button>
+            <button type="button" data-cat="cat-unlock" class="faq-cat-btn rounded-lg border border-line dark:border-white/10 bg-white dark:bg-white/5 text-ink dark:text-white font-semibold px-3 py-1.5 hover:border-moss transition-colors">
+              🤖 AI与4K流媒体 (8)
+            </button>
+            <button type="button" data-cat="cat-troubleshoot" class="faq-cat-btn rounded-lg border border-line dark:border-white/10 bg-white dark:bg-white/5 text-ink dark:text-white font-semibold px-3 py-1.5 hover:border-moss transition-colors">
+              🛠️ 掉速与Timeout排障 (8)
+            </button>
+            <button type="button" data-cat="cat-security" class="faq-cat-btn rounded-lg border border-line dark:border-white/10 bg-white dark:bg-white/5 text-ink dark:text-white font-semibold px-3 py-1.5 hover:border-moss transition-colors">
+              🔒 隐私与防跑路 (8)
+            </button>
+          </div>
+        </section>
+
+        <!-- Table 1 & Table 2: 60-Second Error Code Lookup & Golden Combo Table -->
+        <section id="error-code-table" class="scroll-mt-24 rounded-2xl border border-line dark:border-white/10 bg-white dark:bg-[#102a2b] p-5 sm:p-8 space-y-6">
+          <div>
+            <span class="text-xs font-bold text-moss dark:text-coral-bright uppercase tracking-wider">QUICK REFERENCE TABLE 01 & 02 · ERROR CODES & GOLDEN COMBOS</span>
+            <h2 class="font-heading text-xl sm:text-2xl font-black text-ink dark:text-white mt-1">
+              60 秒常见故障代码速查表 & 全场景黄金搭配总表
+            </h2>
+          </div>
+
+          <div>
+            <div class="text-xs font-bold text-ink dark:text-white mb-2">
+              {faqContent.errorCodeTable.caption}
+            </div>
+            <div class="overflow-x-auto rounded-xl border border-line dark:border-white/10">
+              <table class="w-full text-xs text-left border-collapse min-w-[840px]">
+                <thead class="bg-paper dark:bg-black/40 border-b border-line dark:border-white/10 text-ink dark:text-white font-bold">
+                  <tr>
+                    {faqContent.errorCodeTable.headers.map((h) => (
+                      <th class="py-3 px-3 whitespace-nowrap">{h}</th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-line/50 dark:divide-white/10">
+                  {faqContent.errorCodeTable.rows.map((r) => (
+                    <tr class="hover:bg-paper/40 dark:hover:bg-white/5">
+                      <td class="py-3 px-3 font-bold text-coral dark:text-coral-bright min-w-[150px]" set:html={formatInlineMarkdown(r.error)} />
+                      <td class="py-3 px-3 text-ink dark:text-white min-w-[140px]" set:html={formatInlineMarkdown(r.scene)} />
+                      <td class="py-3 px-3 text-muted min-w-[180px]">{r.cause}</td>
+                      <td class="py-3 px-3 text-emerald-700 dark:text-emerald-300 font-medium min-w-[190px]" set:html={formatInlineMarkdown(r.fix)} />
+                      <td class="py-3 px-3 whitespace-nowrap" set:html={formatInlineMarkdown(r.link)} />
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div id="golden-combo-table" class="pt-3">
+            <div class="text-xs font-bold text-ink dark:text-white mb-2">
+              {faqContent.goldenComboTable.caption}
+            </div>
+            <div class="overflow-x-auto rounded-xl border border-line dark:border-white/10">
+              <table class="w-full text-xs text-left border-collapse min-w-[840px]">
+                <thead class="bg-paper dark:bg-black/40 border-b border-line dark:border-white/10 text-ink dark:text-white font-bold">
+                  <tr>
+                    {faqContent.goldenComboTable.headers.map((h) => (
+                      <th class="py-3 px-3 whitespace-nowrap">{h}</th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-line/50 dark:divide-white/10">
+                  {faqContent.goldenComboTable.rows.map((r) => (
+                    <tr class="hover:bg-paper/40 dark:hover:bg-white/5">
+                      <td class="py-3 px-3 font-bold text-ink dark:text-white min-w-[160px]">{r.scene}</td>
+                      <td class="py-3 px-3 font-mono text-moss dark:text-emerald-300 min-w-[150px]">{r.client}</td>
+                      <td class="py-3 px-3 text-muted min-w-[160px]">{r.proto}</td>
+                      <td class="py-3 px-3 font-semibold min-w-[170px]" set:html={formatInlineMarkdown(r.brand)} />
+                      <td class="py-3 px-3 font-mono text-[11px] text-ink dark:text-white min-w-[150px]">{r.budget}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- 6 Master FAQ Categories (48 Deep Q&As) -->
+        <div id="faq-categories-container" class="space-y-10">
+          {faqContent.categories.map((cat) => (
+            <section id={cat.id} data-cat-section={cat.id} class="faq-category-section scroll-mt-24 rounded-2xl border border-line dark:border-white/10 bg-white dark:bg-[#102a2b] p-5 sm:p-8 space-y-6">
+              <div>
+                <span class="text-xs font-bold text-moss dark:text-coral-bright uppercase tracking-wider">{cat.badge}</span>
+                <h2 class="font-heading text-xl sm:text-3xl font-black text-ink dark:text-white mt-1">
+                  {cat.title}
+                </h2>
+                <p class="mt-2 text-xs sm:text-sm text-muted leading-relaxed" set:html={formatInlineMarkdown(cat.desc)} />
+              </div>
+
+              <div class="space-y-4">
+                {cat.items.map((item) => (
+                  <details class="faq-item-card group rounded-xl border border-line/80 dark:border-white/10 bg-paper/40 dark:bg-black/20 p-4 sm:p-5 open:bg-white dark:open:bg-black/30 transition-colors" open>
+                    <summary class="cursor-pointer list-none font-heading text-sm sm:text-base font-bold text-ink dark:text-white flex items-start justify-between gap-3">
+                      <span class="faq-q-text">{item.q}</span>
+                      <span class="text-xs text-moss dark:text-emerald-300 group-open:rotate-180 transition-transform shrink-0 mt-1">▼</span>
+                    </summary>
+                    <div class="faq-a-text mt-3 pt-3 border-t border-line/50 dark:border-white/10 text-xs sm:text-sm text-muted leading-relaxed whitespace-pre-line" set:html={formatInlineMarkdown(item.a)} />
+                  </details>
+                ))}
+              </div>
+            </section>
+          ))}
+        </div>
+
+        <script is:inline>
+          (function () {
+            const searchInput = document.getElementById('faq-search-input');
+            const resetBtn = document.getElementById('faq-reset-btn');
+            const countBadge = document.getElementById('faq-match-count');
+            const catBtns = document.querySelectorAll('.faq-cat-btn');
+            const sections = document.querySelectorAll('.faq-category-section');
+
+            let activeCat = 'all';
+
+            function filterFaqs() {
+              const kw = (searchInput ? searchInput.value : '').trim().toLowerCase();
+              let visibleCount = 0;
+
+              sections.forEach((sec) => {
+                const secId = sec.getAttribute('data-cat-section');
+                const catMatch = activeCat === 'all' || activeCat === secId;
+                const cards = sec.querySelectorAll('.faq-item-card');
+                let secVisible = 0;
+
+                cards.forEach((card) => {
+                  const text = (card.textContent || '').toLowerCase();
+                  const kwMatch = !kw || text.includes(kw);
+                  if (catMatch && kwMatch) {
+                    card.style.display = '';
+                    card.open = true;
+                    secVisible++;
+                    visibleCount++;
+                  } else {
+                    card.style.display = 'none';
+                  }
+                });
+
+                sec.style.display = secVisible > 0 ? '' : 'none';
+              });
+
+              if (countBadge) {
+                countBadge.textContent = kw || activeCat !== 'all'
+                  ? '已筛选出 ' + visibleCount + ' / 48 组匹配问答'
+                  : '正在显示全部 48 组问答';
+              }
+            }
+
+            catBtns.forEach((btn) => {
+              btn.addEventListener('click', () => {
+                activeCat = btn.getAttribute('data-cat') || 'all';
+                catBtns.forEach((b) => {
+                  b.className = 'faq-cat-btn rounded-lg border border-line dark:border-white/10 bg-white dark:bg-white/5 text-ink dark:text-white font-semibold px-3 py-1.5 hover:border-moss transition-colors';
+                });
+                btn.className = 'faq-cat-btn rounded-lg bg-moss text-white font-bold px-3 py-1.5 transition-colors';
+                filterFaqs();
+              });
+            });
+
+            if (searchInput) searchInput.addEventListener('input', filterFaqs);
+            if (resetBtn) {
+              resetBtn.addEventListener('click', () => {
+                if (searchInput) searchInput.value = '';
+                activeCat = 'all';
+                catBtns.forEach((b, idx) => {
+                  b.className = idx === 0
+                    ? 'faq-cat-btn rounded-lg bg-moss text-white font-bold px-3 py-1.5 transition-colors'
+                    : 'faq-cat-btn rounded-lg border border-line dark:border-white/10 bg-white dark:bg-white/5 text-ink dark:text-white font-semibold px-3 py-1.5 hover:border-moss transition-colors';
+                });
+                filterFaqs();
+              });
+            }
+          })();
+        </script>
+
+        <!-- Chapter 7: Conversion Cards -->
+        <section id="recommended-entries" class="scroll-mt-24 rounded-2xl border border-line dark:border-white/10 bg-white dark:bg-[#102a2b] p-5 sm:p-8 space-y-6">
+          <div>
+            <span class="text-xs font-bold text-moss dark:text-coral-bright uppercase tracking-wider">CHAPTER 07 · ENCYCLOPEDIA TOP PICKS</span>
+            <h2 class="font-heading text-xl sm:text-3xl font-black text-ink dark:text-white mt-1">
+              七、看完 48 问后可直接闭眼入的 3 大代表性方案入口
+            </h2>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+            {faqContent.conversionCards.map((card) => (
+              <div class="flex flex-col justify-between rounded-2xl border-2 border-moss/30 dark:border-emerald-500/30 bg-emerald-50/30 dark:bg-[#0d2625] p-5">
+                <div class="space-y-3">
+                  <span class="rounded-md bg-moss/15 dark:bg-emerald-500/20 px-2.5 py-0.5 text-[11px] font-bold text-moss dark:text-emerald-300 inline-block">
+                    {card.badge}
+                  </span>
+                  <h3 class="font-heading text-base sm:text-lg font-black text-ink dark:text-white">
+                    {card.name}
+                  </h3>
+                  <div class="space-y-2 text-xs leading-relaxed">
+                    <p class="text-muted">
+                      <strong class="text-ink dark:text-white">适用人群：</strong>{card.suitableFor}
+                    </p>
+                    <p class="text-ink dark:text-white font-medium bg-white/80 dark:bg-black/25 p-2.5 rounded-lg border border-line/50 dark:border-white/10">
+                      <strong class="text-moss dark:text-emerald-300">实际费用：</strong>{card.pricing}
+                    </p>
+                    <p class="text-muted">
+                      <strong class="text-amber-700 dark:text-amber-400">主要限制：</strong>{card.limitations}
+                    </p>
+                    <p class="text-[11px] font-mono text-muted">
+                      核验依据：{card.verifiedAt}
+                    </p>
+                  </div>
+                </div>
+
+                <div class="mt-4 pt-3 border-t border-line/60 dark:border-white/10 flex flex-col gap-2">
+                  <a
+                    href={card.primaryAction.href}
+                    class="w-full text-center rounded-xl bg-moss px-3 py-2 text-xs font-bold text-white hover:bg-moss/90 transition-colors"
+                  >
+                    {card.primaryAction.text}
+                  </a>
+                  <a
+                    href={card.externalAction.href}
+                    target="_blank"
+                    rel="nofollow sponsored noopener"
+                    class="w-full text-center rounded-xl border border-moss/40 bg-white dark:bg-white/10 px-3 py-2 text-xs font-bold text-moss dark:text-emerald-300 hover:bg-moss/10 transition-colors"
+                  >
+                    {card.externalAction.text}
+                  </a>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div class="rounded-xl border border-line/70 dark:border-white/10 bg-paper/50 dark:bg-black/30 p-3.5 text-[11px] text-muted leading-relaxed">
+            <strong>透明合规与推广披露：</strong>本页外部官网直达链接均带有 <code>rel="nofollow sponsored noopener"</code> 属性，通过链接注册可能为本站带来维护佣金支持，不影响用户实际支付价格。
+          </div>
+        </section>
+
+        <!-- Chapter 8: Provenance & Internal Topic Cluster -->
+        <section id={faqContent.dataSources.id} class="scroll-mt-24 rounded-2xl border border-line dark:border-white/10 bg-white dark:bg-[#102a2b] p-5 sm:p-8 space-y-6">
+          <div>
+            <span class="text-xs font-bold text-moss dark:text-coral-bright uppercase tracking-wider">{faqContent.dataSources.badge}</span>
+            <h2 class="font-heading text-xl sm:text-3xl font-black text-ink dark:text-white mt-1">
+              {faqContent.dataSources.title}
+            </h2>
+            <p class="mt-2 text-xs sm:text-sm text-muted leading-relaxed">
+              {faqContent.dataSources.intro}
+            </p>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {faqContent.dataSources.sources.map((src) => (
+              <div class="rounded-xl border border-line/70 dark:border-white/10 bg-paper/40 dark:bg-black/20 p-4 space-y-1.5">
+                <h3 class="font-heading text-sm font-bold text-ink dark:text-white">{src.title}</h3>
+                <p class="text-xs text-muted leading-relaxed" set:html={formatInlineMarkdown(src.detail)} />
+              </div>
+            ))}
+          </div>
+
+          <div class="pt-4 border-t border-line dark:border-white/10">
+            <h3 class="font-heading text-base font-bold text-ink dark:text-white mb-3">
+              延伸阅读：全站万字专著级专题矩阵
+            </h3>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 text-xs">
+              <a href="/free" class="rounded-xl border border-line dark:border-white/10 p-3.5 hover:border-moss transition-colors block">
+                <div class="font-bold text-moss dark:text-emerald-300">🎁 免费资源与平替核验 →</div>
+                <p class="mt-1 text-muted">Cloudflare WARP 优选、免费节点安全红线与 ¥147 永久包核算。</p>
+              </a>
+              <a href="/tools" class="rounded-xl border border-line dark:border-white/10 p-3.5 hover:border-moss transition-colors block">
+                <div class="font-bold text-moss dark:text-emerald-300">🛠️ 梯子诊断与订阅工具箱 →</div>
+                <p class="mt-1 text-muted">检测 IP 欺诈分、DNS 泄露、计算流量倍率与本地安全转换订阅。</p>
+              </a>
+              <a href="/warnings" class="rounded-xl border border-line dark:border-white/10 p-3.5 hover:border-moss transition-colors block">
+                <div class="font-bold text-moss dark:text-emerald-300">🚨 机场跑路预警与避坑雷达 →</div>
+                <p class="mt-1 text-muted">深扒同源马甲站群、5.6元同构盘风险与跑路前兆 10 大红旗。</p>
+              </a>
+              <a href="/speedtest" class="rounded-xl border border-line dark:border-white/10 p-3.5 hover:border-moss transition-colors block">
+                <div class="font-bold text-moss dark:text-emerald-300">📊 17份真实测速证据库 →</div>
+                <p class="mt-1 text-muted">查验 MAI-TEST-BOT 原始测速 PNG 与五地延迟吞吐横评表。</p>
+              </a>
+            </div>
+          </div>
+        </section>
+
+      </article>
+    </div>
+  </div>
+</BaseLayout>

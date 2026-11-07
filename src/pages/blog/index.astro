@@ -1,40 +1,140 @@
 ---
 import { getCollection } from 'astro:content';
 import BaseLayout from '@layouts/BaseLayout.astro';
-import { Image } from 'astro:assets';
-import workspaceImage from '../../assets/workspace.jpg';
-import saasTeamImage from '../../assets/saas-team.jpg';
-import launchTeamImage from '../../assets/launch-team.jpg';
 
 const posts = (await getCollection('blog')).sort(
   (first, second) => second.data.publishedAt.valueOf() - first.data.publishedAt.valueOf(),
 );
 const featuredPost = posts.find((post) => post.data.featured) ?? posts[0];
 const otherPosts = posts.filter((post) => post.id !== featuredPost?.id);
-const postImages = [saasTeamImage, launchTeamImage];
+
+const pageTitle = 'Clash 机场评测博客与使用教程 | 节点专线与客户端知识库 - clashjichang.world';
+const pageDesc = '精选 Clash 机场评测深度长文、IPLC/IEPL 专线知识科普、42 家品牌实测报告及全平台客户端上手配置教程。';
+
+const breadcrumbSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: '首页', item: 'https://clashjichang.world' },
+    { '@type': 'ListItem', position: 2, name: '评测与博客', item: 'https://clashjichang.world/blog' }
+  ]
+};
+
+const collectionPageSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'CollectionPage',
+  name: pageTitle,
+  url: 'https://clashjichang.world/blog',
+  description: pageDesc
+};
 ---
 
 <BaseLayout
-  title="مدونة AstroArabia | معرفة عربية للويب"
-  description="مقالات عربية عن Astro وRTL وأداء الويب وبناء المنتجات الرقمية."
+  title={pageTitle}
+  description={pageDesc}
+  schema={[breadcrumbSchema, collectionPageSchema]}
 >
-  <section class="border-b border-line bg-[#102a2b] text-white">
-    <div class="container grid items-end gap-12 py-20 sm:py-28 lg:grid-cols-[1fr_.7fr]">
-      <div>
-        <p class="text-sm font-bold text-emerald-300">مدونة AstroArabia</p>
-        <h1 class="mt-5 max-w-3xl font-heading text-4xl font-bold leading-[1.55] sm:text-6xl">
-          معرفة عربية<br /><span class="text-coral-bright">تبني بها أفضل.</span>
+  <div class="border-b border-line dark:border-white/10 bg-paper/50 dark:bg-black/20 py-3">
+    <div class="container flex items-center gap-2 text-xs text-muted">
+      <a href="/" class="hover:text-moss dark:hover:text-white">首页</a>
+      <span>/</span>
+      <span class="text-ink dark:text-white font-medium">评测与教程博客</span>
+    </div>
+  </div>
+  <div class="py-12 border-b border-line dark:border-white/10 bg-paper/60 dark:bg-black/20">
+    <div class="container">
+      <div class="max-w-3xl">
+        <div class="inline-flex items-center gap-2 rounded-full border border-moss/30 bg-moss/10 px-3 py-0.5 text-xs font-semibold text-moss dark:text-emerald-300 mb-4">
+          <span>专业深度科普 · 实测经验分享</span>
+        </div>
+        <h1 class="font-heading text-3xl sm:text-5xl font-black text-ink dark:text-white tracking-tight">
+          机场评测与客户端教程博客
         </h1>
-        <p class="mt-7 max-w-2xl text-lg leading-9 text-white/70">
-          أفكار وتجارب عملية عن الويب العربي، Astro، الأداء، وتجربة المستخدم من منظور RTL.
+        <p class="mt-4 text-sm sm:text-base text-muted leading-relaxed">
+          深入浅出解析专线原理、测速报告分析、协议选型与常见连接故障排查，助您掌握科学上网核心技能。
         </p>
       </div>
-      <div class="border-s-2 border-coral-bright ps-6"><p class="text-sm text-white/55">نكتب عن</p><p class="mt-3 font-heading text-2xl font-bold">ما يساعدك على البناء، لا ما يملأ الصفحة.</p></div>
     </div>
-  </section>
+  </div>
 
-  {featuredPost && <section class="container py-20 sm:py-28"><div class="grid items-center gap-10 lg:grid-cols-[.7fr_1.3fr]"><div><p class="eyebrow">المقال المميز · {featuredPost.data.category}</p><h2 class="mt-4 font-heading text-3xl font-bold sm:text-5xl">{featuredPost.data.title}</h2><p class="mt-5 max-w-xl text-lg leading-9 text-muted">{featuredPost.data.description}</p><div class="mt-8 flex items-center gap-4 text-sm text-muted"><time datetime={featuredPost.data.publishedAt.toISOString()}>{featuredPost.data.publishedAt.toLocaleDateString('ar-SA')}</time><span>·</span><span>{featuredPost.data.readingTime}</span></div><a href={`/blog/${featuredPost.id}`} class="mt-8 inline-block rounded-xl bg-moss px-7 py-3.5 font-bold text-white transition hover:bg-moss-dark">اقرأ المقال</a></div><div class="overflow-hidden rounded-3xl bg-paper"><Image src={workspaceImage} alt="صورة المقال المميز" width={1600} height={1000} layout="constrained" sizes="(min-width: 1024px) 55vw, 100vw" class="h-72 w-full object-cover sm:h-96" /><div class="p-8 sm:p-12"><span class="text-7xl font-heading font-bold text-coral">01</span><p class="mt-8 max-w-md font-heading text-2xl font-bold leading-relaxed">العربية ليست طبقة فوق التصميم. هي طريقة تفكير.</p></div></div></div></section>}
-  <section class="border-y border-line bg-paper"><div class="container py-20 sm:py-28"><div class="flex items-end justify-between gap-6"><div><p class="eyebrow">كل المقالات</p><h2 class="mt-4 font-heading text-3xl font-bold sm:text-4xl">اقرأ على مهل، وابنِ بوضوح.</h2></div><span class="text-sm text-muted">{posts.length} مقالات</span></div><div class="mt-12 grid gap-5 md:grid-cols-2">{otherPosts.map((post, index) => <article class="overflow-hidden border-t-2 border-moss bg-white"><Image src={postImages[index % postImages.length]} alt={`صورة مقال ${post.data.title}`} width={1200} height={800} layout="constrained" sizes="(min-width: 768px) 50vw, 100vw" class="h-52 w-full object-cover" /><div class="p-7"><div class="flex justify-between gap-4 text-xs text-muted"><span>{post.data.category}</span><span dir="ltr">0{index + 2}</span></div><h3 class="mt-6 font-heading text-2xl font-bold">{post.data.title}</h3><p class="mt-4 text-sm leading-8 text-muted">{post.data.description}</p><div class="mt-8 flex items-center justify-between text-sm"><span class="text-muted">{post.data.readingTime}</span><a href={`/blog/${post.id}`} class="font-bold text-moss">اقرأ ←</a></div></div></article>)}</div></div></section>
+  <div class="container py-12 space-y-12">
+    <!-- Featured Article -->
+    {featuredPost && (
+      <section class="rounded-3xl border border-line dark:border-white/10 bg-white dark:bg-[#102a2b] p-6 sm:p-10 shadow-sm hover:shadow-md transition-all">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+          <div class="lg:col-span-8">
+            <div class="flex items-center gap-2 mb-3">
+              <span class="rounded-full bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 font-bold text-xs px-2.5 py-0.5 border border-emerald-500/20">
+                本期精选 · {featuredPost.data.category}
+              </span>
+              <span class="text-xs text-muted font-mono">{featuredPost.data.readingTime}</span>
+            </div>
+            <h2 class="font-heading text-2xl sm:text-3xl font-black text-ink dark:text-white tracking-tight">
+              <a href={`/blog/${featuredPost.id}`} class="hover:text-moss dark:hover:text-coral-bright transition-colors">
+                {featuredPost.data.title}
+              </a>
+            </h2>
+            <p class="mt-4 text-sm text-muted leading-relaxed">
+              {featuredPost.data.description}
+            </p>
+            <div class="mt-6 flex items-center gap-4">
+              <a
+                href={`/blog/${featuredPost.id}`}
+                class="rounded-xl bg-moss hover:bg-moss-dark text-white font-bold text-xs sm:text-sm px-5 py-2.5 transition-all"
+              >
+                阅读全文 →
+              </a>
+              <time class="text-xs text-muted font-mono" datetime={featuredPost.data.publishedAt.toISOString()}>
+                {featuredPost.data.publishedAt.toISOString().split('T')[0]}
+              </time>
+            </div>
+          </div>
+          <div class="lg:col-span-4 rounded-2xl bg-paper dark:bg-white/5 border border-line dark:border-white/10 p-6 flex flex-col justify-center items-center text-center">
+            <span class="text-4xl block mb-2">📖</span>
+            <span class="font-heading font-bold text-ink dark:text-white text-base">选购避雷必看</span>
+            <p class="text-xs text-muted mt-1">涵盖专线拓扑、协议优劣与退款风险防坑</p>
+          </div>
+        </div>
+      </section>
+    )}
 
-  <section class="bg-coral text-white"><div class="container flex flex-col justify-between gap-6 py-14 sm:flex-row sm:items-center"><div><p class="text-sm font-bold text-white">لديك فكرة أو تجربة؟</p><h2 class="mt-2 font-heading text-3xl font-bold">ساهم في إثراء الويب العربي.</h2></div><a href="/terms" class="rounded-xl bg-[#102a2b] px-7 py-3.5 font-bold">دليل المساهمة</a></div></section>
+    <!-- Other Articles -->
+    <section>
+      <div class="mb-6 flex items-center justify-between">
+        <h2 class="font-heading text-xl font-bold text-ink dark:text-white">
+          最新评测与教程
+        </h2>
+        <span class="text-xs text-muted font-mono">共 {posts.length} 篇原创文章</span>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {otherPosts.map((post) => (
+          <article class="rounded-2xl border border-line dark:border-white/10 bg-white dark:bg-[#102a2b] p-6 flex flex-col justify-between hover:shadow-md transition-all">
+            <div>
+              <div class="flex items-center justify-between mb-3 text-xs">
+                <span class="font-bold text-moss dark:text-coral-bright">{post.data.category}</span>
+                <span class="text-muted font-mono">{post.data.readingTime}</span>
+              </div>
+              <h3 class="font-heading text-lg font-bold text-ink dark:text-white mb-2">
+                <a href={`/blog/${post.id}`} class="hover:text-moss dark:hover:text-coral-bright">
+                  {post.data.title}
+                </a>
+              </h3>
+              <p class="text-xs text-muted leading-relaxed line-clamp-3 mb-4">
+                {post.data.description}
+              </p>
+            </div>
+            <div class="pt-4 border-t border-line/40 dark:border-white/5 flex items-center justify-between text-xs">
+              <time class="text-muted font-mono" datetime={post.data.publishedAt.toISOString()}>
+                {post.data.publishedAt.toISOString().split('T')[0]}
+              </time>
+              <a href={`/blog/${post.id}`} class="font-bold text-moss dark:text-emerald-400 hover:underline">
+                阅读文章 →
+              </a>
+            </div>
+          </article>
+        ))}
+      </div>
+    </section>
+  </div>
 </BaseLayout>

@@ -1,0 +1,644 @@
+---
+import BaseLayout from '@layouts/BaseLayout.astro';
+import clientsContent from '../../data/clients-content.json';
+
+const pageTitle = clientsContent.meta.title;
+const pageDesc = clientsContent.meta.description;
+
+function formatInlineMarkdown(text: string): string {
+  if (!text) return '';
+  return text
+    .replace(/\*\*(.+?)\*\*/g, '<strong class="font-bold text-ink dark:text-white">$1</strong>')
+    .replace(/`([^`]+)`/g, '<code class="rounded bg-moss/10 dark:bg-white/10 px-1.5 py-0.5 font-mono text-[11px] text-moss dark:text-emerald-300 break-all">$1</code>')
+    .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" class="font-semibold text-moss dark:text-emerald-300 underline decoration-moss/40 underline-offset-4 hover:text-coral transition-colors">$1</a>');
+}
+
+const combinedSchema = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        { '@type': 'ListItem', position: 1, name: '首页', item: 'https://clashjichang.world/' },
+        { '@type': 'ListItem', position: 2, name: '2026 机场代理客户端大全', item: 'https://clashjichang.world/clients' }
+      ]
+    },
+    {
+      '@type': 'TechArticle',
+      headline: clientsContent.meta.h1,
+      description: clientsContent.meta.description,
+      datePublished: '2026-08-11',
+      dateModified: clientsContent.meta.updatedAt,
+      author: {
+        '@type': 'Organization',
+        name: clientsContent.meta.author,
+        url: 'https://clashjichang.world/'
+      },
+      publisher: {
+        '@type': 'Organization',
+        name: 'Clash机场评测网',
+        url: 'https://clashjichang.world/'
+      },
+      mainEntityOfPage: {
+        '@type': 'WebPage',
+        '@id': 'https://clashjichang.world/clients'
+      }
+    },
+    {
+      '@type': 'ItemList',
+      name: '2026 全平台主流机场代理客户端官方列表',
+      numberOfItems: clientsContent.masterComparisonTable.rows.length,
+      itemListElement: clientsContent.masterComparisonTable.rows.map((row, idx) => ({
+        '@type': 'ListItem',
+        position: idx + 1,
+        name: row.name,
+        description: `${row.os} | ${row.core} | ${row.target}`
+      }))
+    },
+    {
+      '@type': 'FAQPage',
+      mainEntity: clientsContent.faqs.map((item) => ({
+        '@type': 'Question',
+        name: item.q,
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: item.a
+        }
+      }))
+    }
+  ]
+};
+---
+
+<BaseLayout
+  title={pageTitle}
+  description={pageDesc}
+  schema={combinedSchema}
+>
+  <!-- Page Hero & Metadata Header -->
+  <header class="py-10 sm:py-14 border-b border-line dark:border-white/10 bg-paper/60 dark:bg-black/20">
+    <div class="container max-w-6xl">
+      <nav aria-label="Breadcrumb" class="mb-4 text-xs text-muted flex flex-wrap items-center gap-1.5">
+        <a href="/" class="hover:text-moss transition-colors">首页</a>
+        <span>/</span>
+        <span class="text-ink dark:text-white font-semibold">2026 机场代理客户端大全</span>
+      </nav>
+
+      <div class="inline-flex flex-wrap items-center gap-2 rounded-full border border-moss/30 bg-moss/10 px-3.5 py-1 text-xs font-semibold text-moss dark:text-emerald-300 mb-4">
+        <span>官方开源渠道 · 无毒纯净版</span>
+        <span class="opacity-50">|</span>
+        <span>覆盖 Win / 安卓 / iOS / Mac / Linux / OpenWrt 软路由</span>
+      </div>
+
+      <h1 class="font-heading text-2xl sm:text-4xl lg:text-5xl font-black text-ink dark:text-white tracking-tight leading-tight">
+        {clientsContent.meta.h1}
+      </h1>
+
+      <p class="mt-4 text-sm sm:text-base text-muted leading-relaxed max-w-4xl">
+        {clientsContent.meta.description}
+      </p>
+
+      <!-- Author, Verification & Update Metadata Bar -->
+      <div class="mt-6 pt-5 border-t border-line/60 dark:border-white/10 flex flex-wrap items-center gap-x-6 gap-y-2 text-xs text-muted">
+        <div class="flex items-center gap-1.5">
+          <span class="font-bold text-ink dark:text-white">维护团队：</span>
+          <span>{clientsContent.meta.author}</span>
+        </div>
+        <div class="flex items-center gap-1.5">
+          <span class="font-bold text-ink dark:text-white">仓库与兼容核验：</span>
+          <span class="font-mono text-moss dark:text-emerald-300">{clientsContent.meta.verifiedAt}</span>
+        </div>
+        <div class="flex items-center gap-1.5">
+          <span class="font-bold text-ink dark:text-white">最后更新：</span>
+          <time datetime={clientsContent.meta.updatedAt} class="font-mono">{clientsContent.meta.updatedAt}</time>
+        </div>
+        <div class="flex items-center gap-1.5">
+          <span class="font-bold text-ink dark:text-white">阅读时长：</span>
+          <span>{clientsContent.meta.readingTime}</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content Layout with Sidebar / Collapsible TOC -->
+  <div class="container max-w-6xl py-8 sm:py-12">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+
+      <!-- Left/Top TOC Navigation -->
+      <aside class="lg:col-span-3 lg:sticky lg:top-20 rounded-2xl border border-line dark:border-white/10 bg-white dark:bg-[#102a2b] p-4 sm:p-5 shadow-sm">
+        <details class="group lg:open" open>
+          <summary class="flex items-center justify-between cursor-pointer list-none font-heading text-sm font-black text-ink dark:text-white">
+            <span class="flex items-center gap-2">
+              <span class="inline-block w-2 h-2 rounded-full bg-moss dark:bg-emerald-400"></span>
+              全平台客户端目录 (TOC)
+            </span>
+            <span class="text-xs text-muted lg:hidden group-open:rotate-180 transition-transform">▼</span>
+          </summary>
+          <nav aria-label="页内章节导航" class="mt-3 pt-3 border-t border-line/60 dark:border-white/10">
+            <ul class="space-y-1.5 text-xs">
+              {clientsContent.toc.map((item) => (
+                <li>
+                  <a
+                    href={`#${item.id}`}
+                    class="block py-1 px-2 rounded-lg text-muted hover:text-moss dark:hover:text-emerald-300 hover:bg-moss/5 dark:hover:bg-white/5 transition-colors leading-snug"
+                  >
+                    {item.title}
+                  </a>
+                </li>
+              ))}
+            </ul>
+            <div class="mt-4 pt-3 border-t border-line/60 dark:border-white/10 space-y-1.5">
+              <div class="text-[11px] font-bold text-ink dark:text-white">站内核心专题直达</div>
+              <div class="flex flex-wrap gap-1.5 text-[11px]">
+                <a href="/brands" class="rounded bg-paper dark:bg-white/10 px-2 py-1 text-moss dark:text-emerald-300 hover:underline">42家品牌库</a>
+                <a href="/guide" class="rounded bg-paper dark:bg-white/10 px-2 py-1 text-moss dark:text-emerald-300 hover:underline">专线与协议指南</a>
+                <a href="/speedtest" class="rounded bg-paper dark:bg-white/10 px-2 py-1 text-moss dark:text-emerald-300 hover:underline">16份测速原图</a>
+                <a href="/ranking" class="rounded bg-paper dark:bg-white/10 px-2 py-1 text-moss dark:text-emerald-300 hover:underline">Top10榜单</a>
+              </div>
+            </div>
+          </nav>
+        </details>
+      </aside>
+
+      <!-- Right Primary Article Column -->
+      <article class="lg:col-span-9 space-y-10 min-w-0">
+
+        <!-- Module 0: Direct Answer Box (核心结论前置) -->
+        <section id="direct-answer" class="scroll-mt-24 rounded-2xl border-2 border-moss/40 dark:border-emerald-500/40 bg-emerald-50/50 dark:bg-[#0d2625] p-5 sm:p-8 shadow-sm">
+          <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+            <span class="inline-flex items-center gap-1.5 rounded-md bg-moss px-2.5 py-1 text-[11px] font-bold text-white uppercase tracking-wider">
+              ⚡ 核心结论前置 · 30 秒找准您的系统首选客户端
+            </span>
+            <span class="text-[11px] font-mono text-muted">Quick Selection & Security Answer</span>
+          </div>
+
+          <p class="text-xs sm:text-sm text-ink dark:text-white font-medium leading-relaxed mb-5">
+            {clientsContent.directAnswer.summary}
+          </p>
+
+          <div class="space-y-4">
+            {clientsContent.directAnswer.points.map((pt) => (
+              <div class="rounded-xl border border-moss/20 dark:border-white/10 bg-white/90 dark:bg-black/25 p-4 sm:p-5">
+                <h2 class="font-heading text-sm sm:text-base font-black text-moss dark:text-emerald-300 mb-2">
+                  {pt.label}
+                </h2>
+                <p class="text-xs sm:text-sm text-muted leading-relaxed">
+                  {pt.content}
+                </p>
+              </div>
+            ))}
+          </div>
+
+          <!-- Platform Quick Jump Pills -->
+          <div class="mt-5 pt-4 border-t border-moss/20 dark:border-white/10">
+            <div class="text-xs font-bold text-ink dark:text-white mb-2.5">按操作系统或核验表一键跳转：</div>
+            <div class="flex flex-wrap gap-2">
+              {clientsContent.directAnswer.quickNav.map((nav) => (
+                <a
+                  href={nav.href}
+                  class="inline-flex items-center gap-1 rounded-xl border border-moss/30 bg-white dark:bg-white/10 px-3 py-1.5 text-xs font-bold text-moss dark:text-emerald-300 hover:bg-moss hover:text-white transition-colors"
+                >
+                  <span>{nav.text}</span>
+                </a>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <!-- Table 1: Master Client Comparison Table -->
+        <section id="master-comparison-table" class="scroll-mt-24 rounded-2xl border border-line dark:border-white/10 bg-white dark:bg-[#102a2b] p-5 sm:p-8 space-y-4">
+          <div>
+            <span class="text-xs font-bold text-moss dark:text-coral-bright uppercase tracking-wider">MASTER COMPARISON MATRIX</span>
+            <h2 class="font-heading text-xl sm:text-2xl font-black text-ink dark:text-white mt-1">
+              {clientsContent.masterComparisonTable.caption}
+            </h2>
+            <p class="mt-2 text-xs text-muted leading-relaxed">
+              下表汇总了 2026 年全平台 21 组主流代理客户端的操作系统、底层内核、协议兼容范围、收费模式与当前社区维护状态。在 375px 手机端可左右滑动表格审阅完整参数：
+            </p>
+          </div>
+
+          <div class="overflow-x-auto rounded-xl border border-line dark:border-white/10">
+            <table class="w-full text-xs text-left border-collapse min-w-[820px]">
+              <thead class="bg-paper dark:bg-black/40 border-b border-line dark:border-white/10 text-ink dark:text-white font-bold">
+                <tr>
+                  {clientsContent.masterComparisonTable.headers.map((h) => (
+                    <th class="py-3 px-3 whitespace-nowrap">{h}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-line/50 dark:divide-white/10">
+                {clientsContent.masterComparisonTable.rows.map((r) => (
+                  <tr class="hover:bg-paper/40 dark:hover:bg-white/5">
+                    <td class="py-3 px-3 font-bold text-moss dark:text-emerald-300 whitespace-nowrap">{r.name}</td>
+                    <td class="py-3 px-3 font-mono text-[11px] min-w-[130px]">{r.os}</td>
+                    <td class="py-3 px-3 font-semibold text-ink dark:text-white min-w-[130px]">{r.core}</td>
+                    <td class="py-3 px-3 text-muted min-w-[160px]">{r.proto}</td>
+                    <td class="py-3 px-3 text-muted min-w-[150px]">{r.format}</td>
+                    <td class="py-3 px-3 font-mono text-[11px] min-w-[130px]">{r.price}</td>
+                    <td class="py-3 px-3 font-semibold text-emerald-700 dark:text-emerald-300 min-w-[140px]">{r.status}</td>
+                    <td class="py-3 px-3 text-muted min-w-[180px]">{r.target}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- Table 2 & Table 3: Architecture Suffix Guide & Airport Mode Compatibility -->
+        <section id="arch-package-guide" class="scroll-mt-24 rounded-2xl border border-line dark:border-white/10 bg-white dark:bg-[#102a2b] p-5 sm:p-8 space-y-6">
+          <div>
+            <span class="text-xs font-bold text-moss dark:text-coral-bright uppercase tracking-wider">PACKAGE ARCHITECTURE & COMPATIBILITY</span>
+            <h2 class="font-heading text-xl sm:text-2xl font-black text-ink dark:text-white mt-1">
+              安装包芯片架构后缀对照表 & 机场订阅兼容模式矩阵
+            </h2>
+            <p class="mt-2 text-xs text-muted leading-relaxed">
+              许多新手点进 GitHub Releases 页面后，面对一长串诸如 `x64`、`arm64`、`aarch64`、`arm64-v8a`、`armeabi-v7a` 的文件名无所适从。请先对照【表 2】确认您的设备应该下哪个后缀，再对照【表 3】确认您买的机场是否支持导入第三方客户端：
+            </p>
+          </div>
+
+          <!-- Table 2 -->
+          <div>
+            <div class="text-xs font-bold text-ink dark:text-white mb-2">
+              {clientsContent.archInstallTable.caption}
+            </div>
+            <div class="overflow-x-auto rounded-xl border border-line dark:border-white/10">
+              <table class="w-full text-xs text-left border-collapse min-w-[760px]">
+                <thead class="bg-paper dark:bg-black/40 border-b border-line dark:border-white/10 text-ink dark:text-white font-bold">
+                  <tr>
+                    {clientsContent.archInstallTable.headers.map((h) => (
+                      <th class="py-3 px-3 whitespace-nowrap">{h}</th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-line/50 dark:divide-white/10">
+                  {clientsContent.archInstallTable.rows.map((r) => (
+                    <tr class="hover:bg-paper/40 dark:hover:bg-white/5">
+                      <td class="py-3 px-3 font-bold text-moss dark:text-emerald-300 whitespace-nowrap">{r.platform}</td>
+                      <td class="py-3 px-3 text-ink dark:text-white min-w-[150px]">{r.hardware}</td>
+                      <td class="py-3 px-3 text-muted min-w-[150px]" set:html={formatInlineMarkdown(r.checkCmd)} />
+                      <td class="py-3 px-3 font-semibold min-w-[150px]" set:html={formatInlineMarkdown(r.correctSuffix)} />
+                      <td class="py-3 px-3 text-coral dark:text-coral-bright min-w-[150px]" set:html={formatInlineMarkdown(r.wrongSuffix)} />
+                      <td class="py-3 px-3 text-muted min-w-[170px]" set:html={formatInlineMarkdown(r.tip)} />
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Table 3 -->
+          <div id="airport-compatibility" class="pt-2">
+            <div class="text-xs font-bold text-ink dark:text-white mb-2">
+              {clientsContent.airportModeTable.caption}
+            </div>
+            <div class="overflow-x-auto rounded-xl border border-line dark:border-white/10">
+              <table class="w-full text-xs text-left border-collapse min-w-[720px]">
+                <thead class="bg-paper dark:bg-black/40 border-b border-line dark:border-white/10 text-ink dark:text-white font-bold">
+                  <tr>
+                    {clientsContent.airportModeTable.headers.map((h) => (
+                      <th class="py-3 px-3 whitespace-nowrap">{h}</th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-line/50 dark:divide-white/10">
+                  {clientsContent.airportModeTable.rows.map((r) => (
+                    <tr class="hover:bg-paper/40 dark:hover:bg-white/5">
+                      <td class="py-3 px-3 font-bold text-moss dark:text-emerald-300 min-w-[150px]">{r.mode}</td>
+                      <td class="py-3 px-3 text-muted min-w-[170px]">{r.method}</td>
+                      <td class="py-3 px-3 text-ink dark:text-white min-w-[150px]">{r.custom}</td>
+                      <td class="py-3 px-3 text-muted min-w-[150px]">{r.beginner}</td>
+                      <td class="py-3 px-3 font-medium text-ink dark:text-white min-w-[200px]">{r.brands}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- Chapters 1 to 6: Six OS & Platform Deep Sections -->
+        {clientsContent.platforms.map((plat) => (
+          <section id={plat.id} class="scroll-mt-24 rounded-2xl border border-line dark:border-white/10 bg-white dark:bg-[#102a2b] p-5 sm:p-8 space-y-6">
+            <div>
+              <span class="text-xs font-bold text-moss dark:text-coral-bright uppercase tracking-wider">{plat.badge}</span>
+              <h2 class="font-heading text-xl sm:text-3xl font-black text-ink dark:text-white mt-1">
+                {plat.title}
+              </h2>
+              <p class="mt-2 text-[11px] font-mono text-moss dark:text-emerald-300 bg-moss/5 dark:bg-white/5 px-3 py-1.5 rounded-lg inline-block">
+                {plat.searchIntentNote}
+              </p>
+              <p class="mt-3 text-xs sm:text-sm text-muted leading-relaxed" set:html={formatInlineMarkdown(plat.intro)} />
+            </div>
+
+            <!-- Client Cards Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+              {plat.items.map((client) => (
+                <div class="rounded-xl border border-line/90 dark:border-white/10 bg-paper/40 dark:bg-black/20 p-5 flex flex-col justify-between hover:border-moss/50 transition-all">
+                  <div class="space-y-3">
+                    <div class="flex items-start justify-between gap-2">
+                      <h3 class="font-heading text-base sm:text-lg font-black text-ink dark:text-white">
+                        {client.name}
+                      </h3>
+                      <span class="rounded-full bg-moss/15 dark:bg-emerald-500/20 text-moss dark:text-emerald-300 text-[11px] font-mono font-bold px-2.5 py-0.5 shrink-0">
+                        {client.badge}
+                      </span>
+                    </div>
+
+                    <div class="space-y-2 text-xs leading-relaxed">
+                      <div class="flex items-start gap-2">
+                        <span class="font-bold text-ink dark:text-white shrink-0">运行核心：</span>
+                        <span class="font-mono text-moss dark:text-emerald-300">{client.core}</span>
+                      </div>
+                      <div class="flex items-start gap-2">
+                        <span class="font-bold text-ink dark:text-white shrink-0">支持系统：</span>
+                        <span class="font-mono text-muted">{client.os}</span>
+                      </div>
+                      <div>
+                        <span class="font-bold text-ink dark:text-white">核心功能与协议：</span>
+                        <span class="text-muted" set:html={formatInlineMarkdown(client.features)} />
+                      </div>
+                      <div>
+                        <span class="font-bold text-ink dark:text-white">适用场景：</span>
+                        <span class="font-medium text-ink dark:text-white">{client.bestFor}</span>
+                      </div>
+                      <div class="rounded-lg bg-white/80 dark:bg-white/5 border border-line/50 dark:border-white/10 p-2.5 text-[11px] text-muted">
+                        <strong class="text-moss dark:text-emerald-300">下载与配置要点：</strong>
+                        <span set:html={formatInlineMarkdown(client.notes)} />
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="mt-4 pt-3 border-t border-line/60 dark:border-white/10 flex items-center justify-between gap-3">
+                    <span class="text-[11px] font-mono text-muted">官方正规分发源</span>
+                    <a
+                      href={client.downloadUrl}
+                      target="_blank"
+                      rel="nofollow noopener noreferrer"
+                      class="rounded-xl bg-moss hover:bg-moss/90 text-white font-bold text-xs px-4 py-2 transition-colors inline-flex items-center gap-1"
+                    >
+                      <span>官方项目 / 下载</span>
+                      <span>↗</span>
+                    </a>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <!-- Platform Specific Security / Maintenance Callout -->
+            <div class="rounded-xl border border-amber-500/30 bg-amber-50/50 dark:bg-amber-950/25 p-4 text-xs sm:text-sm text-ink dark:text-white/90 leading-relaxed" set:html={formatInlineMarkdown(plat.extraWarning)} />
+          </section>
+        ))}
+
+        <!-- Chapter 7: Kernel & Subscription Principles -->
+        <section id={clientsContent.coreTechChapter.id} class="scroll-mt-24 rounded-2xl border border-line dark:border-white/10 bg-white dark:bg-[#102a2b] p-5 sm:p-8 space-y-6">
+          <div>
+            <span class="text-xs font-bold text-moss dark:text-coral-bright uppercase tracking-wider">{clientsContent.coreTechChapter.badge}</span>
+            <h2 class="font-heading text-xl sm:text-3xl font-black text-ink dark:text-white mt-1">
+              {clientsContent.coreTechChapter.title}
+            </h2>
+            <p class="mt-3 text-xs sm:text-sm text-muted leading-relaxed">
+              {clientsContent.coreTechChapter.intro}
+            </p>
+          </div>
+
+          <div class="space-y-6">
+            {clientsContent.coreTechChapter.subsections.map((sub) => (
+              <div id={sub.id} class="space-y-3 pt-2">
+                <h3 class="font-heading text-base sm:text-xl font-bold text-ink dark:text-white border-l-4 border-moss pl-3">
+                  {sub.title}
+                </h3>
+                {sub.paragraphs.map((p) => (
+                  <p class="text-xs sm:text-sm text-muted leading-relaxed" set:html={formatInlineMarkdown(p)} />
+                ))}
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <!-- Chapter 8: 5-Step Actionable Download & Setup Workflow -->
+        <section id={clientsContent.securityAndSetupChapter.id} class="scroll-mt-24 rounded-2xl border border-line dark:border-white/10 bg-white dark:bg-[#102a2b] p-5 sm:p-8 space-y-6">
+          <div>
+            <span class="text-xs font-bold text-moss dark:text-coral-bright uppercase tracking-wider">{clientsContent.securityAndSetupChapter.badge}</span>
+            <h2 class="font-heading text-xl sm:text-3xl font-black text-ink dark:text-white mt-1">
+              {clientsContent.securityAndSetupChapter.title}
+            </h2>
+            <p class="mt-3 text-xs sm:text-sm text-muted leading-relaxed">
+              {clientsContent.securityAndSetupChapter.intro}
+            </p>
+          </div>
+
+          <div class="grid grid-cols-1 gap-4">
+            {clientsContent.securityAndSetupChapter.steps.map((step) => (
+              <div class="rounded-xl border border-line/80 dark:border-white/10 bg-paper/40 dark:bg-black/20 p-4 sm:p-6 space-y-2">
+                <div class="flex items-center gap-2">
+                  <span class="rounded bg-moss px-2 py-0.5 font-mono text-[11px] font-bold text-white">{step.stepNum}</span>
+                  <h3 class="font-heading text-base sm:text-lg font-bold text-ink dark:text-white">{step.title}</h3>
+                </div>
+                <p class="text-xs sm:text-sm text-muted leading-relaxed" set:html={formatInlineMarkdown(step.detail)} />
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <!-- Chapter 9: Decision Branches -->
+        <section id="decision-path" class="scroll-mt-24 rounded-2xl border border-line dark:border-white/10 bg-white dark:bg-[#102a2b] p-5 sm:p-8 space-y-6">
+          <div>
+            <span class="text-xs font-bold text-moss dark:text-coral-bright uppercase tracking-wider">CHAPTER 09 · DECISION MATRIX</span>
+            <h2 class="font-heading text-xl sm:text-3xl font-black text-ink dark:text-white mt-1">
+              九、按设备组合与技术水平的客户端配置决策树
+            </h2>
+            <p class="mt-2 text-xs sm:text-sm text-muted leading-relaxed">
+              不确定自己该搭配哪款客户端与哪类机场订阅？请按您当前的设备环境对号入座：
+            </p>
+          </div>
+
+          <div class="grid grid-cols-1 gap-5">
+            {clientsContent.decisionBranches.map((b) => (
+              <div id={b.id} class="rounded-xl border border-line/90 dark:border-white/10 bg-paper/40 dark:bg-black/20 p-5 space-y-3">
+                <span class="rounded-full bg-moss/15 dark:bg-emerald-500/20 px-3 py-0.5 text-xs font-bold text-moss dark:text-emerald-300 inline-block">
+                  {b.badge}
+                </span>
+                <h3 class="font-heading text-base sm:text-xl font-black text-ink dark:text-white">
+                  {b.title}
+                </h3>
+                <p class="text-xs sm:text-sm text-muted leading-relaxed">
+                  <strong class="text-ink dark:text-white">适用条件：</strong>{b.condition}
+                </p>
+                <div class="rounded-lg bg-white dark:bg-white/5 border border-line/60 dark:border-white/10 p-3 text-xs text-ink dark:text-white leading-relaxed">
+                  <strong class="text-moss dark:text-emerald-300">推荐配置方案：</strong>{b.techChoice}
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+                  {b.recommendations.map((rec) => (
+                    <div class="rounded-lg border border-line/60 dark:border-white/10 bg-white/80 dark:bg-black/30 p-3 text-xs">
+                      <a href={rec.link} class="font-bold text-moss dark:text-emerald-300 hover:underline text-sm">
+                        {rec.name} →
+                      </a>
+                      <p class="mt-1 text-muted leading-relaxed">{rec.note}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <!-- Chapter 10: Verified Contextual Conversion Cards -->
+        <section id="recommended-entries" class="scroll-mt-24 rounded-2xl border border-line dark:border-white/10 bg-white dark:bg-[#102a2b] p-5 sm:p-8 space-y-6">
+          <div>
+            <span class="text-xs font-bold text-moss dark:text-coral-bright uppercase tracking-wider">CHAPTER 10 · COMPATIBLE SUBSCRIPTIONS</span>
+            <h2 class="font-heading text-xl sm:text-3xl font-black text-ink dark:text-white mt-1">
+              十、经过核实的兼容订阅主力机场与配置教程入口
+            </h2>
+            <p class="mt-2 text-xs sm:text-sm text-muted leading-relaxed">
+              第三方开源客户端安装完成后，必须导入高质量的机场节点订阅才能发挥作用。以下整理出对本页客户端兼容性最佳的代表性专线机场及免配置专属客户端代表：
+            </p>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+            {clientsContent.conversionCards.map((card) => (
+              <div class="flex flex-col justify-between rounded-2xl border-2 border-moss/30 dark:border-emerald-500/30 bg-emerald-50/30 dark:bg-[#0d2625] p-5">
+                <div class="space-y-3">
+                  <span class="rounded-md bg-moss/15 dark:bg-emerald-500/20 px-2.5 py-0.5 text-[11px] font-bold text-moss dark:text-emerald-300 inline-block">
+                    {card.badge}
+                  </span>
+                  <h3 class="font-heading text-base sm:text-lg font-black text-ink dark:text-white">
+                    {card.name}
+                  </h3>
+                  <div class="space-y-2 text-xs leading-relaxed">
+                    <p class="text-muted">
+                      <strong class="text-ink dark:text-white">适用人群：</strong>{card.suitableFor}
+                    </p>
+                    <p class="text-ink dark:text-white font-medium bg-white/80 dark:bg-black/25 p-2.5 rounded-lg border border-line/50 dark:border-white/10">
+                      <strong class="text-moss dark:text-emerald-300">实际费用：</strong>{card.pricing}
+                    </p>
+                    <p class="text-muted">
+                      <strong class="text-amber-700 dark:text-amber-400">主要限制：</strong>{card.limitations}
+                    </p>
+                    <p class="text-[11px] font-mono text-muted">
+                      核实时间：{card.verifiedAt}
+                    </p>
+                  </div>
+                </div>
+
+                <div class="mt-4 pt-3 border-t border-line/60 dark:border-white/10 flex flex-col gap-2">
+                  <a
+                    href={card.primaryAction.href}
+                    class="w-full text-center rounded-xl bg-moss px-3 py-2 text-xs font-bold text-white hover:bg-moss/90 transition-colors"
+                  >
+                    {card.primaryAction.text}
+                  </a>
+                  {card.externalAction.href.startsWith('http') ? (
+                    <a
+                      href={card.externalAction.href}
+                      target="_blank"
+                      rel="nofollow sponsored noopener"
+                      class="w-full text-center rounded-xl border border-moss/40 bg-white dark:bg-white/10 px-3 py-2 text-xs font-bold text-moss dark:text-emerald-300 hover:bg-moss/10 transition-colors"
+                    >
+                      {card.externalAction.text}
+                    </a>
+                  ) : (
+                    <a
+                      href={card.externalAction.href}
+                      class="w-full text-center rounded-xl border border-moss/40 bg-white dark:bg-white/10 px-3 py-2 text-xs font-bold text-moss dark:text-emerald-300 hover:bg-moss/10 transition-colors"
+                    >
+                      {card.externalAction.text}
+                    </a>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div class="rounded-xl border border-line/70 dark:border-white/10 bg-paper/50 dark:bg-black/30 p-3.5 text-[11px] text-muted leading-relaxed">
+            <strong>透明合规与推广披露：</strong>本页所有开源客户端下载链接均 100% 直连 GitHub 官方源码仓库或 Apple App Store（无任何收费拦截或二次打包）；上方机场订阅入口含经本站核实的合作推广链接（已标记 <code>rel="nofollow sponsored noopener"</code>），配合站内优惠码可享原价折扣。
+          </div>
+        </section>
+
+        <!-- Chapter 11: Deep FAQ -->
+        <section id="faq" class="scroll-mt-24 rounded-2xl border border-line dark:border-white/10 bg-white dark:bg-[#102a2b] p-5 sm:p-8 space-y-6">
+          <div>
+            <span class="text-xs font-bold text-moss dark:text-coral-bright uppercase tracking-wider">CHAPTER 11 · CLIENT TROUBLESHOOTING FAQ</span>
+            <h2 class="font-heading text-xl sm:text-3xl font-black text-ink dark:text-white mt-1">
+              十一、客户端下载、安装报错与使用边界常见问题解答 (FAQ)
+            </h2>
+            <p class="mt-2 text-xs sm:text-sm text-muted leading-relaxed">
+              汇总用户在下载安装包、导入订阅与日常开关代理时最常遇到的 8 个边界问题：
+            </p>
+          </div>
+
+          <div class="space-y-4">
+            {clientsContent.faqs.map((faq) => (
+              <details class="group rounded-xl border border-line/80 dark:border-white/10 bg-paper/40 dark:bg-black/20 p-4 sm:p-5 open:bg-white dark:open:bg-black/30 transition-colors" open>
+                <summary class="cursor-pointer list-none font-heading text-sm sm:text-base font-bold text-ink dark:text-white flex items-start justify-between gap-3">
+                  <span>{faq.q}</span>
+                  <span class="text-xs text-moss dark:text-emerald-300 group-open:rotate-180 transition-transform shrink-0 mt-1">▼</span>
+                </summary>
+                <div class="mt-3 pt-3 border-t border-line/50 dark:border-white/10 text-xs sm:text-sm text-muted leading-relaxed" set:html={formatInlineMarkdown(faq.a)} />
+              </details>
+            ))}
+          </div>
+        </section>
+
+        <!-- Chapter 12: Data Sources, Gaps & Topic Cluster Hub -->
+        <section id={clientsContent.dataSources.id} class="scroll-mt-24 rounded-2xl border border-line dark:border-white/10 bg-white dark:bg-[#102a2b] p-5 sm:p-8 space-y-6">
+          <div>
+            <span class="text-xs font-bold text-moss dark:text-coral-bright uppercase tracking-wider">{clientsContent.dataSources.badge}</span>
+            <h2 class="font-heading text-xl sm:text-3xl font-black text-ink dark:text-white mt-1">
+              {clientsContent.dataSources.title}
+            </h2>
+            <p class="mt-2 text-xs sm:text-sm text-muted leading-relaxed">
+              {clientsContent.dataSources.intro}
+            </p>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {clientsContent.dataSources.sources.map((src) => (
+              <div class="rounded-xl border border-line/70 dark:border-white/10 bg-paper/40 dark:bg-black/20 p-4 space-y-1.5">
+                <h3 class="font-heading text-sm font-bold text-ink dark:text-white">{src.title}</h3>
+                <p class="text-xs text-muted leading-relaxed" set:html={formatInlineMarkdown(src.detail)} />
+              </div>
+            ))}
+          </div>
+
+          <div class="space-y-3 pt-2">
+            <h3 class="font-heading text-base font-bold text-amber-700 dark:text-amber-400">
+              当前待核实信息与客观资料缺口声明
+            </h3>
+            {clientsContent.dataSources.gaps.map((gap) => (
+              <div class="rounded-xl border border-amber-500/30 bg-amber-50/40 dark:bg-amber-950/20 p-4 text-xs space-y-1">
+                <div class="font-bold text-ink dark:text-white">{gap.label}</div>
+                <p class="text-muted leading-relaxed">{gap.content}</p>
+              </div>
+            ))}
+          </div>
+
+          <!-- Topic Cluster Internal Hub -->
+          <div class="pt-4 border-t border-line dark:border-white/10">
+            <h3 class="font-heading text-base font-bold text-ink dark:text-white mb-3">
+              延伸阅读：站内配套教程、技术科普与实测榜单
+            </h3>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 text-xs">
+              <a href="/blog/clash-verge-rev-setup-tutorial" class="rounded-xl border border-line dark:border-white/10 p-3.5 hover:border-moss transition-colors block">
+                <div class="font-bold text-moss dark:text-emerald-300">Clash Verge Rev 图文教程 →</div>
+                <p class="text-muted mt-1">解决下载后如何导入订阅、开启服务模式 TUN 与配置 AI 分流的问题。</p>
+              </a>
+              <a href="/guide" class="rounded-xl border border-line dark:border-white/10 p-3.5 hover:border-moss transition-colors block">
+                <div class="font-bold text-moss dark:text-emerald-300">IEPL 专线与协议深度指南 →</div>
+                <p class="text-muted mt-1">看懂 VLESS、Shadowsocks、Trojan 协议差异及流媒体 AI 解锁底层机制。</p>
+              </a>
+              <a href="/speedtest" class="rounded-xl border border-line dark:border-white/10 p-3.5 hover:border-moss transition-colors block">
+                <div class="font-bold text-moss dark:text-emerald-300">16 份真实节点测速图库 →</div>
+                <p class="text-muted mt-1">核验 MAI-TEST-BOT 实测的 500Mbps+ 专线峰值与流媒体解锁原图。</p>
+              </a>
+              <a href="/blog/2026-clash-airport-selection-guide" class="rounded-xl border border-line dark:border-white/10 p-3.5 hover:border-moss transition-colors block">
+                <div class="font-bold text-moss dark:text-emerald-300">2026 机场选购避坑指南 →</div>
+                <p class="text-muted mt-1">按月均预算与流量习惯挑选高性价比、不跑路的主力订阅服务。</p>
+              </a>
+            </div>
+          </div>
+        </section>
+
+      </article>
+    </div>
+  </div>
+</BaseLayout>

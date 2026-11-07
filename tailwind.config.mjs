@@ -9,8 +9,8 @@ export default {
         content: 'clamp(1.25rem, 3vw, 2rem)',
       },
       fontFamily: {
-        sans: ['IBM Plex Sans Arabic', 'ui-sans-serif', 'sans-serif'],
-        heading: ['Alexandria Variable', 'IBM Plex Sans Arabic', 'sans-serif'],
+        sans: ['system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'PingFang SC', 'Microsoft YaHei', 'sans-serif'],
+        heading: ['system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'PingFang SC', 'Microsoft YaHei', 'sans-serif'],
       },
       colors: {
         ink: '#102a2b',

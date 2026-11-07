@@ -1,0 +1,756 @@
+---
+import BaseLayout from '@layouts/BaseLayout.astro';
+import toolsContent from '../../data/tools-content.json';
+
+const pageTitle = toolsContent.meta.title;
+const pageDesc = toolsContent.meta.description;
+
+function formatInlineMarkdown(text: string): string {
+  if (!text) return '';
+  return text
+    .replace(/\*\*(.+?)\*\*/g, '<strong class="font-bold text-ink dark:text-white">$1</strong>')
+    .replace(/`([^`]+)`/g, '<code class="rounded bg-moss/10 dark:bg-white/10 px-1.5 py-0.5 font-mono text-[11px] text-moss dark:text-emerald-300 break-all">$1</code>')
+    .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" class="font-semibold text-moss dark:text-emerald-300 underline decoration-moss/40 underline-offset-4 hover:text-coral transition-colors">$1</a>');
+}
+
+const combinedSchema = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        { '@type': 'ListItem', position: 1, name: '首页', item: 'https://clashjichang.world/' },
+        { '@type': 'ListItem', position: 2, name: '2026 梯子工程工具箱与节点诊断指南', item: 'https://clashjichang.world/tools' }
+      ]
+    },
+    {
+      '@type': 'TechArticle',
+      headline: toolsContent.meta.h1,
+      description: toolsContent.meta.description,
+      datePublished: '2026-10-19',
+      dateModified: toolsContent.meta.updatedAt,
+      author: {
+        '@type': 'Organization',
+        name: toolsContent.meta.author,
+        url: 'https://clashjichang.world/'
+      },
+      publisher: {
+        '@type': 'Organization',
+        name: 'Clash机场评测网',
+        url: 'https://clashjichang.world/'
+      },
+      mainEntityOfPage: {
+        '@type': 'WebPage',
+        '@id': 'https://clashjichang.world/tools'
+      }
+    },
+    {
+      '@type': 'FAQPage',
+      mainEntity: toolsContent.faqs.map((item) => ({
+        '@type': 'Question',
+        name: item.q,
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: item.a
+        }
+      }))
+    }
+  ]
+};
+---
+
+<BaseLayout
+  title={pageTitle}
+  description={pageDesc}
+  schema={combinedSchema}
+>
+  <!-- Page Hero Header -->
+  <header class="py-10 sm:py-14 border-b border-line dark:border-white/10 bg-paper/60 dark:bg-black/20">
+    <div class="container max-w-6xl">
+      <nav aria-label="Breadcrumb" class="mb-4 text-xs text-muted flex flex-wrap items-center gap-1.5">
+        <a href="/" class="hover:text-moss transition-colors">首页</a>
+        <span>/</span>
+        <span class="text-ink dark:text-white font-semibold">梯子工具箱与节点诊断专著</span>
+      </nav>
+
+      <div class="inline-flex flex-wrap items-center gap-2 rounded-full border border-moss/30 bg-moss/10 px-3.5 py-1 text-xs font-semibold text-moss dark:text-emerald-300 mb-4">
+        <span>🛠️ 纯前端零上传诊断引擎</span>
+        <span class="opacity-50">|</span>
+        <span>倍率成本核算 · 带宽 BDP 换算 · 订阅安全与 IP 纯净度审计</span>
+      </div>
+
+      <h1 class="font-heading text-2xl sm:text-4xl lg:text-5xl font-black text-ink dark:text-white tracking-tight leading-tight">
+        {toolsContent.meta.h1}
+      </h1>
+
+      <p class="mt-4 text-sm sm:text-base text-muted leading-relaxed max-w-4xl">
+        {toolsContent.meta.description}
+      </p>
+
+      <!-- KPI Chips -->
+      <div class="mt-7 grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
+        <div class="rounded-xl border border-line dark:border-white/10 bg-white dark:bg-[#102a2b] p-3.5">
+          <span class="text-muted block text-[11px]">内嵌交互工具</span>
+          <span class="font-bold text-moss dark:text-emerald-400 font-mono">3 大纯本地计算器</span>
+        </div>
+        <div class="rounded-xl border border-line dark:border-white/10 bg-white dark:bg-[#102a2b] p-3.5">
+          <span class="text-muted block text-[11px]">IP 欺诈分安全线</span>
+          <span class="font-bold text-ink dark:text-white font-mono">Scamalytics ≤ 25 分</span>
+        </div>
+        <div class="rounded-xl border border-line dark:border-white/10 bg-white dark:bg-[#102a2b] p-3.5">
+          <span class="text-muted block text-[11px]">推荐订阅管理器</span>
+          <span class="font-bold text-ink dark:text-white font-mono">Sub-Store / 本地覆写</span>
+        </div>
+        <div class="rounded-xl border border-line dark:border-white/10 bg-white dark:bg-[#102a2b] p-3.5">
+          <span class="text-muted block text-[11px]">测速单位换算比</span>
+          <span class="font-bold text-coral dark:text-coral-bright font-mono">1 MB/s = 8 Mbps</span>
+        </div>
+      </div>
+
+      <!-- Metadata Bar -->
+      <div class="mt-6 pt-5 border-t border-line/60 dark:border-white/10 flex flex-wrap items-center gap-x-6 gap-y-2 text-xs text-muted">
+        <div class="flex items-center gap-1.5">
+          <span class="font-bold text-ink dark:text-white">研发团队：</span>
+          <span>{toolsContent.meta.author}</span>
+        </div>
+        <div class="flex items-center gap-1.5">
+          <span class="font-bold text-ink dark:text-white">核验时间：</span>
+          <span class="font-mono text-moss dark:text-emerald-300">{toolsContent.meta.verifiedAt}</span>
+        </div>
+        <div class="flex items-center gap-1.5">
+          <span class="font-bold text-ink dark:text-white">最后修订：</span>
+          <time datetime={toolsContent.meta.updatedAt} class="font-mono">{toolsContent.meta.updatedAt}</time>
+        </div>
+        <div class="flex items-center gap-1.5">
+          <span class="font-bold text-ink dark:text-white">阅读时长：</span>
+          <span>{toolsContent.meta.readingTime}</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="container max-w-6xl py-8 sm:py-12">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+
+      <!-- Left Sticky TOC -->
+      <aside class="lg:col-span-3 lg:sticky lg:top-20 rounded-2xl border border-line dark:border-white/10 bg-white dark:bg-[#102a2b] p-4 sm:p-5 shadow-sm">
+        <details class="group lg:open" open>
+          <summary class="flex items-center justify-between cursor-pointer list-none font-heading text-sm font-black text-ink dark:text-white">
+            <span class="flex items-center gap-2">
+              <span class="inline-block w-2 h-2 rounded-full bg-moss dark:bg-emerald-400"></span>
+              工具箱章节目录 (TOC)
+            </span>
+            <span class="text-xs text-muted lg:hidden group-open:rotate-180 transition-transform">▼</span>
+          </summary>
+          <nav aria-label="页内章节导航" class="mt-3 pt-3 border-t border-line/60 dark:border-white/10">
+            <ul class="space-y-1.5 text-xs">
+              {toolsContent.toc.map((item) => (
+                <li>
+                  <a
+                    href={`#${item.id}`}
+                    class="block py-1 px-2 rounded-lg text-muted hover:text-moss dark:hover:text-emerald-300 hover:bg-moss/5 dark:hover:bg-white/5 transition-colors leading-snug"
+                  >
+                    {item.title}
+                  </a>
+                </li>
+              ))}
+            </ul>
+            <div class="mt-4 pt-3 border-t border-line/60 dark:border-white/10 space-y-1.5">
+              <div class="text-[11px] font-bold text-ink dark:text-white">全站核心专题矩阵</div>
+              <div class="flex flex-wrap gap-1.5 text-[11px]">
+                <a href="/free" class="rounded bg-paper dark:bg-white/10 px-2 py-1 text-moss dark:text-emerald-300 hover:underline">免费资源核验</a>
+                <a href="/warnings" class="rounded bg-paper dark:bg-white/10 px-2 py-1 text-moss dark:text-emerald-300 hover:underline">跑路预警雷达</a>
+                <a href="/faq" class="rounded bg-paper dark:bg-white/10 px-2 py-1 text-moss dark:text-emerald-300 hover:underline">机场百科FAQ</a>
+                <a href="/clients" class="rounded bg-paper dark:bg-white/10 px-2 py-1 text-moss dark:text-emerald-300 hover:underline">客户端大全</a>
+                <a href="/speedtest" class="rounded bg-paper dark:bg-white/10 px-2 py-1 text-moss dark:text-emerald-300 hover:underline">测速证据库</a>
+              </div>
+            </div>
+          </nav>
+        </details>
+      </aside>
+
+      <!-- Main Article Column -->
+      <article class="lg:col-span-9 space-y-10 min-w-0">
+
+        <!-- Module 0: Direct Answer Box -->
+        <section id="direct-answer" class="scroll-mt-24 rounded-2xl border-2 border-moss/40 dark:border-emerald-500/40 bg-emerald-50/50 dark:bg-[#0d2625] p-5 sm:p-8 shadow-sm">
+          <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+            <span class="inline-flex items-center gap-1.5 rounded-md bg-moss px-2.5 py-1 text-[11px] font-bold text-white uppercase tracking-wider">
+              ⚡ 核心诊断准则前置 · 订阅防盗刷、IP 纯净度阈值与倍率真相
+            </span>
+            <span class="text-[11px] font-mono text-muted">Engineering Toolkit Executive Summary</span>
+          </div>
+
+          <p class="text-xs sm:text-sm text-ink dark:text-white font-medium leading-relaxed mb-5">
+            {toolsContent.directAnswer.summary}
+          </p>
+
+          <div class="space-y-4">
+            {toolsContent.directAnswer.points.map((pt) => (
+              <div class="rounded-xl border border-moss/20 dark:border-white/10 bg-white/90 dark:bg-black/25 p-4 sm:p-5">
+                <h2 class="font-heading text-sm sm:text-base font-black text-moss dark:text-emerald-300 mb-2">
+                  {pt.label}
+                </h2>
+                <p class="text-xs sm:text-sm text-muted leading-relaxed" set:html={formatInlineMarkdown(pt.content)} />
+              </div>
+            ))}
+          </div>
+
+          <div class="mt-5 pt-4 border-t border-moss/20 dark:border-white/10">
+            <div class="text-xs font-bold text-ink dark:text-white mb-2.5">按诊断目的快速直达工具与章节：</div>
+            <div class="flex flex-wrap gap-2">
+              {toolsContent.directAnswer.quickNav.map((nav) => (
+                <a
+                  href={nav.href}
+                  class="inline-flex items-center gap-1 rounded-xl border border-moss/30 bg-white dark:bg-white/10 px-3 py-1.5 text-xs font-bold text-moss dark:text-emerald-300 hover:bg-moss hover:text-white transition-colors"
+                >
+                  <span>{nav.text}</span>
+                </a>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <!-- Interactive 3-in-1 Engineering Toolkit -->
+        <section id="interactive-toolkit" class="scroll-mt-24 rounded-2xl border-2 border-moss/40 dark:border-emerald-500/40 bg-gradient-to-br from-emerald-50/70 via-white to-paper/60 dark:from-[#102a2b] dark:to-[#071312] p-5 sm:p-8 shadow-md space-y-6">
+          <div>
+            <span class="inline-flex items-center gap-1.5 rounded-md bg-moss px-2.5 py-1 text-[11px] font-bold text-white uppercase tracking-wider">
+              🛠️ 三合一交互式工程工具箱 · 100% 本地浏览器运行 (零数据上传)
+            </span>
+            <h2 class="font-heading text-xl sm:text-2xl font-black text-ink dark:text-white mt-2">
+              在线工具：流量倍率核算器 · 带宽与跨洋 BDP 换算器 · 订阅格式安全自检器
+            </h2>
+          </div>
+
+          <!-- Tool 1: Multiplier & Real GB Cost Calculator -->
+          <div class="rounded-xl border border-line dark:border-white/10 bg-white dark:bg-black/30 p-4 sm:p-5 space-y-4">
+            <div class="flex items-center justify-between border-b border-line/60 dark:border-white/10 pb-2.5">
+              <h3 class="font-heading text-sm sm:text-base font-black text-ink dark:text-white">
+                工具 ①：套餐流量倍率（Multiplier）与真实可用 4K 视频时长核算器
+              </h3>
+              <span class="text-[11px] font-mono text-moss dark:text-emerald-300">识破虚假大流量陷阱</span>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs">
+              <div>
+                <label for="tool1-price" class="block font-bold text-ink dark:text-white mb-1">套餐月付价格 (元)：</label>
+                <input id="tool1-price" type="number" value="25" min="1" max="500" class="w-full rounded-lg border border-line dark:border-white/20 bg-paper/50 dark:bg-white/5 px-3 py-2 font-mono text-sm text-ink dark:text-white" />
+              </div>
+              <div>
+                <label for="tool1-gb" class="block font-bold text-ink dark:text-white mb-1">账面标称流量 (GB/月)：</label>
+                <input id="tool1-gb" type="number" value="168" min="10" max="5000" class="w-full rounded-lg border border-line dark:border-white/20 bg-paper/50 dark:bg-white/5 px-3 py-2 font-mono text-sm text-ink dark:text-white" />
+              </div>
+              <div>
+                <label for="tool1-mult" class="block font-bold text-ink dark:text-white mb-1">专线节点计费倍率 (×)：</label>
+                <select id="tool1-mult" class="w-full rounded-lg border border-line dark:border-white/20 bg-paper/50 dark:bg-[#102a2b] px-3 py-2 font-mono text-sm text-ink dark:text-white">
+                  <option value="1" selected>×1.0 倍 (如光速云/星岛梦/无忧链接实算)</option>
+                  <option value="1.5">×1.5 倍 (轻度倍率节点)</option>
+                  <option value="2">×2.0 倍 (常见双倍扣费节点)</option>
+                  <option value="3">×3.0 倍 (高倍率原生解锁节点)</option>
+                  <option value="5">×5.0 倍 (重度缩水套路节点)</option>
+                </select>
+              </div>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs pt-1">
+              <div class="rounded-lg bg-emerald-500/10 border border-emerald-500/20 p-3">
+                <span class="text-muted block text-[11px]">真实可用物理流量</span>
+                <span id="tool1-real-gb" class="font-mono text-lg font-black text-emerald-700 dark:text-emerald-300">168.0 GB</span>
+              </div>
+              <div class="rounded-lg bg-paper dark:bg-white/5 border border-line/60 dark:border-white/10 p-3">
+                <span class="text-muted block text-[11px]">每 1GB 真实物理流量单价</span>
+                <span id="tool1-unit-cost" class="font-mono text-lg font-black text-ink dark:text-white">¥0.15 / GB</span>
+              </div>
+              <div class="rounded-lg bg-paper dark:bg-white/5 border border-line/60 dark:border-white/10 p-3">
+                <span class="text-muted block text-[11px]">约合可看 YouTube 4K 时长</span>
+                <span id="tool1-4k-hours" class="font-mono text-lg font-black text-moss dark:text-coral-bright">约 14.9 小时</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Tool 2: Speedtest Unit (MB/s <-> Mbps) & BDP Throughput Estimator -->
+          <div class="rounded-xl border border-line dark:border-white/10 bg-white dark:bg-black/30 p-4 sm:p-5 space-y-4">
+            <div class="flex items-center justify-between border-b border-line/60 dark:border-white/10 pb-2.5">
+              <h3 class="font-heading text-sm sm:text-base font-black text-ink dark:text-white">
+                工具 ②：MAI-TEST-BOT 测速单位换算（MB/s ↔ Mbps）与跨洋延迟 BDP 吞吐估算器
+              </h3>
+              <span class="text-[11px] font-mono text-moss dark:text-emerald-300">1 Byte = 8 bits</span>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
+              <div>
+                <label for="tool2-mbs" class="block font-bold text-ink dark:text-white mb-1">输入测速图显示的平均速度 (MB/s)：</label>
+                <input id="tool2-mbs" type="number" value="66.1" step="0.5" min="0.5" max="500" class="w-full rounded-lg border border-line dark:border-white/20 bg-paper/50 dark:bg-white/5 px-3 py-2 font-mono text-sm text-ink dark:text-white" />
+              </div>
+              <div>
+                <label for="tool2-rtt" class="block font-bold text-ink dark:text-white mb-1">输入节点往返延迟 RTT (ms)：</label>
+                <input id="tool2-rtt" type="number" value="22" step="1" min="5" max="500" class="w-full rounded-lg border border-line dark:border-white/20 bg-paper/50 dark:bg-white/5 px-3 py-2 font-mono text-sm text-ink dark:text-white" />
+              </div>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs pt-1">
+              <div class="rounded-lg bg-emerald-500/10 border border-emerald-500/20 p-3">
+                <span class="text-muted block text-[11px]">等效运营商宽带兆数 (Mbps)</span>
+                <span id="tool2-mbps" class="font-mono text-lg font-black text-emerald-700 dark:text-emerald-300">528.8 Mbps</span>
+              </div>
+              <div class="rounded-lg bg-paper dark:bg-white/5 border border-line/60 dark:border-white/10 p-3">
+                <span class="text-muted block text-[11px]">满速所需最小 TCP 窗口 (BDP)</span>
+                <span id="tool2-bdp" class="font-mono text-lg font-black text-ink dark:text-white">1.45 MB</span>
+              </div>
+              <div class="rounded-lg bg-paper dark:bg-white/5 border border-line/60 dark:border-white/10 p-3">
+                <span class="text-muted block text-[11px]">流媒体并发承载评估</span>
+                <span id="tool2-eval" class="font-mono text-xs font-bold text-moss dark:text-emerald-300 mt-1 block">可同时流畅播放 15+ 路 4K HDR 视频</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Tool 3: Local Subscription Format & Security Inspector -->
+          <div class="rounded-xl border border-line dark:border-white/10 bg-white dark:bg-black/30 p-4 sm:p-5 space-y-4">
+            <div class="flex items-center justify-between border-b border-line/60 dark:border-white/10 pb-2.5">
+              <h3 class="font-heading text-sm sm:text-base font-black text-ink dark:text-white">
+                工具 ③：订阅链接类型与 YAML 配置安全特征本地自检器（纯浏览器离线分析）
+              </h3>
+              <span class="text-[11px] font-mono text-emerald-600 dark:text-emerald-400">🔒 零网络请求</span>
+            </div>
+            <div class="text-xs space-y-2">
+              <label for="tool3-input" class="block font-bold text-ink dark:text-white">
+                粘贴订阅链接格式样本、单节点 URI（如 `vless://`、`ss://`、`hysteria2://`）或 Clash YAML 片段：
+              </label>
+              <textarea
+                id="tool3-input"
+                rows="3"
+                class="w-full rounded-lg border border-line dark:border-white/20 bg-paper/50 dark:bg-white/5 p-3 font-mono text-xs text-ink dark:text-white"
+                placeholder="示例：vless://uuid@example.com:443?security=reality&sni=www.apple.com#HK-IEPL 或粘贴 YAML 片段（如 external-controller: 127.0.0.1:9090）"
+              >vless://demo-uuid@hk-bgp.example.com:443?encryption=none&security=tls&type=ws#香港IEPL专线-01</textarea>
+              <div id="tool3-output" class="rounded-lg border border-moss/30 bg-emerald-50/60 dark:bg-black/40 p-3 text-xs font-mono text-ink dark:text-white leading-relaxed">
+                正在初始化本地自检器...
+              </div>
+            </div>
+          </div>
+
+          <script is:inline>
+            (function () {
+              // Tool 1 logic
+              const p1 = document.getElementById('tool1-price');
+              const g1 = document.getElementById('tool1-gb');
+              const m1 = document.getElementById('tool1-mult');
+              const outRealGb = document.getElementById('tool1-real-gb');
+              const outUnit = document.getElementById('tool1-unit-cost');
+              const out4k = document.getElementById('tool1-4k-hours');
+
+              function updateTool1() {
+                if (!p1 || !g1 || !m1) return;
+                const price = parseFloat(p1.value) || 25;
+                const gb = parseFloat(g1.value) || 168;
+                const mult = parseFloat(m1.value) || 1;
+                const realGb = gb / mult;
+                const unitCost = price / realGb;
+                const hours4k = realGb / 11.25; // ~25Mbps = 11.25GB/hour
+                outRealGb.textContent = realGb.toFixed(1) + ' GB (按 ×' + mult + ' 折算)';
+                outUnit.textContent = '¥' + unitCost.toFixed(2) + ' / 真实GB';
+                out4k.textContent = '约 ' + hours4k.toFixed(1) + ' 小时 (25Mbps码率)';
+              }
+              [p1, g1, m1].forEach((el) => el && el.addEventListener('input', updateTool1));
+              updateTool1();
+
+              // Tool 2 logic
+              const mbsInput = document.getElementById('tool2-mbs');
+              const rttInput = document.getElementById('tool2-rtt');
+              const outMbps = document.getElementById('tool2-mbps');
+              const outBdp = document.getElementById('tool2-bdp');
+              const outEval = document.getElementById('tool2-eval');
+
+              function updateTool2() {
+                if (!mbsInput || !rttInput) return;
+                const mbs = parseFloat(mbsInput.value) || 66.1;
+                const rtt = parseFloat(rttInput.value) || 22;
+                const mbps = mbs * 8;
+                const bdpMB = mbs * (rtt / 1000);
+                outMbps.textContent = mbps.toFixed(1) + ' Mbps';
+                outBdp.textContent = bdpMB.toFixed(2) + ' MB 缓冲窗口';
+                const streams = Math.floor(mbps / 30);
+                if (streams >= 10) {
+                  outEval.textContent = '🔥 顶级专线水准：可同时承载 ' + streams + ' 路 4K 视频流';
+                } else if (streams >= 2) {
+                  outEval.textContent = '✅ 流畅水准：可同时承载 ' + streams + ' 路 4K 视频与 AI 对话';
+                } else {
+                  outEval.textContent = '⚠️ 适合网页/AI文本与 1080P 视频（受跨洋延迟或带宽限制）';
+                }
+              }
+              [mbsInput, rttInput].forEach((el) => el && el.addEventListener('input', updateTool2));
+              updateTool2();
+
+              // Tool 3 logic
+              const t3Input = document.getElementById('tool3-input');
+              const t3Output = document.getElementById('tool3-output');
+
+              function updateTool3() {
+                if (!t3Input || !t3Output) return;
+                const val = (t3Input.value || '').trim();
+                if (!val) {
+                  t3Output.textContent = '请在上方输入框粘贴协议链接或 YAML 配置片段进行本地诊断。';
+                  return;
+                }
+                const findings = [];
+                if (/^vless:\/\//i.test(val)) {
+                  findings.push('✅ 识别为 [VLESS] 单节点 URI（主流抗封锁轻量协议，需 Clash Meta/Mihomo、v2rayN 或小火箭支持）。');
+                  if (/security=reality/i.test(val)) findings.push('🛡️ 检测到 [Reality] 偷取指纹增强特性，抗主动探测能力极强。');
+                } else if (/^(hysteria2|hy2):\/\//i.test(val)) {
+                  findings.push('🚀 识别为 [Hysteria 2] 基于 QUIC/UDP 的暴力发包加速协议，高丢包晚高峰克星。');
+                } else if (/^ss:\/\//i.test(val)) {
+                  findings.push('✅ 识别为 [Shadowsocks] 经典流加密协议（IEPL/IPLC 内网专线机场最常用的低开销承载协议）。');
+                } else if (/^trojan:\/\//i.test(val)) {
+                  findings.push('✅ 识别为 [Trojan] 伪装 HTTPS 流量协议。');
+                } else if (/^vmess:\/\//i.test(val)) {
+                  findings.push('ℹ️ 识别为 [VMess] 传统协议（建议优先升级至 VLESS 或 Shadowsocks 2022）。');
+                } else if (/^https?:\/\//i.test(val)) {
+                  findings.push('🔗 识别为 [HTTPS 远程订阅链接]。');
+                  if (/sub\?|target=clash|url=http/i.test(val)) {
+                    findings.push('🚨 [高危预警] 该链接疑似经过第三方在线 subconverter 转换！请确认转换后端为您本人自建，切勿使用陌生公共转换站以免泄露 Token！');
+                  } else {
+                    findings.push('✅ 属于机场原生直出订阅 URL，请直接粘贴进 Clash Verge Rev / 小火箭，切勿发给他人。');
+                  }
+                }
+                if (/external-controller:\s*0\.0\.0\.0/i.test(val)) {
+                  findings.push('🔴 [严重安全漏洞] 检测到 external-controller 绑定在 0.0.0.0！请立即改为 127.0.0.1:9090 防止局域网劫持！');
+                } else if (/external-controller:\s*127\.0\.0\.1/i.test(val)) {
+                  findings.push('🟢 检测到本地控制端口安全绑定在 127.0.0.1 回环地址。');
+                }
+                if (findings.length === 0) {
+                  findings.push('ℹ️ 已完成本地扫描：未发现 0.0.0.0 端口暴露或第三方在线转换嵌套特征。');
+                }
+                t3Output.innerHTML = findings.join('<br/>');
+              }
+              if (t3Input) t3Input.addEventListener('input', updateTool3);
+              updateTool3();
+            })();
+          </script>
+        </section>
+
+        <!-- Table 1: IP Purity & DNS Leak Probe Matrix -->
+        <section id="ip-probe-table" class="scroll-mt-24 rounded-2xl border border-line dark:border-white/10 bg-white dark:bg-[#102a2b] p-5 sm:p-8 space-y-4">
+          <div>
+            <span class="text-xs font-bold text-moss dark:text-coral-bright uppercase tracking-wider">DIAGNOSTIC TABLE 01 · IP PURITY & LEAK PROBES</span>
+            <h2 class="font-heading text-xl sm:text-2xl font-black text-ink dark:text-white mt-1">
+              {toolsContent.ipProbeTable.caption}
+            </h2>
+            <p class="mt-2 text-xs text-muted leading-relaxed">
+              连接任何节点后，请按顺序使用下表中的 6 类权威探针检验您的出口 IP 是否干净、是否存在国内 DNS 抢答泄露或 WebRTC 真实地址穿透：
+            </p>
+          </div>
+
+          <div class="overflow-x-auto rounded-xl border border-line dark:border-white/10">
+            <table class="w-full text-xs text-left border-collapse min-w-[840px]">
+              <thead class="bg-paper dark:bg-black/40 border-b border-line dark:border-white/10 text-ink dark:text-white font-bold">
+                <tr>
+                  {toolsContent.ipProbeTable.headers.map((h) => (
+                    <th class="py-3 px-3 whitespace-nowrap">{h}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-line/50 dark:divide-white/10">
+                {toolsContent.ipProbeTable.rows.map((r) => (
+                  <tr class="hover:bg-paper/40 dark:hover:bg-white/5">
+                    <td class="py-3 px-3 font-bold text-ink dark:text-white whitespace-nowrap">{r.dim}</td>
+                    <td class="py-3 px-3 font-mono font-bold text-moss dark:text-emerald-300 whitespace-nowrap">{r.tool}</td>
+                    <td class="py-3 px-3 text-muted min-w-[160px]" set:html={formatInlineMarkdown(r.metric)} />
+                    <td class="py-3 px-3 text-emerald-700 dark:text-emerald-300 font-medium min-w-[170px]" set:html={formatInlineMarkdown(r.pass)} />
+                    <td class="py-3 px-3 text-amber-700 dark:text-amber-400 min-w-[170px]" set:html={formatInlineMarkdown(r.warn)} />
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- Table 2 & Table 3: Subconverter Comparison & Open-Source Benchmark Scripts -->
+        <section id="subconverter-table" class="scroll-mt-24 rounded-2xl border border-line dark:border-white/10 bg-white dark:bg-[#102a2b] p-5 sm:p-8 space-y-6">
+          <div>
+            <span class="text-xs font-bold text-moss dark:text-coral-bright uppercase tracking-wider">DIAGNOSTIC TABLE 02 & 03 · SUBCONVERTER & BENCHMARK SCRIPTS</span>
+            <h2 class="font-heading text-xl sm:text-2xl font-black text-ink dark:text-white mt-1">
+              订阅转换方案安全矩阵 & 测速/流媒体解锁开源脚本库
+            </h2>
+          </div>
+
+          <div>
+            <div class="text-xs font-bold text-ink dark:text-white mb-2">
+              {toolsContent.subconverterTable.caption}
+            </div>
+            <div class="overflow-x-auto rounded-xl border border-line dark:border-white/10">
+              <table class="w-full text-xs text-left border-collapse min-w-[820px]">
+                <thead class="bg-paper dark:bg-black/40 border-b border-line dark:border-white/10 text-ink dark:text-white font-bold">
+                  <tr>
+                    {toolsContent.subconverterTable.headers.map((h) => (
+                      <th class="py-3 px-3 whitespace-nowrap">{h}</th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-line/50 dark:divide-white/10">
+                  {toolsContent.subconverterTable.rows.map((r) => (
+                    <tr class="hover:bg-paper/40 dark:hover:bg-white/5">
+                      <td class="py-3 px-3 font-bold text-ink dark:text-white min-w-[140px]">{r.name}</td>
+                      <td class="py-3 px-3 text-muted min-w-[150px]" set:html={formatInlineMarkdown(r.mode)} />
+                      <td class="py-3 px-3 text-ink dark:text-white min-w-[140px]" set:html={formatInlineMarkdown(r.proto)} />
+                      <td class="py-3 px-3 font-semibold min-w-[150px]">{r.risk}</td>
+                      <td class="py-3 px-3 text-muted min-w-[180px]">{r.advice}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div id="script-benchmark-table" class="pt-3">
+            <div class="text-xs font-bold text-ink dark:text-white mb-2">
+              {toolsContent.scriptBenchmarkTable.caption}
+            </div>
+            <div class="overflow-x-auto rounded-xl border border-line dark:border-white/10">
+              <table class="w-full text-xs text-left border-collapse min-w-[820px]">
+                <thead class="bg-paper dark:bg-black/40 border-b border-line dark:border-white/10 text-ink dark:text-white font-bold">
+                  <tr>
+                    {toolsContent.scriptBenchmarkTable.headers.map((h) => (
+                      <th class="py-3 px-3 whitespace-nowrap">{h}</th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-line/50 dark:divide-white/10">
+                  {toolsContent.scriptBenchmarkTable.rows.map((r) => (
+                    <tr class="hover:bg-paper/40 dark:hover:bg-white/5">
+                      <td class="py-3 px-3 font-bold text-moss dark:text-emerald-300 whitespace-nowrap">{r.name}</td>
+                      <td class="py-3 px-3 font-mono text-[11px] text-ink dark:text-white whitespace-nowrap">{r.repo}</td>
+                      <td class="py-3 px-3 text-muted min-w-[180px]">{r.func}</td>
+                      <td class="py-3 px-3 text-muted min-w-[140px]">{r.env}</td>
+                      <td class="py-3 px-3 text-ink dark:text-white min-w-[170px]" set:html={formatInlineMarkdown(r.usage)} />
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- Chapter 1 to Chapter 4 Deep Text Sections -->
+        {[toolsContent.chapters.chapter1, toolsContent.chapters.chapter2, toolsContent.chapters.chapter3, toolsContent.chapters.chapter4].map((chap) => (
+          <section id={chap.id} class="scroll-mt-24 rounded-2xl border border-line dark:border-white/10 bg-white dark:bg-[#102a2b] p-5 sm:p-8 space-y-6">
+            <div>
+              <span class="text-xs font-bold text-moss dark:text-coral-bright uppercase tracking-wider">{chap.badge}</span>
+              <h2 class="font-heading text-xl sm:text-3xl font-black text-ink dark:text-white mt-1">
+                {chap.title}
+              </h2>
+              <p class="mt-3 text-xs sm:text-sm text-muted leading-relaxed" set:html={formatInlineMarkdown(chap.intro)} />
+            </div>
+
+            <div class="space-y-6">
+              {chap.subsections.map((sub) => (
+                <div id={sub.id} class="space-y-3 pt-2">
+                  <h3 class="font-heading text-base sm:text-xl font-bold text-ink dark:text-white border-l-4 border-moss pl-3">
+                    {sub.title}
+                  </h3>
+                  {sub.paragraphs.map((p) => (
+                    <p class="text-xs sm:text-sm text-muted leading-relaxed" set:html={formatInlineMarkdown(p)} />
+                  ))}
+                </div>
+              ))}
+            </div>
+          </section>
+        ))}
+
+        <!-- Chapter 5: 6-Step Health Check SOP -->
+        <section id={toolsContent.chapters.chapter5.id} class="scroll-mt-24 rounded-2xl border border-line dark:border-white/10 bg-white dark:bg-[#102a2b] p-5 sm:p-8 space-y-6">
+          <div>
+            <span class="text-xs font-bold text-moss dark:text-coral-bright uppercase tracking-wider">{toolsContent.chapters.chapter5.badge}</span>
+            <h2 class="font-heading text-xl sm:text-3xl font-black text-ink dark:text-white mt-1">
+              {toolsContent.chapters.chapter5.title}
+            </h2>
+            <p class="mt-3 text-xs sm:text-sm text-muted leading-relaxed">
+              {toolsContent.chapters.chapter5.intro}
+            </p>
+          </div>
+
+          <div class="grid grid-cols-1 gap-4">
+            {toolsContent.chapters.chapter5.steps.map((step) => (
+              <div class="rounded-xl border border-line/80 dark:border-white/10 bg-paper/40 dark:bg-black/20 p-4 sm:p-6 space-y-2">
+                <div class="flex items-center gap-2">
+                  <span class="rounded bg-moss px-2 py-0.5 font-mono text-[11px] font-bold text-white">{step.stepNum}</span>
+                  <h3 class="font-heading text-base sm:text-lg font-bold text-ink dark:text-white">{step.title}</h3>
+                </div>
+                <p class="text-xs sm:text-sm text-muted leading-relaxed" set:html={formatInlineMarkdown(step.detail)} />
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <!-- Chapter 6: Decision Branches -->
+        <section id="decision-path" class="scroll-mt-24 rounded-2xl border border-line dark:border-white/10 bg-white dark:bg-[#102a2b] p-5 sm:p-8 space-y-6">
+          <div>
+            <span class="text-xs font-bold text-moss dark:text-coral-bright uppercase tracking-wider">CHAPTER 06 · DIAGNOSTIC DECISION TREE</span>
+            <h2 class="font-heading text-xl sm:text-3xl font-black text-ink dark:text-white mt-1">
+              六、根据工具诊断结果的 3 大升级与选品分支
+            </h2>
+          </div>
+
+          <div class="space-y-5">
+            {toolsContent.decisionBranches.map((b) => (
+              <div id={b.id} class="rounded-xl border border-line/90 dark:border-white/10 bg-paper/40 dark:bg-black/20 p-5 space-y-3">
+                <span class="rounded-full bg-moss/15 dark:bg-emerald-500/20 px-3 py-0.5 text-xs font-bold text-moss dark:text-emerald-300 inline-block">
+                  {b.badge}
+                </span>
+                <h3 class="font-heading text-base sm:text-xl font-black text-ink dark:text-white">
+                  {b.title}
+                </h3>
+                <p class="text-xs sm:text-sm text-muted leading-relaxed">
+                  <strong class="text-ink dark:text-white">触发症状：</strong>{b.condition}
+                </p>
+                <div class="rounded-lg bg-white dark:bg-white/5 border border-line/60 dark:border-white/10 p-3 text-xs text-ink dark:text-white leading-relaxed" set:html={formatInlineMarkdown('<strong>工程处方：</strong>' + b.techChoice)} />
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+                  {b.recommendations.map((rec) => (
+                    <div class="rounded-lg border border-line/60 dark:border-white/10 bg-white/80 dark:bg-black/30 p-3 text-xs">
+                      <a href={`/brands/${rec.slug}`} class="font-bold text-moss dark:text-emerald-300 hover:underline text-sm">
+                        {rec.name} →
+                      </a>
+                      <p class="mt-1 text-muted leading-relaxed">{rec.note}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <!-- Chapter 7: Conversion Cards -->
+        <section id="recommended-entries" class="scroll-mt-24 rounded-2xl border border-line dark:border-white/10 bg-white dark:bg-[#102a2b] p-5 sm:p-8 space-y-6">
+          <div>
+            <span class="text-xs font-bold text-moss dark:text-coral-bright uppercase tracking-wider">CHAPTER 07 · VERIFIED 1X MULTIPLIER & NATIVE IP BRANDS</span>
+            <h2 class="font-heading text-xl sm:text-3xl font-black text-ink dark:text-white mt-1">
+              七、经工具箱全项体检通过的代表性专线方案入口
+            </h2>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+            {toolsContent.conversionCards.map((card) => (
+              <div class="flex flex-col justify-between rounded-2xl border-2 border-moss/30 dark:border-emerald-500/30 bg-emerald-50/30 dark:bg-[#0d2625] p-5">
+                <div class="space-y-3">
+                  <span class="rounded-md bg-moss/15 dark:bg-emerald-500/20 px-2.5 py-0.5 text-[11px] font-bold text-moss dark:text-emerald-300 inline-block">
+                    {card.badge}
+                  </span>
+                  <h3 class="font-heading text-base sm:text-lg font-black text-ink dark:text-white">
+                    {card.name}
+                  </h3>
+                  <div class="space-y-2 text-xs leading-relaxed">
+                    <p class="text-muted">
+                      <strong class="text-ink dark:text-white">适用人群：</strong>{card.suitableFor}
+                    </p>
+                    <p class="text-ink dark:text-white font-medium bg-white/80 dark:bg-black/25 p-2.5 rounded-lg border border-line/50 dark:border-white/10">
+                      <strong class="text-moss dark:text-emerald-300">实际费用：</strong>{card.pricing}
+                    </p>
+                    <p class="text-muted">
+                      <strong class="text-amber-700 dark:text-amber-400">主要限制：</strong>{card.limitations}
+                    </p>
+                    <p class="text-[11px] font-mono text-muted">
+                      核验依据：{card.verifiedAt}
+                    </p>
+                  </div>
+                </div>
+
+                <div class="mt-4 pt-3 border-t border-line/60 dark:border-white/10 flex flex-col gap-2">
+                  <a
+                    href={card.primaryAction.href}
+                    class="w-full text-center rounded-xl bg-moss px-3 py-2 text-xs font-bold text-white hover:bg-moss/90 transition-colors"
+                  >
+                    {card.primaryAction.text}
+                  </a>
+                  <a
+                    href={card.externalAction.href}
+                    target="_blank"
+                    rel="nofollow sponsored noopener"
+                    class="w-full text-center rounded-xl border border-moss/40 bg-white dark:bg-white/10 px-3 py-2 text-xs font-bold text-moss dark:text-emerald-300 hover:bg-moss/10 transition-colors"
+                  >
+                    {card.externalAction.text}
+                  </a>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div class="rounded-xl border border-line/70 dark:border-white/10 bg-paper/50 dark:bg-black/30 p-3.5 text-[11px] text-muted leading-relaxed">
+            <strong>透明合规与推广披露：</strong>本页外部官网直达链接均带有 <code>rel="nofollow sponsored noopener"</code> 属性，通过链接注册可能为本站带来维护佣金支持，不影响用户实际支付价格。
+          </div>
+        </section>
+
+        <!-- Chapter 8: FAQ -->
+        <section id="faq" class="scroll-mt-24 rounded-2xl border border-line dark:border-white/10 bg-white dark:bg-[#102a2b] p-5 sm:p-8 space-y-6">
+          <div>
+            <span class="text-xs font-bold text-moss dark:text-coral-bright uppercase tracking-wider">CHAPTER 08 · TOOLKIT & DIAGNOSTIC FAQ</span>
+            <h2 class="font-heading text-xl sm:text-3xl font-black text-ink dark:text-white mt-1">
+              八、订阅转换、IP 检测与分流诊断常见疑问解答 (FAQ)
+            </h2>
+          </div>
+
+          <div class="space-y-4">
+            {toolsContent.faqs.map((faq) => (
+              <details class="group rounded-xl border border-line/80 dark:border-white/10 bg-paper/40 dark:bg-black/20 p-4 sm:p-5 open:bg-white dark:open:bg-black/30 transition-colors" open>
+                <summary class="cursor-pointer list-none font-heading text-sm sm:text-base font-bold text-ink dark:text-white flex items-start justify-between gap-3">
+                  <span>{faq.q}</span>
+                  <span class="text-xs text-moss dark:text-emerald-300 group-open:rotate-180 transition-transform shrink-0 mt-1">▼</span>
+                </summary>
+                <div class="mt-3 pt-3 border-t border-line/50 dark:border-white/10 text-xs sm:text-sm text-muted leading-relaxed" set:html={formatInlineMarkdown(faq.a)} />
+              </details>
+            ))}
+          </div>
+        </section>
+
+        <!-- Chapter 9: Provenance & Internal Topic Cluster -->
+        <section id={toolsContent.dataSources.id} class="scroll-mt-24 rounded-2xl border border-line dark:border-white/10 bg-white dark:bg-[#102a2b] p-5 sm:p-8 space-y-6">
+          <div>
+            <span class="text-xs font-bold text-moss dark:text-coral-bright uppercase tracking-wider">{toolsContent.dataSources.badge}</span>
+            <h2 class="font-heading text-xl sm:text-3xl font-black text-ink dark:text-white mt-1">
+              {toolsContent.dataSources.title}
+            </h2>
+            <p class="mt-2 text-xs sm:text-sm text-muted leading-relaxed">
+              {toolsContent.dataSources.intro}
+            </p>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {toolsContent.dataSources.sources.map((src) => (
+              <div class="rounded-xl border border-line/70 dark:border-white/10 bg-paper/40 dark:bg-black/20 p-4 space-y-1.5">
+                <h3 class="font-heading text-sm font-bold text-ink dark:text-white">{src.title}</h3>
+                <p class="text-xs text-muted leading-relaxed" set:html={formatInlineMarkdown(src.detail)} />
+              </div>
+            ))}
+          </div>
+
+          <div class="space-y-3 pt-2">
+            {toolsContent.dataSources.gaps.map((gap) => (
+              <div class="rounded-xl border border-amber-500/30 bg-amber-50/40 dark:bg-amber-950/20 p-4 text-xs space-y-1">
+                <div class="font-bold text-ink dark:text-white">{gap.label}</div>
+                <p class="text-muted leading-relaxed">{gap.content}</p>
+              </div>
+            ))}
+          </div>
+
+          <div class="pt-4 border-t border-line dark:border-white/10">
+            <h3 class="font-heading text-base font-bold text-ink dark:text-white mb-3">
+              延伸阅读：站内互补专题枢纽
+            </h3>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 text-xs">
+              <a href="/free" class="rounded-xl border border-line dark:border-white/10 p-3.5 hover:border-moss transition-colors block">
+                <div class="font-bold text-moss dark:text-emerald-300">🎁 免费资源与平替核验 →</div>
+                <p class="mt-1 text-muted">Cloudflare WARP 优选、免费节点安全红线与 ¥147 永久包核算。</p>
+              </a>
+              <a href="/warnings" class="rounded-xl border border-line dark:border-white/10 p-3.5 hover:border-moss transition-colors block">
+                <div class="font-bold text-moss dark:text-emerald-300">🚨 机场跑路预警与避坑雷达 →</div>
+                <p class="mt-1 text-muted">深扒同源马甲站群、5.6元同构盘风险与跑路前兆 10 大红旗。</p>
+              </a>
+              <a href="/faq" class="rounded-xl border border-line dark:border-white/10 p-3.5 hover:border-moss transition-colors block">
+                <div class="font-bold text-moss dark:text-emerald-300">📚 机场百科全书 FAQ →</div>
+                <p class="mt-1 text-muted">涵盖选购、客户端报错、流媒体解锁与防封号的 50+ 深度问答。</p>
+              </a>
+              <a href="/clients" class="rounded-xl border border-line dark:border-white/10 p-3.5 hover:border-moss transition-colors block">
+                <div class="font-bold text-moss dark:text-emerald-300">💻 全平台代理客户端大全 →</div>
+                <p class="mt-1 text-muted">Windows / Mac / iOS / Android 官方 GitHub 纯净版下载与配置。</p>
+              </a>
+            </div>
+          </div>
+        </section>
+
+      </article>
+    </div>
+  </div>
+</BaseLayout>

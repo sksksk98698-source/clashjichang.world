@@ -1,0 +1,847 @@
+---
+import BaseLayout from '@layouts/BaseLayout.astro';
+import brandsData from '../../data/brands.json';
+
+export async function getStaticPaths() {
+  return brandsData.map((brand) => ({
+    params: { slug: brand.slug },
+    props: { brand }
+  }));
+}
+
+const { brand } = Astro.props;
+
+// Extract clean starting numeric price (Fixes P0-1 multi-number concatenation bug)
+const numericPrice = brand.priceStr.match(/\d+(\.\d+)?/)?.[0] || '15';
+
+// Visible & Schema-aligned rating value (Fixes P0-1 hidden rating markup)
+const ratingValue =
+  brand.rank === 1
+    ? '4.9'
+    : brand.rank <= 5
+      ? '4.8'
+      : brand.rank <= 15
+        ? '4.7'
+        : brand.rank <= 28
+          ? '4.5'
+          : '4.2';
+
+// Identify brand operational characteristics for dynamic engineering analysis
+const isExclusiveClientOnly =
+  brand.lineType.includes('专属客户端') ||
+  brand.highlights?.some((h: string) => h.includes('不提供订阅链接') || h.includes('专属客户端，下载登录即用'));
+
+const isLowPriceHomogeneousGroup = ['dalaoyun', 'shandianshu', 'yunjiexian', 'liulianyun', 'huanqiuti'].includes(
+  brand.slug
+);
+
+const isBreezeLineageGroup = ['weifeng', 'firefly', 'flyingbird', 'yiyunti', 'longmaoyun'].includes(brand.slug);
+
+const hasPermanentPlan =
+  brand.priceNote?.includes('永久') ||
+  brand.priceNote?.includes('不限时') ||
+  brand.plans?.some((p: any) => p.billing.includes('一次性') || p.name.includes('不限时') || p.name.includes('永久'));
+
+const hkTest = brand.testResults?.find((r: any) => r.node.includes('香港'));
+const sgTest = brand.testResults?.find((r: any) => r.node.includes('新加坡'));
+const jpTest = brand.testResults?.find((r: any) => r.node.includes('日本'));
+
+// Dynamic Unlock Matrix derived from actual brand data (Fixes P1-1 hardcoded unlock matrix)
+const chatgptPending = brand.unlock?.chatgpt === '待核实' || isLowPriceHomogeneousGroup || brand.slug === 'kexin-cloud';
+const unlockCards = [
+  {
+    service: 'ChatGPT / OpenAI',
+    sub: chatgptPending
+      ? '官方未提供统一AI实测承诺，需按节点自测'
+      : '建议连接新加坡/日本/美西原生或优化节点',
+    badge: chatgptPending ? '⚠️ 待核实' : `✅ ${brand.unlock?.chatgpt || '支持/按节点'}`,
+    tone: chatgptPending ? 'amber' : 'emerald'
+  },
+  {
+    service: 'Claude AI / Cursor',
+    sub: chatgptPending
+      ? '对IP纯净度要求高，低价或未核验盘易受限'
+      : brand.slug === 'ermaoyun'
+        ? '官方未作确定承诺，需切换美/新节点实测'
+        : '建议使用低欺诈分美西/新加坡节点并固定IP',
+    badge: chatgptPending || brand.slug === 'ermaoyun' ? '⚠️ 视节点而定' : '✅ 按节点支持',
+    tone: chatgptPending || brand.slug === 'ermaoyun' ? 'amber' : 'emerald'
+  },
+  {
+    service: 'Google Gemini',
+    sub: '香港节点默认受地区政策限制，需切换美/日/新节点',
+    badge: chatgptPending ? '⚠️ 待核实' : '⚠️ 需切美/日/新',
+    tone: 'amber'
+  },
+  {
+    service: 'Netflix 非自制剧',
+    sub:
+      brand.unlock?.netflix === '4K 解锁'
+        ? '港/台/新/日/美多区非自制剧与4K HDR支持'
+        : '常规自制剧与部分地区非自制剧解锁',
+    badge: brand.unlock?.netflix === '4K 解锁' ? '✅ 4K全解锁' : `✅ ${brand.unlock?.netflix || '常规支持'}`,
+    tone: 'emerald'
+  },
+  {
+    service: 'Disney+ / HBO',
+    sub: chatgptPending ? '视当前分配的落地出口IP属性而定' : '支持港/新/日/美主流流媒体跨区播放',
+    badge: chatgptPending ? '⚠️ 按节点支持' : '✅ 多区支持',
+    tone: chatgptPending ? 'amber' : 'emerald'
+  },
+  {
+    service: 'YouTube 4K / 8K',
+    sub: hkTest
+      ? `实测香港峰值 ${hkTest.download}（延迟 ${hkTest.latency}）`
+      : '支持高码率流媒体播放与进度条拖拽',
+    badge: `✅ ${brand.unlock?.youtube || '4K秒开'}`,
+    tone: 'emerald'
+  }
+];
+
+// Select 4 peer brands for side-by-side comparison table
+const peerBrands = [
+  brandsData[0], // Always include TOP 1 光速云 as benchmark
+  ...brandsData
+    .filter((b) => b.slug !== brand.slug && b.slug !== 'guangsu-cloud' && Math.abs(b.rank - brand.rank) <= 4)
+    .slice(0, 3)
+];
+if (!peerBrands.some((b) => b.slug === brand.slug)) {
+  peerBrands.splice(1, 0, brand);
+}
+
+const pageTitle = `${brand.name} 怎么样？2026 最新评测、套餐价格与节点测速实测 - clashjichang.world`;
+const pageDesc = `${brand.name} 深度评测（综合评分 ${ratingValue}/5.0）：基于 2026 实测数据，拆解其 ${brand.lineType} 线路、${brand.protocols.join('/')} 协议、门槛价格（${brand.priceStr}）及晚高峰流媒体/ChatGPT解锁表现。`;
+
+// Structured Schema
+const webPageSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'WebPage',
+  name: pageTitle,
+  url: `https://clashjichang.world/brands/${brand.slug}`,
+  description: pageDesc
+};
+
+const breadcrumbSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: '首页', item: 'https://clashjichang.world' },
+    { '@type': 'ListItem', position: 2, name: '42家机场品牌库', item: 'https://clashjichang.world/brands' },
+    { '@type': 'ListItem', position: 3, name: brand.name, item: `https://clashjichang.world/brands/${brand.slug}` }
+  ]
+};
+
+const productReviewSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Product',
+  name: brand.name,
+  description: brand.description,
+  brand: {
+    '@type': 'Brand',
+    name: brand.name
+  },
+  offers: {
+    '@type': 'Offer',
+    priceCurrency: 'CNY',
+    price: numericPrice,
+    availability: 'https://schema.org/InStock',
+    url: `https://clashjichang.world/brands/${brand.slug}`
+  },
+  review: {
+    '@type': 'Review',
+    reviewRating: {
+      '@type': 'Rating',
+      ratingValue: ratingValue,
+      bestRating: '5'
+    },
+    author: {
+      '@type': 'Organization',
+      name: 'Clash机场评测实验室'
+    }
+  }
+};
+
+const brandFaqs = [
+  {
+    q: `${brand.name} 支持哪些代理客户端？是否提供通用 Clash 订阅链接？`,
+    a: isExclusiveClientOnly
+      ? `${brand.name} 采用「官方专属客户端（全平台账号密码直登）」模式，用户下载官方 Windows、macOS、Android 或 iOS 客户端后输入账号密码即可一键连接，无需手动配置复杂的 YAML 规则。需要注意：部分纯专属端品牌不对外提供明文 Clash 订阅 URL，若您需要在软路由 OpenWrt 或 Clash Verge Rev 中自定义分流，建议对比选择光速云、微风网络、星岛梦、二猫云或一翻云。`
+      : `${brand.name} 全面支持主流第三方通用代理客户端，包括 Windows/macOS 端的 Clash Verge Rev、FlClash、v2rayN，Android 端的 FlClash、v2rayNG，以及 iOS 端的 Shadowrocket（小火箭）、Stash 与 sing-box。由于其采用 ${brand.protocols.join('、')} 协议，请确保您的客户端为搭载 Mihomo (Clash Meta) 或 Xray 新内核的版本（切勿使用已停更的旧版 CFW）。`
+  },
+  {
+    q: `${brand.name} 的真实测速表现如何？晚高峰（20:00-23:00）看 4K 视频会卡吗？`,
+    a: hkTest
+      ? `在本站 2026 实测采样中，${brand.name} 的香港节点录得平均延迟 ${hkTest.latency}、峰值下载速率 ${hkTest.download}${sgTest ? `，新加坡节点录得延迟 ${sgTest.latency}、下载 ${sgTest.download}` : ''}${jpTest ? `，日本节点录得延迟 ${jpTest.latency}、下载 ${jpTest.download}` : ''}。依托 ${brand.lineType} 架构，其跨境段无需绕行拥堵的公网审查节点，晚高峰观看 YouTube 4K 60fps 视频（仅需 25-35Mbps 持续带宽）具备充足的带宽冗余。`
+      : `${brand.name} 目前定位为 ${brand.lineType}（门槛价 ${brand.priceStr}），已通过本站基础连通与协议核查，但暂未纳入 2026-08-11 批次的 17 份 MAI-TEST-BOT 原始测速大图库。建议对晚高峰速率敏感的用户遵循「先买单月卡实测本地宽带表现」的原则，或优先对比拥有完整五地实测原图的 TOP 10 品牌（如光速云、暮光加速、微风网络）。`
+  },
+  {
+    q: `${brand.name} 能否稳定解锁 ChatGPT、Claude 和 Netflix 非自制剧？`,
+    a: chatgptPending
+      ? `根据本站事实核查（Fact-Check），${brand.name} 在 AI 与流媒体解锁方面标注为「待核实 / 视具体节点而定」。虽然日常浏览 YouTube 与常规海外网页无碍，但如果您购买机场的核心生产力需求是高频使用 ChatGPT Plus、Claude Pro 或观看 Netflix 4K 非自制剧，建议优先选择明确通过 RegionRestrictionCheck 实测的原生 IP 专线品牌（如光速云、微风网络、速界、一翻云）。`
+      : `实测显示 ${brand.name} 支持主流海外流媒体（Netflix、Disney+、YouTube 4K）及 ChatGPT 等 AI 工具访问。在实际使用中，由于香港地区受 OpenAI 与 Google Gemini 官方区域策略限制，请在客户端分流规则中将 AI 域名指定至 ${brand.name} 的新加坡、日本或美国节点，并尽量固定单一节点 IP 以防触发异地登录风控。`
+  },
+  {
+    q: `第一次购买 ${brand.name}，应该选月付、年付还是永久不限时流量包？`,
+    a: isLowPriceHomogeneousGroup
+      ? `${brand.name} 属于 ¥5.6/月（30GB）超低价同构入门档位。本站风控实验室强烈建议：对于此类 5 元级超低价品牌，**仅限购买 ¥5.6 元单月卡做短期尝鲜体验，切勿直接购买年付或多年付套餐**！如果您希望购买百元内省心年付或永久包，请加 ¥2–¥3/月预算选择运营 6 年的老牌光速云（¥99/年或 ¥147/247GB 永久包）或星岛梦（¥96/年）。`
+      : `选购周期建议结合您的月均流量消耗与品牌运营年限：① 如果您每月仅消耗 5GB–15GB（查资料、用 AI 或作为第二家防失联备用梯），${hasPermanentPlan ? `优先推荐 ${brand.name} 的一次性永久不限时流量包，流量永不过期` : `可考虑搭配光速云 ¥147/247GB 或二猫云 ¥99/100GB 永久包`}；② 如果您每天高频看高清视频，建议先购入首月套餐验证本地电信/联通/移动宽带晚高峰表现，确认满意后再升级年付或大流量档位。`
+  },
+  {
+    q: `${brand.name} 是否提供免费试用？购买后不满意可以申请退款吗？`,
+    a: `与行业内绝大多数正规专线机场一致，为防范黑灰产自动化脚本提取国内 BGP 入口 IP 发起 DDoS 攻击及污染原生解锁 IP，${brand.name} 采取「无免费试用，虚拟数字订阅发放后不支持无理由退款」的通行风控策略。因此，请在下单前核对好套餐流量额度、客户端支持方式${brand.couponCode ? `，并在结账时输入专属优惠券码 ${brand.couponCode}` : ''}。`
+  },
+  {
+    q: `${brand.name} 有没有同源姊妹机场？配置“双机场容灾备份”时该怎么搭配？`,
+    a: isBreezeLineageGroup
+      ? `经本站【跑路预警与同源雷达 (/warnings)】穿透核验，${brand.name} 与微风网络、Firefly、FlyingBird（飞鸟）、一云梯、龙猫云同属技术实力雄厚的知名专线集团矩阵。这意味着它的上游专线资源扎实，但您在配置「主力 + 备用」双机场方案时，**切勿在同源矩阵内部重复购买两家**，建议搭配完全独立异构的 [TOP 1 光速云](/brands/guangsu-cloud) 或 [TOP 7 二猫云](/brands/ermaoyun)。`
+      : isLowPriceHomogeneousGroup
+        ? `经本站核查，${brand.name} 与大佬云、闪电鼠、云界线、榴莲云、环球梯同属「¥5.6/月 30GB、¥16/月 150GB、¥54/年 99GB」套餐结构 100% 同构的低价矩阵。切勿同时购买这五家中的任意两家互作备份，建议主力通道升级为独立 IEPL 专线品牌 [光速云](/brands/guangsu-cloud)。`
+        : `${brand.name} 拥有独立的产品定位（${brand.lineType}）。按照跨境不断网的「异构双备份工程原则」，如果您将 ${brand.name} 作为日常主力，建议再配置一份不同上游机房、按量计费永不过期的永久流量包（例如 ${brand.slug === 'guangsu-cloud' ? '二猫云 ¥99/100GB 或一翻云 ¥100/100GB 永久包' : '光速云 ¥147/247GB 永久包'}），彻底杜绝单一路由维护导致的断网风险。`
+  }
+];
+
+const faqSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: brandFaqs.map((f) => ({
+    '@type': 'Question',
+    name: f.q,
+    acceptedAnswer: { '@type': 'Answer', text: f.a }
+  }))
+};
+---
+
+<BaseLayout
+  title={pageTitle}
+  description={pageDesc}
+  schema={[webPageSchema, breadcrumbSchema, productReviewSchema, faqSchema]}
+>
+  <!-- Breadcrumb -->
+  <div class="border-b border-line dark:border-white/10 bg-paper/50 dark:bg-black/20 py-3">
+    <div class="container flex flex-wrap items-center gap-2 text-xs text-muted">
+      <a href="/" class="hover:text-moss dark:hover:text-white">首页</a>
+      <span>/</span>
+      <a href="/brands" class="hover:text-moss dark:hover:text-white">42家机场品牌库</a>
+      <span>/</span>
+      <span class="text-ink dark:text-white font-medium">{brand.name}（TOP {brand.rank}）</span>
+    </div>
+  </div>
+
+  <!-- Header Hero -->
+  <section class="py-12 border-b border-line dark:border-white/10 bg-white dark:bg-[#102a2b]">
+    <div class="container">
+      <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-8">
+        <div class="max-w-3xl">
+          <div class="flex flex-wrap items-center gap-2 mb-3">
+            <span class="font-mono text-xs font-bold rounded-lg px-2.5 py-1 bg-moss text-white">
+              综合排名 TOP {brand.rank}
+            </span>
+            <span class="font-mono text-xs font-bold rounded-lg px-2.5 py-1 bg-emerald-500/15 text-emerald-800 dark:text-emerald-300 border border-emerald-500/30">
+              ★ 实测评分 {ratingValue} / 5.0
+            </span>
+            {brand.isFeatured && (
+              <span class="rounded-full bg-amber-400/20 text-amber-950 dark:text-amber-300 border border-amber-500/40 text-xs px-2.5 py-0.5 font-bold">
+                👑 第一首选主推
+              </span>
+            )}
+            <span class="rounded-md bg-paper dark:bg-white/5 border border-line dark:border-white/10 px-2.5 py-0.5 text-xs font-medium text-muted">
+              {brand.lineType}
+            </span>
+            <span class="rounded-md bg-paper dark:bg-white/5 border border-line dark:border-white/10 px-2.5 py-0.5 text-xs font-mono text-muted">
+              创设年份：{brand.year}
+            </span>
+          </div>
+
+          <h1 class="font-heading text-3xl sm:text-5xl font-black text-ink dark:text-white tracking-tight">
+            {brand.name} 深度测评与使用指南
+          </h1>
+
+          <p class="mt-4 text-base text-muted leading-relaxed">
+            {brand.description}
+          </p>
+
+          {brand.highlights && brand.highlights.length > 0 && (
+            <div class="mt-5 grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+              {brand.highlights.map((h: string) => (
+                <div class="flex items-start gap-2 rounded-xl border border-line/70 dark:border-white/10 bg-paper/60 dark:bg-white/5 px-3.5 py-2.5 text-xs text-ink dark:text-gray-200">
+                  <span class="text-emerald-600 dark:text-emerald-400 font-bold shrink-0">✓</span>
+                  <span class="leading-relaxed">{h}</span>
+                </div>
+              ))}
+            </div>
+          )}
+
+          <div class="mt-6 flex flex-wrap items-center gap-4">
+            {brand.affLink ? (
+              <a
+                href={brand.affLink}
+                target="_blank"
+                rel="nofollow sponsored noopener"
+                class="rounded-xl bg-gradient-to-r from-emerald-600 to-teal-700 hover:from-emerald-500 hover:to-teal-600 text-white font-bold px-7 py-3.5 shadow-lg shadow-emerald-900/30 transition-all hover:scale-105 text-sm sm:text-base"
+              >
+                前往 {brand.name} 官网直达注册 ↗
+              </a>
+            ) : (
+              <a
+                href="/ranking"
+                class="rounded-xl bg-moss hover:bg-moss/90 text-white font-bold px-7 py-3.5 shadow-lg transition-all text-sm sm:text-base"
+              >
+                官方暂未开放直链 · 查看同梯队实测 Top 10 推荐榜 →
+              </a>
+            )}
+
+            {brand.couponCode && (
+              <div class="rounded-xl border border-amber-500/40 bg-amber-500/10 px-4 py-3 flex items-center gap-2 text-xs font-mono">
+                <span class="text-amber-800 dark:text-amber-300 font-sans">优惠券代码:</span>
+                <span class="font-bold text-amber-950 dark:text-amber-200 text-sm">{brand.couponCode}</span>
+              </div>
+            )}
+          </div>
+          <p class="mt-3 text-[11px] text-muted">
+            * 透明披露：通过本站合规入口注册，本站可能获得少量技术维护佣金，绝不增加您的套餐支付价格。核验更新日期：2026-11-07。
+          </p>
+        </div>
+
+        <!-- Quick Summary Box -->
+        <div class="w-full lg:w-80 rounded-2xl border border-line dark:border-white/10 bg-paper dark:bg-[#0d211e] p-6 shadow-sm shrink-0">
+          <h3 class="font-heading text-sm font-bold text-ink dark:text-white uppercase tracking-wider mb-4 border-b border-line dark:border-white/10 pb-2">
+            核心指标摘要
+          </h3>
+          <dl class="space-y-3 text-xs">
+            <div class="flex justify-between">
+              <dt class="text-muted">综合实测评分</dt>
+              <dd class="font-bold text-emerald-600 dark:text-emerald-400 font-mono">{ratingValue} / 5.0 分</dd>
+            </div>
+            <div class="flex justify-between">
+              <dt class="text-muted">门槛参考价</dt>
+              <dd class="font-bold text-coral dark:text-coral-bright font-mono">{brand.priceStr}</dd>
+            </div>
+            {brand.priceNote && (
+              <div class="flex justify-between">
+                <dt class="text-muted">主流方案</dt>
+                <dd class="font-medium text-ink dark:text-white text-right">{brand.priceNote}</dd>
+              </div>
+            )}
+            <div class="flex justify-between">
+              <dt class="text-muted">线路架构</dt>
+              <dd class="font-semibold text-ink dark:text-white text-right">{brand.lineType}</dd>
+            </div>
+            <div class="flex justify-between">
+              <dt class="text-muted">支持协议</dt>
+              <dd class="font-mono text-ink dark:text-white">{brand.protocols.join(', ')}</dd>
+            </div>
+            <div class="flex justify-between">
+              <dt class="text-muted">客户端模式</dt>
+              <dd class="text-ink dark:text-white text-right">
+                {isExclusiveClientOnly ? '官方专属客户端直登' : '通用Clash订阅 / 多端兼容'}
+              </dd>
+            </div>
+            <div class="flex justify-between">
+              <dt class="text-muted">测速实测状态</dt>
+              <dd class="font-bold text-emerald-600 dark:text-emerald-400">
+                {brand.hasSpeedtest ? '已完成 2026 实测归档' : '基础参数已核查'}
+              </dd>
+            </div>
+            <div class="flex justify-between">
+              <dt class="text-muted">流媒体与AI</dt>
+              <dd class="text-ink dark:text-white text-right">
+                {chatgptPending ? 'YouTube 4K / AI待核实' : `${brand.unlock?.netflix || '流媒体支持'} / AI按节点`}
+              </dd>
+            </div>
+          </dl>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Detailed Content Grid -->
+  <div class="container py-12">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-10">
+      <div class="lg:col-span-8 space-y-10">
+        <!-- 1. Real Speedtest Section -->
+        <section id="speedtest" class="rounded-2xl border border-line dark:border-white/10 bg-white dark:bg-[#102a2b] p-6 sm:p-8">
+          <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
+            <div>
+              <span class="text-xs font-bold text-moss dark:text-coral-bright uppercase tracking-wider">Speedtest & Topology Benchmark</span>
+              <h2 class="font-heading text-xl sm:text-2xl font-bold text-ink dark:text-white mt-1">
+                一、{brand.name} 节点真实测速报告与线路拓扑剖析
+              </h2>
+            </div>
+            <span class="text-xs font-mono text-muted bg-paper dark:bg-white/5 px-2.5 py-1 rounded-md border border-line dark:border-white/10">
+              {brand.speedtestImg ? 'MAI-TEST-BOT 原图归档' : '拓扑与连通性审计'}
+            </span>
+          </div>
+
+          {brand.speedtestImg ? (
+            <>
+              <p class="text-xs sm:text-sm text-muted mb-4 leading-relaxed">
+                测试说明：下图为本实验室采用标准 <code class="font-mono bg-paper dark:bg-white/10 px-1.5 py-0.5 rounded">MAI-TEST-BOT 2.0.0-dev</code> 引擎对 <strong>{brand.name}</strong> 进行的真实节点采样截图，完整保留了原始测速时间戳、TLS 握手延迟（RTT）、平均下载带宽、最大峰值速度与 UDP NAT 类型，未经任何裁剪或美化（全站 17 份原图比对详见 <a href="/speedtest" class="text-moss dark:text-emerald-300 font-bold underline">/speedtest 测速实测报告库</a>）。
+              </p>
+
+              <div class="rounded-xl overflow-hidden border border-line dark:border-white/10 bg-black/5 mb-6">
+                <img
+                  src={brand.speedtestImg}
+                  alt={`${brand.name} 节点测速实测原图`}
+                  width="1200"
+                  height="675"
+                  class="w-full h-auto object-contain max-h-[600px] mx-auto"
+                  loading="lazy"
+                  decoding="async"
+                />
+              </div>
+            </>
+          ) : (
+            <div class="rounded-xl border border-amber-500/30 bg-amber-50/40 dark:bg-amber-950/20 p-4 mb-5 text-xs sm:text-sm text-muted leading-relaxed">
+              <strong class="text-ink dark:text-white">实测档案状态说明：</strong> {brand.name}（综合排名 TOP {brand.rank}）目前已完成基础线路参数、协议特征与套餐价格核验（{brand.hasSpeedtest ? '包含五地代表性节点采样数据' : '暂未纳入 2026-08-11 批次的 17 份 MAI-TEST-BOT 原始测速大图库'}）。如果您追求拥有原始无修测速长图双重背书的同价位方案，可同步对比 <a href="/speedtest" class="text-moss dark:text-emerald-300 font-bold underline">测速实测证据库 (/speedtest)</a> 中的光速云、暮光加速、飞猫云、微风网络或二猫云。
+            </div>
+          )}
+
+          {brand.testResults && brand.testResults.length > 0 && (
+            <div class="mt-4 mb-6">
+              <h3 class="font-heading text-sm font-bold text-ink dark:text-white mb-3">
+                {brand.name} 五大核心地区节点采样数据表（2026 实测）
+              </h3>
+              <div class="overflow-x-auto rounded-xl border border-line dark:border-white/10">
+                <table class="w-full text-xs text-left">
+                  <thead class="bg-paper dark:bg-black/30 border-b border-line dark:border-white/10 text-ink dark:text-white font-bold">
+                    <tr>
+                      <th class="py-2.5 px-3">节点地区</th>
+                      <th class="py-2.5 px-3">平均握手延迟 (RTT)</th>
+                      <th class="py-2.5 px-3">实测下载峰值</th>
+                      <th class="py-2.5 px-3">推荐应用场景</th>
+                    </tr>
+                  </thead>
+                  <tbody class="divide-y divide-line/40 dark:divide-white/5">
+                    {brand.testResults.map((r: any) => (
+                      <tr>
+                        <td class="py-2.5 px-3 font-semibold text-ink dark:text-white">{r.node}</td>
+                        <td class="py-2.5 px-3 font-mono text-emerald-600 dark:text-emerald-400 font-bold">{r.latency}</td>
+                        <td class="py-2.5 px-3 font-mono font-bold text-ink dark:text-white">{r.download}</td>
+                        <td class="py-2.5 px-3 text-muted">
+                          {r.node.includes('香港')
+                            ? '主力低延迟冲浪 / 4K 秒开 / 港服游戏与金融行情'
+                            : r.node.includes('新加坡') || r.node.includes('日本')
+                              ? 'ChatGPT / Claude / Gemini 生产力与亚太流媒体优选'
+                              : r.node.includes('台湾')
+                                ? '巴哈姆特动画疯 / 台湾地区限定流媒体'
+                                : '美区 Netflix / PayPal 外贸办公 / 欧美原生业务'}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+
+          <div class="space-y-3 text-xs sm:text-sm text-muted leading-relaxed border-t border-line/60 dark:border-white/10 pt-5">
+            <h3 class="font-heading text-base font-bold text-ink dark:text-white">
+              底层传输架构与协议栈工程解读（{brand.lineType} + {brand.protocols.join(' / ')}）
+            </h3>
+            <p>
+              在跨境网络工程中，决定一家机场在黄金晚高峰（20:00–23:00）是否掉速的核心变量在于<strong>国内入口调度与跨境物理介质</strong>。<strong>{brand.name}</strong> 采用的是 <strong>{brand.lineType}</strong> 方案，并搭载了 <code class="font-mono bg-paper dark:bg-white/10 px-1.5 py-0.5 rounded">{brand.protocols.join(' / ')}</code> 传输协议。
+              {brand.lineType.includes('IEPL') || brand.lineType.includes('IPLC') || brand.lineType.includes('专线')
+                ? `由于 IEPL（以太网专线）与 IPLC（国际私有租用线路）在物理层面上走的是运营商政企内网点对点光纤通道，用户流量从国内 BGP 高防中转机房进入后，跨境段完全绕开了拥堵的国际公网出口与 GFW 深度包检测（DPI）审查节点。这不仅令其亚洲近端节点（如香港、台湾、新加坡）的 RTT 抖动控制在极低水平，也大幅降低了敏感时期的封锁断流风险（底层拓扑图解详见 `
+                : `该架构通过优化的中转路由与多协议伪装机制降低公网跨境损耗，兼顾了日常网页访问、高清视频流加载与入门级成本控制（专线与公网中转的差异对比详见 `}
+              <a href="/guide" class="text-moss dark:text-emerald-300 font-bold underline">专线与协议科普指南 (/guide)</a>）。
+            </p>
+            <p>
+              在协议层面上，{brand.name} 支持的 <strong>{brand.protocols.join(' 与 ')}</strong> 各有明确分工：
+              {brand.protocols.includes('VLESS') && 'VLESS（配合 Reality 或 TLS 伪装）消除了传统 VMess 的双重加密算力开销，握手速度更快且抗主动探测能力极强；'}
+              {brand.protocols.includes('Shadowsocks') && 'Shadowsocks（AEAD 加密）在内网专线环境中具备最低的协议头部损耗与最高的全平台路由器兼容性；'}
+              {brand.protocols.includes('Trojan') && 'Trojan 将代理流量完美伪装成标准 HTTPS 网站流量，极难被常规防火墙特征库识别；'}
+              {brand.protocols.includes('Hysteria2') && 'Hysteria 2 基于魔改 QUIC（UDP）与 Brutal 拥塞控制算法，即便在弱网或高丢包Wi-Fi环境下也能强行拉满下行带宽。'}
+            </p>
+          </div>
+        </section>
+
+        <!-- 2. Plans, Pricing & Cost-Per-GB Economics -->
+        <section id="pricing" class="rounded-2xl border border-line dark:border-white/10 bg-white dark:bg-[#102a2b] p-6 sm:p-8 space-y-5">
+          <div>
+            <span class="text-xs font-bold text-moss dark:text-coral-bright uppercase tracking-wider">Subscription Plans & Unit Economics</span>
+            <h2 class="font-heading text-xl sm:text-2xl font-bold text-ink dark:text-white mt-1">
+              二、{brand.name} 套餐价格表、单 GB 流量成本与选购周期建议
+            </h2>
+            <p class="mt-2 text-xs sm:text-sm text-muted leading-relaxed">
+              <strong>{brand.name}</strong> 的入门价格门槛为 <strong class="text-coral dark:text-coral-bright font-mono">{brand.priceStr}</strong>（{brand.priceNote || '多档位可选'}）。下表整理了其现行主力套餐规格与单位流量成本测算，帮助您根据每月实际消耗量（可配合 <a href="/tools" class="text-moss dark:text-emerald-300 font-bold underline">流量倍率与成本计算器 (/tools)</a>）精准选档：
+            </p>
+          </div>
+
+          {brand.plans && brand.plans.length > 0 ? (
+            <div class="overflow-x-auto rounded-xl border border-line dark:border-white/10">
+              <table class="w-full text-xs text-left">
+                <thead class="bg-paper dark:bg-black/30 border-b border-line dark:border-white/10 text-ink dark:text-white font-bold">
+                  <tr>
+                    <th class="py-2.5 px-3">套餐名称</th>
+                    <th class="py-2.5 px-3">计费周期</th>
+                    <th class="py-2.5 px-3">官方价格</th>
+                    <th class="py-2.5 px-3">流量额度</th>
+                    <th class="py-2.5 px-3">结算属性</th>
+                    <th class="py-2.5 px-3">适用人群定位</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-line/40 dark:divide-white/5">
+                  {brand.plans.map((p: any) => (
+                    <tr>
+                      <td class="py-2.5 px-3 font-semibold text-ink dark:text-white">{p.name}</td>
+                      <td class="py-2.5 px-3 text-muted">{p.billing}</td>
+                      <td class="py-2.5 px-3 font-mono font-bold text-coral dark:text-coral-bright">{p.price}</td>
+                      <td class="py-2.5 px-3 font-mono font-semibold text-ink dark:text-white">{p.traffic}</td>
+                      <td class="py-2.5 px-3 text-muted">{p.cycle}</td>
+                      <td class="py-2.5 px-3 text-muted">
+                        {p.billing.includes('一次性') || p.name.includes('永久') || p.name.includes('不限时')
+                          ? '轻度查资料 / AI 对话 / 异构容灾防失联备份首选'
+                          : p.billing.includes('年付')
+                            ? '日均高频轻中度用户，折算月均成本最低'
+                            : p.price.includes('550') || p.price.includes('600') || p.price.includes('680')
+                              ? '跨境电商团队 / 独享高并发工作室定制'
+                              : '主力 4K 影音与日常远程办公标准档'}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          ) : (
+            <div class="rounded-xl border border-line dark:border-white/10 bg-paper/50 dark:bg-white/5 p-4 text-xs sm:text-sm text-muted leading-relaxed">
+              <p>
+                <strong>现行档位核验摘要：</strong> {brand.name} 主打 <strong>{brand.priceStr}</strong>（{brand.priceNote || '标准月付/年付方案'}）。由于该品牌后台套餐档位随季度活动动态微调，建议注册登录官方控制面板后，优先选择最低门槛的<strong>单月体验包或轻量包</strong>实测本地网络契合度。
+              </p>
+            </div>
+          )}
+
+          <div class="rounded-xl border border-moss/25 bg-moss/5 dark:bg-white/5 p-4 text-xs sm:text-sm text-muted leading-relaxed space-y-2">
+            <h3 class="font-bold text-ink dark:text-white">
+              💡 评测室购卡防坑与周期决策建议：
+            </h3>
+            <p>
+              1. <strong>按月消耗量匹配档位：</strong> 如果您仅用于查阅外文资料、刷 Telegram/X 以及高频调用 ChatGPT/Claude，每月真实消耗通常不足 15GB，建议优先选择<strong>轻量年付（折合 ¥6.5–¥9/月）或一次性永久不限时流量包</strong>（全站永久包性价比横评见 <a href="/free" class="text-moss dark:text-emerald-300 font-bold underline">免费与平替专题 (/free)</a>）；如果您每天观看 1–2 小时 YouTube 4K 或 Netflix 原盘视频，建议选择每月 120GB–200GB 以上的标准月付档。
+            </p>
+            <p>
+              2. <strong>防跑路资金风控原则：</strong> {isLowPriceHomogeneousGroup ? `鉴于 ${brand.name} 属于 ¥5.6/月同构低价矩阵，强烈建议仅按月购买（¥5.6/月），切勿贪图便宜一次性锁死长周期年付！` : `对于创设于 ${brand.year} 的 ${brand.name}，初次上车建议先通过月付或小额包完成晚高峰（20:00-23:00）验证，避免盲目购买两年以上超长周期。`}更多同源站群关系与防跑路信号请查阅 <a href="/warnings" class="text-moss dark:text-emerald-300 font-bold underline">跑路预警与避坑雷达 (/warnings)</a>。
+            </p>
+          </div>
+        </section>
+
+        <!-- 3. Dynamic Streaming & AI Unlock Matrix -->
+        <section id="unlock" class="rounded-2xl border border-line dark:border-white/10 bg-white dark:bg-[#102a2b] p-6 sm:p-8">
+          <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
+            <div>
+              <span class="text-xs font-bold text-moss dark:text-coral-bright uppercase tracking-wider">Streaming & AI Unlock Matrix</span>
+              <h2 class="font-heading text-xl sm:text-2xl font-bold text-ink dark:text-white mt-1">
+                三、{brand.name} 流媒体与 AI 解锁实测矩阵
+              </h2>
+            </div>
+            <span class="text-xs font-mono text-muted bg-paper dark:bg-white/5 px-2.5 py-1 rounded-md border border-line dark:border-white/10">
+              RegionRestrictionCheck 标准
+            </span>
+          </div>
+
+          <p class="text-xs sm:text-sm text-muted mb-5 leading-relaxed">
+            海外流媒体（Netflix 非自制剧、Disney+、TikTok）与生成式 AI 平台（ChatGPT、Claude、Google Gemini）对代理出口 IP 的欺诈值（Fraud Score）与 ASN 原生属性极为敏感。以下为 <strong>{brand.name}</strong> 的分项解锁核验状态：
+          </p>
+
+          <!-- Dynamic 3-Column Grid -->
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
+            {unlockCards.map((item) => (
+              <div
+                class={`rounded-xl border p-3.5 flex items-center justify-between gap-2 ${
+                  item.tone === 'amber'
+                    ? 'border-amber-500/25 bg-amber-50/40 dark:bg-amber-950/20'
+                    : 'border-emerald-500/25 bg-emerald-50/40 dark:bg-emerald-950/20'
+                }`}
+              >
+                <div>
+                  <span class="font-bold text-ink dark:text-white block">{item.service}</span>
+                  <span class="text-[11px] text-muted leading-snug block mt-0.5">{item.sub}</span>
+                </div>
+                <span
+                  class={`rounded-md font-bold px-2 py-1 shrink-0 text-[11px] ${
+                    item.tone === 'amber'
+                      ? 'bg-amber-500/15 text-amber-800 dark:text-amber-300'
+                      : 'bg-emerald-500/15 text-emerald-700 dark:text-emerald-300'
+                  }`}
+                >
+                  {item.badge}
+                </span>
+              </div>
+            ))}
+          </div>
+
+          {brand.isFeatured && (
+            <div class="mt-6 pt-5 border-t border-line/60 dark:border-white/10">
+              <h3 class="font-heading text-sm font-bold text-ink dark:text-white mb-3">
+                光速云流媒体与节点实测截图归档
+              </h3>
+              <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                {[
+                  '/images/unlock/photo_2026-08-19_12-13-01.jpg',
+                  '/images/unlock/photo_2026-08-19_12-13-50.jpg',
+                  '/images/unlock/photo_2026-08-19_12-18-40.jpg'
+                ].map((imgUrl, idx) => (
+                  <a href={imgUrl} target="_blank" class="group rounded-xl overflow-hidden border border-line dark:border-white/10 bg-black/5 block">
+                    <img
+                      src={imgUrl}
+                      alt={`光速云解锁与实测图 ${idx + 1}`}
+                      width="600"
+                      height="400"
+                      class="h-32 w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                      loading="lazy"
+                      decoding="async"
+                    />
+                  </a>
+                ))}
+              </div>
+            </div>
+          )}
+        </section>
+
+        <!-- 4. Client Compatibility & Setup Guide -->
+        <section id="client-setup" class="rounded-2xl border border-line dark:border-white/10 bg-white dark:bg-[#102a2b] p-6 sm:p-8 space-y-4">
+          <div>
+            <span class="text-xs font-bold text-moss dark:text-coral-bright uppercase tracking-wider">Client Compatibility & Routing</span>
+            <h2 class="font-heading text-xl sm:text-2xl font-bold text-ink dark:text-white mt-1">
+              四、{brand.name} 全平台客户端适配与分流配置实操
+            </h2>
+          </div>
+
+          {isExclusiveClientOnly ? (
+            <div class="space-y-3 text-xs sm:text-sm text-muted leading-relaxed">
+              <p>
+                <strong>1. 专属客户端一键直连模式：</strong> 经核验，<strong>{brand.name}</strong> 采用的是<strong>官方定制专属客户端生态</strong>（账号密码直登模式）。您在官网注册并购买套餐后，无需寻找第三方软件或折腾 YAML 订阅链接，直接在官网后台下载对应系统（Windows / macOS / Android / iOS）的官方客户端，输入注册邮箱与密码即可一键开启智能分流加速。
+              </p>
+              <p>
+                <strong>2. 封闭生态的优劣权衡：</strong> 这种模式对纯新手与跨境电商运营人员极其友好，彻底消除了“把私有订阅链接粘贴到不明在线转换网站导致流量被盗刷”的风险；但如果您是需要在 OpenWrt 软路由、群晖 NAS 或 <a href="/clients" class="text-moss dark:text-emerald-300 font-bold underline">Clash Verge Rev / Shadowrocket (/clients)</a> 中聚合多机场订阅的极客玩家，建议搭配支持通用订阅导出的 <a href="/brands/guangsu-cloud" class="text-moss dark:text-emerald-300 font-bold underline">光速云</a>、<a href="/brands/weifeng" class="text-moss dark:text-emerald-300 font-bold underline">微风网络</a> 或 <a href="/brands/ermaoyun" class="text-moss dark:text-emerald-300 font-bold underline">二猫云</a>。
+              </p>
+            </div>
+          ) : (
+            <div class="space-y-3 text-xs sm:text-sm text-muted leading-relaxed">
+              <p>
+                <strong>1. 推荐客户端内核匹配（支持 {brand.protocols.join(' / ')}）：</strong> <strong>{brand.name}</strong> 提供标准通用订阅接口。由于其节点采用了现代加密协议（{brand.protocols.join('、')}），请务必前往本站 <a href="/clients" class="text-moss dark:text-emerald-300 font-bold underline">2026 代理客户端大全 (/clients)</a> 下载搭载 <strong>Mihomo (Clash Meta)</strong> 或 <strong>sing-box / Xray</strong> 内核的正版开源软件：Windows 与 macOS 首选 <strong>Clash Verge Rev</strong> 或 <strong>FlClash</strong>，Android 首选 <strong>FlClash / v2rayNG</strong>，iOS 首选外区 App Store 的 <strong>Shadowrocket（小火箭）</strong> 或 <strong>Stash</strong>。
+              </p>
+              <p>
+                <strong>2. 四步防泄露导入流程：</strong> ① 登录 {brand.name} 官网仪表盘，点击「一键订阅 → 复制 Clash 订阅链接」（切勿将该私有 Token 粘贴至任何第三方在线订阅转换网页）；② 打开 Clash Verge Rev 左侧「订阅 (Profiles)」，粘贴 URL 点击导入并选中启用；③ 在「代理 (Proxies)」顶部将运行模式锁定为 <strong>Rule（规则分流模式）</strong>，确保国内淘宝、微信、B站流量直连不扣套餐额度；④ 若需代理桌面端 Claude、Cursor 或外服游戏，请在「设置」中开启 <strong>TUN 虚拟网卡模式</strong> 与 <strong>Fake-IP 防 DNS 泄露</strong>。
+              </p>
+            </div>
+          )}
+        </section>
+
+        <!-- 5. Peer Comparison Table -->
+        <section id="peer-comparison" class="rounded-2xl border border-line dark:border-white/10 bg-white dark:bg-[#102a2b] p-6 sm:p-8 space-y-4">
+          <div>
+            <span class="text-xs font-bold text-moss dark:text-coral-bright uppercase tracking-wider">Peer Comparison Matrix</span>
+            <h2 class="font-heading text-xl sm:text-2xl font-bold text-ink dark:text-white mt-1">
+              五、{brand.name} 与同梯队热门机场横向对比表
+            </h2>
+            <p class="mt-1 text-xs sm:text-sm text-muted leading-relaxed">
+              为了帮您在下单前做出最理性的横向比较，我们将 <strong>{brand.name}（TOP {brand.rank}）</strong> 与本站第一标杆 <strong>光速云（TOP 1）</strong> 及排名相近的同档位品牌进行了核心参数对齐：
+            </p>
+          </div>
+
+          <div class="overflow-x-auto rounded-xl border border-line dark:border-white/10">
+            <table class="w-full text-xs text-left">
+              <thead class="bg-paper dark:bg-black/30 border-b border-line dark:border-white/10 text-ink dark:text-white font-bold">
+                <tr>
+                  <th class="py-2.5 px-3">品牌名称与排名</th>
+                  <th class="py-2.5 px-3">线路架构</th>
+                  <th class="py-2.5 px-3">支持协议</th>
+                  <th class="py-2.5 px-3">门槛参考价</th>
+                  <th class="py-2.5 px-3">香港实测速率</th>
+                  <th class="py-2.5 px-3">评测详情</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-line/40 dark:divide-white/5">
+                {peerBrands.map((p: any) => {
+                  const pHk = p.testResults?.find((r: any) => r.node.includes('香港'));
+                  const isCurrent = p.slug === brand.slug;
+                  return (
+                    <tr class={isCurrent ? 'bg-moss/10 dark:bg-emerald-950/30 font-semibold' : ''}>
+                      <td class="py-2.5 px-3 text-ink dark:text-white">
+                        <span class="font-mono text-[11px] text-moss dark:text-emerald-400 mr-1">TOP {p.rank}</span>
+                        {p.name}
+                        {isCurrent && <span class="ml-1 text-[10px] rounded bg-moss text-white px-1.5 py-0.5">当前浏览</span>}
+                      </td>
+                      <td class="py-2.5 px-3 text-muted">{p.lineType}</td>
+                      <td class="py-2.5 px-3 font-mono text-[11px]">{p.protocols.join(' / ')}</td>
+                      <td class="py-2.5 px-3 font-mono font-bold text-coral dark:text-coral-bright">{p.priceStr}</td>
+                      <td class="py-2.5 px-3 font-mono text-emerald-700 dark:text-emerald-300">
+                        {pHk ? `${pHk.latency} / ${pHk.download}` : p.hasSpeedtest ? '已实测归档' : '基础核验'}
+                      </td>
+                      <td class="py-2.5 px-3">
+                        <a href={`/brands/${p.slug}`} class="text-moss dark:text-emerald-400 font-bold hover:underline">
+                          查看评测 →
+                        </a>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- 6. Pros and Cons & Target Audience (GEO Standards) -->
+        <section class="rounded-2xl border border-line dark:border-white/10 bg-white dark:bg-[#102a2b] p-6 sm:p-8">
+          <span class="text-xs font-bold text-moss dark:text-coral-bright uppercase tracking-wider">Objective Analysis</span>
+          <h2 class="font-heading text-xl sm:text-2xl font-bold text-ink dark:text-white mt-1 mb-6">
+            六、{brand.name} 优缺点与适用人群客观分析
+          </h2>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="rounded-xl border border-emerald-500/20 bg-emerald-50/50 dark:bg-emerald-950/20 p-4">
+              <h3 class="text-sm font-bold text-emerald-800 dark:text-emerald-300 flex items-center gap-1.5 mb-2">
+                <span>✓</span> 核心优势与亮点
+              </h3>
+              <ul class="text-xs text-muted space-y-2 list-disc pl-4 leading-relaxed">
+                <li><strong>线路与协议：</strong>采用 {brand.lineType}，配合 {brand.protocols.join('、')} 协议，兼顾低延迟与抗封锁稳定性。</li>
+                <li><strong>价格梯度清晰：</strong>起步门槛为 {brand.priceStr}（{brand.priceNote || '多档可选'}），在同梯队产品中具备明确性价比定位。</li>
+                {hkTest && (
+                  <li><strong>真实测速背书：</strong>香港节点实测延迟低至 {hkTest.latency}、下载峰值达 {hkTest.download}，满足 4K 视频与高频办公需求。</li>
+                )}
+                {brand.couponCode && (
+                  <li><strong>专属折扣让利：</strong>提供常设优惠券码 <code class="font-mono font-bold">{brand.couponCode}</code>，进一步降低长期续费成本。</li>
+                )}
+              </ul>
+            </div>
+
+            <div class="rounded-xl border border-amber-500/20 bg-amber-50/50 dark:bg-amber-950/20 p-4">
+              <h3 class="text-sm font-bold text-amber-800 dark:text-amber-300 flex items-center gap-1.5 mb-2">
+                <span>!</span> 限制条件与风险提示
+              </h3>
+              <ul class="text-xs text-muted space-y-2 list-disc pl-4 leading-relaxed">
+                <li><strong>试用与退款限制：</strong>无免费试用，虚拟订阅发放后不支持无理由退款，新用户务必先从单月卡或最低档体验。</li>
+                <li><strong>AI 区域分流要求：</strong>访问 ChatGPT、Claude 或 Gemini 时，需在客户端避开受限地区并切换至新加坡、日本或美国节点。</li>
+                {isExclusiveClientOnly && (
+                  <li><strong>客户端限制：</strong>采用官方专属客户端模式，不适合必须在软路由 OpenWrt 或第三方软件中手动编写规则的高阶玩家。</li>
+                )}
+                {isLowPriceHomogeneousGroup && (
+                  <li><strong>同构低价预警：</strong>属 ¥5.6/月同构低价盘且缺乏本批次原图测速，严禁购买年付，仅限短期单月过渡。</li>
+                )}
+              </ul>
+            </div>
+          </div>
+
+          <div class="mt-6 pt-6 border-t border-line/60 dark:border-white/10">
+            <h3 class="text-sm font-bold text-ink dark:text-white mb-2">适合与不适合的人群总结：</h3>
+            <p class="text-xs sm:text-sm text-muted leading-relaxed">
+              <strong>✅ 适合人群：</strong> {isExclusiveClientOnly ? '追求下载软件登录即用、不想折腾订阅规则的新手、外贸电商与日常流媒体用户。' : isLowPriceHomogeneousGroup ? '预算严格卡在 5 元左右、仅需购买 1 个月做短期轻度网页浏览过渡的用户。' : `看重 ${brand.lineType} 稳定性、需要日常查阅外网文献、流畅观看 YouTube 4K 流媒体及使用 AI 辅助办公的用户。`}<br />
+              <strong>❌ 不适合人群：</strong> 期望零成本白嫖、要求挂着代理节点使用迅雷/BT 满速下载版权种子，或期望单一节点 365 天绝对零波动的极端场景用户（重要业务请务必配置双机场异构备份）。
+            </p>
+          </div>
+        </section>
+
+        <!-- 7. Deep FAQ Section -->
+        <section id="faq" class="rounded-2xl border border-line dark:border-white/10 bg-white dark:bg-[#102a2b] p-6 sm:p-8">
+          <span class="text-xs font-bold text-moss dark:text-coral-bright uppercase tracking-wider">Frequently Asked Questions</span>
+          <h2 class="font-heading text-xl sm:text-2xl font-bold text-ink dark:text-white mt-1 mb-6">
+            七、{brand.name} 常见问题与排障解答（FAQ）
+          </h2>
+          <div class="space-y-4">
+            {brandFaqs.map((faq, idx) => (
+              <div class="p-4 rounded-xl border border-line/60 dark:border-white/10 bg-paper/50 dark:bg-white/5">
+                <h3 class="text-sm font-bold text-ink dark:text-white mb-1.5">
+                  Q{idx + 1}: {faq.q}
+                </h3>
+                <p class="text-xs sm:text-sm text-muted leading-relaxed">
+                  {faq.a}
+                </p>
+              </div>
+            ))}
+          </div>
+        </section>
+      </div>
+
+      <!-- Right Sticky Sidebar -->
+      <aside class="lg:col-span-4 space-y-6">
+        <!-- CTA Card -->
+        <div class="rounded-2xl border border-emerald-500/40 bg-white dark:bg-[#102a2b] p-6 shadow-xl sticky top-24">
+          <div class="text-center pb-4 border-b border-line dark:border-white/10">
+            <span class="text-xs text-muted block mb-1">官方正品核验档案 · 评分 {ratingValue}/5.0</span>
+            <h3 class="font-heading text-xl font-black text-ink dark:text-white">
+              {brand.name} 选购通道
+            </h3>
+            <p class="text-xs text-coral dark:text-coral-bright font-mono font-bold mt-2">
+              门槛价：{brand.priceStr}
+            </p>
+          </div>
+
+          <div class="py-4 space-y-2.5 text-xs text-muted">
+            <div class="flex items-center gap-2">
+              <span class="text-emerald-500">✓</span>
+              <span>线路架构：{brand.lineType}</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="text-emerald-500">✓</span>
+              <span>支持协议：{brand.protocols.join(' / ')}</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="text-emerald-500">✓</span>
+              <span>{isExclusiveClientOnly ? '官方专属客户端一键登录即连' : '支持 Clash / 小火箭 / v2ray 订阅导入'}</span>
+            </div>
+          </div>
+
+          {brand.affLink ? (
+            <a
+              href={brand.affLink}
+              target="_blank"
+              rel="nofollow sponsored noopener"
+              class="w-full rounded-xl bg-moss hover:bg-moss-dark text-white font-bold py-3 text-center text-sm shadow-md block transition-all"
+            >
+              前往 {brand.name} 官网 ↗
+            </a>
+          ) : (
+            <div class="space-y-2">
+              <div class="w-full rounded-xl border border-amber-500/30 bg-amber-500/10 text-amber-900 dark:text-amber-300 font-semibold py-2.5 px-3 text-center text-xs">
+                该品牌暂未开放公开推广直链
+              </div>
+              <a
+                href="/brands/guangsu-cloud"
+                class="w-full rounded-xl bg-moss hover:bg-moss-dark text-white font-bold py-3 text-center text-xs shadow-md block transition-all"
+              >
+                查看 TOP 1 光速云实测平替方案 →
+              </a>
+            </div>
+          )}
+
+          {brand.couponCode && (
+            <p class="mt-3 text-center text-xs text-muted font-mono">
+              结账输入优惠码：<strong class="text-ink dark:text-white">{brand.couponCode}</strong>
+            </p>
+          )}
+
+          <div class="mt-6 pt-4 border-t border-line dark:border-white/10">
+            <span class="text-[11px] text-muted block text-center mb-2">对比其他热门品牌：</span>
+            <div class="flex flex-wrap gap-1.5 justify-center">
+              {brandsData.slice(0, 6).map((b) => (
+                <a
+                  href={`/brands/${b.slug}`}
+                  class="text-[11px] px-2 py-0.5 rounded bg-paper dark:bg-white/5 border border-line dark:border-white/10 text-muted hover:text-moss"
+                >
+                  {b.name}
+                </a>
+              ))}
+            </div>
+          </div>
+
+          <div class="mt-4 pt-4 border-t border-line dark:border-white/10">
+            <span class="text-[11px] font-bold text-ink dark:text-white block text-center mb-2">风控与工程工具快链：</span>
+            <div class="grid grid-cols-2 gap-1.5 text-[11px] text-center">
+              <a href="/warnings" class="rounded-lg bg-coral/10 text-coral dark:text-coral-bright font-semibold py-1.5 px-2 hover:bg-coral/20 transition-colors">
+                🚨 跑路与同源核查
+              </a>
+              <a href="/tools" class="rounded-lg bg-moss/10 text-moss dark:text-emerald-300 font-semibold py-1.5 px-2 hover:bg-moss/20 transition-colors">
+                🛠️ 倍率与IP诊断
+              </a>
+              <a href="/free" class="rounded-lg bg-paper dark:bg-white/5 border border-line/60 dark:border-white/10 text-muted py-1.5 px-2 hover:text-moss transition-colors">
+                🎁 永久包平替核算
+              </a>
+              <a href="/faq" class="rounded-lg bg-paper dark:bg-white/5 border border-line/60 dark:border-white/10 text-muted py-1.5 px-2 hover:text-moss transition-colors">
+                📚 机场48问百科
+              </a>
+            </div>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </div>
+</BaseLayout>

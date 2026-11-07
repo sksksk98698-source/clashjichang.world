@@ -1,0 +1,190 @@
+[
+  {
+    "category": "Windows 电脑客户端",
+    "id": "windows",
+    "tagline": "Windows 桌面端主力代理工具，支持 Clash YAML 规则配置与 TUN 虚拟网卡模式",
+    "items": [
+      {
+        "name": "Clash Verge Rev",
+        "badge": "首选推荐",
+        "featured": true,
+        "core": "Mihomo (Clash Meta) 内核",
+        "features": "图形化订阅管理、深度规则分流、TUN 全局接管模式、暗黑主题支持",
+        "bestFor": "新手与进阶首选",
+        "os": "Windows 10/11 (x64, ARM64)",
+        "downloadUrl": "https://github.com/clash-verge-rev/clash-verge-rev/releases"
+      },
+      {
+        "name": "v2rayN",
+        "badge": "多协议全能",
+        "featured": true,
+        "core": "Xray / sing-box 核心",
+        "features": "支持 VLESS、VMess、Trojan、Shadowsocks 等全协议，单节点测速与批量路由",
+        "bestFor": "极客与多协议用户",
+        "os": "Windows 7/10/11",
+        "downloadUrl": "https://github.com/2dust/v2rayN/releases"
+      },
+      {
+        "name": "FlClash",
+        "badge": "极简轻量",
+        "featured": false,
+        "core": "Mihomo 内核",
+        "features": "Flutter 跨平台现代化界面、内存占用极低、规则分流直观",
+        "bestFor": "追求轻简与流畅用户",
+        "os": "Windows / Linux / Android",
+        "downloadUrl": "https://github.com/chen08209/FlClash/releases"
+      },
+      {
+        "name": "Hiddify",
+        "badge": "全协议一键",
+        "featured": false,
+        "core": "sing-box 核心",
+        "features": "支持多协议自动选路、智能节点优选、免繁琐配置直接导入订阅",
+        "bestFor": "开箱即用新手",
+        "os": "Windows / Android / iOS / macOS",
+        "downloadUrl": "https://github.com/hiddify/hiddify-next/releases"
+      },
+      {
+        "name": "Karing",
+        "badge": "跨平台新星",
+        "featured": false,
+        "core": "sing-box 系内核",
+        "features": "多协议兼容、规则分流直观、跨平台统一交互体验",
+        "bestFor": "多设备同步用户",
+        "os": "Windows / macOS / iOS / Android",
+        "downloadUrl": "https://github.com/KaringX/karing/releases"
+      }
+    ]
+  },
+  {
+    "category": "Android 安卓客户端",
+    "id": "android",
+    "tagline": "安卓手机与电视盒子客户端，支持分应用代理、电量优化与极速节点切换",
+    "items": [
+      {
+        "name": "v2rayNG",
+        "badge": "装机必备",
+        "featured": true,
+        "core": "Xray 内核",
+        "features": "支持 VLESS / Shadowsocks / Trojan 等主流协议，订阅自动更新，应用白名单",
+        "bestFor": "最普及安卓代理软件",
+        "os": "Android 5.0+",
+        "downloadUrl": "https://github.com/2dust/v2rayNG/releases"
+      },
+      {
+        "name": "FlClash",
+        "badge": "高颜值推荐",
+        "featured": true,
+        "core": "Mihomo 内核",
+        "features": "Material 3 现代设计、无多余后台驻留、支持各种 Clash 订阅 YAML",
+        "bestFor": "审美要求高用户",
+        "os": "Android 8.0+",
+        "downloadUrl": "https://github.com/chen08209/FlClash/releases"
+      },
+      {
+        "name": "Clash Meta for Android (CMFA)",
+        "badge": "专业规则",
+        "featured": false,
+        "core": "Mihomo 内核",
+        "features": "支持 Sub-Rules 高级规则分流、自动健康检查测速",
+        "bestFor": "熟悉规则分流老手",
+        "os": "Android 7.0+",
+        "downloadUrl": "https://github.com/MetaCubeX/ClashMetaForAndroid/releases"
+      },
+      {
+        "name": "Hiddify Android",
+        "badge": "新手友好",
+        "featured": false,
+        "core": "sing-box 内核",
+        "features": "多协议自动识别、一键导入连接、极度省电",
+        "bestFor": "新手与极简用户",
+        "os": "Android 6.0+",
+        "downloadUrl": "https://github.com/hiddify/hiddify-next/releases"
+      }
+    ]
+  },
+  {
+    "category": "iOS / iPad 客户端 (苹果移动端)",
+    "id": "ios",
+    "tagline": "苹果 iPhone 与 iPad 专享客户端，需海外 Apple ID 登录 App Store 下载",
+    "items": [
+      {
+        "name": "Shadowrocket (小火箭)",
+        "badge": "国民神器",
+        "featured": true,
+        "core": "自研高性能核心",
+        "features": "扫码即连、支持 Shadowsocks / VLESS / Trojan / Snell、规则分流与流量监控",
+        "bestFor": "绝大多数苹果用户首选",
+        "os": "iOS / iPadOS 12.0+ (美区 $2.99)",
+        "downloadUrl": "https://apps.apple.com/us/app/shadowrocket/id932747118"
+      },
+      {
+        "name": "Stash",
+        "badge": "Clash for iOS",
+        "featured": true,
+        "core": "Clash 规则引擎",
+        "features": "完整支持 Clash 配置文件语法、覆写功能、分流策略组与仪表盘",
+        "bestFor": "深度 Clash 依赖用户",
+        "os": "iOS / iPadOS / tvOS (美区 $3.99)",
+        "downloadUrl": "https://apps.apple.com/us/app/stash-rule-based-proxy/id1596063349"
+      },
+      {
+        "name": "Quantumult X (圈 X)",
+        "badge": "全能旗舰",
+        "featured": false,
+        "core": "自研高级核心",
+        "features": "强大的网络重写脚本、自定义 MITM、精细分流策略与极低耗电",
+        "bestFor": "进阶发烧友与脚本玩家",
+        "os": "iOS / iPadOS (美区 $7.99)",
+        "downloadUrl": "https://apps.apple.com/us/app/quantumult-x/id1443988612"
+      },
+      {
+        "name": "Surge 5",
+        "badge": "顶级调试",
+        "featured": false,
+        "core": "Surge Network Engine",
+        "features": "工业级网络抓包分析、企业网络策略管理、网关模式",
+        "bestFor": "开发者与网络工程师",
+        "os": "iOS / macOS",
+        "downloadUrl": "https://nssurge.com/"
+      }
+    ]
+  },
+  {
+    "category": "macOS 苹果电脑客户端",
+    "id": "macos",
+    "tagline": "苹果 Mac 电脑专属客户端，原生支持 Apple Silicon M1/M2/M3/M4 与 Intel 架构",
+    "items": [
+      {
+        "name": "Clash Verge Rev for Mac",
+        "badge": "Mac 首选推荐",
+        "featured": true,
+        "core": "Mihomo 内核",
+        "features": "完美适配 macOS 菜单栏、系统级代理与增强 TUN 模式、原生沉浸深色外观",
+        "bestFor": "Mac 全机型用户",
+        "os": "macOS 11.0+ (Universal)",
+        "downloadUrl": "https://github.com/clash-verge-rev/clash-verge-rev/releases"
+      },
+      {
+        "name": "FlClash for macOS",
+        "badge": "轻量优雅",
+        "featured": false,
+        "core": "Mihomo 内核",
+        "features": "极简设计、资源开销极小、配置切换流畅",
+        "bestFor": "轻度办公与极简主义者",
+        "os": "macOS 12.0+",
+        "downloadUrl": "https://github.com/chen08209/FlClash/releases"
+      },
+      {
+        "name": "v2rayU / v2rayN for Mac",
+        "badge": "经典实用",
+        "featured": false,
+        "core": "Xray 核心",
+        "features": "状态栏极简菜单、多订阅聚合、节点快速切换",
+        "bestFor": "熟悉 v2ray 体系用户",
+        "os": "macOS 10.15+",
+        "downloadUrl": "https://github.com/yanue/v2rayu/releases"
+      }
+    ]
+  }
+]

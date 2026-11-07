@@ -1,0 +1,1043 @@
+{
+  "meta": {
+    "title": "2026 机场代理客户端大全：Windows/安卓/iOS/Mac/Linux/OpenWrt官方下载与选型指南 - clashjichang.world",
+    "h1": "2026 机场代理客户端官方下载、内核对比与全平台配置大全",
+    "description": "2026 专著级代理客户端安全下载与选型手册：全面整理 Windows、Android、iOS/iPadOS、macOS、Linux 及 OpenWrt 软路由 6 大平台 30+ 款主流客户端（Clash Verge Rev、v2rayN、v2rayNG、FlClash、Shadowrocket、Stash、Hiddify、Karing、OpenClash、Nikki 等），提供 GitHub Releases 安装包架构对照、真假防毒校验及 42 家机场订阅兼容矩阵。",
+    "updatedAt": "2026-11-07",
+    "verifiedAt": "2026-11-07（GitHub Releases / App Store 核验） & 2026-10-19（42家机场兼容库）",
+    "author": "Clash机场评测实验室（客户端安全与跨平台测试组）",
+    "readingTime": "约 28 分钟深度阅读"
+  },
+  "directAnswer": {
+    "summary": "面对五花八门的代理软件名称与停更传闻，用户在搜索客户端下载时最核心的任务是“找到对应系统的正版无毒安装包、选对 CPU 架构后缀，并顺利导入机场订阅”。基于本站《2026 机场代理客户端大全》原始资料库与 42 家机场实测兼容验证，直接给出以下三条核心结论：",
+    "points": [
+      {
+        "label": "1. 六大操作系统与软路由“闭眼入”首选结论（2026 活跃维护版）",
+        "content": "原版 Clash for Windows (CFW) 与旧版 Clash Premium 内核早已于 2023 年底归档停更，切勿在搜索引擎点击任何带有广告标识的“Clash 中文官网”。2026 年各平台正规开源/官方首选如下：① Windows 电脑端首选【Clash Verge Rev】（基于 Mihomo 内核，支持中文、TUN 模式与规则分流）或【v2rayN】（Xray/sing-box 双核心，多协议管理极强）；② Android 安卓端首选【v2rayNG】（装机量最大、极稳）或【FlClash】（Material 3 现代界面、支持 Clash YAML）；③ iPhone / iPad 端首选美区 App Store 付费购买的【Shadowrocket（小火箭，$2.99）】或【Stash（$3.99）】，零预算用户可选免费的【Karing】或【Streisand】；④ macOS 苹果电脑端首选【Clash Verge Rev】或【FlClash】（务必区分 Apple Silicon M系列芯片 arm64 与 Intel x64 安装包）；⑤ Linux 桌面端首选【FlClash】或【Clash Verge Rev】，无桌面服务器首选 Web 端管理的【v2rayA】；⑥ OpenWrt 软路由首选【OpenClash】、【PassWall2】或要求 OpenWrt 24.10+ 的新锐插件【Nikki】。"
+      },
+      {
+        "label": "2. “第三方通用客户端”与“机场专属客户端”兼容边界结论",
+        "content": "市面上所有机场代理工具严格分为两大阵营：第一类是本页重点收录的【第三方通用客户端】（如 Clash Verge Rev、v2rayN、Shadowrocket、FlClash、Hiddify、Karing、Clash Mi 等），它们本身不包含任何节点，需要您先购买支持通用订阅的机场（如本站 TOP 1 光速云、暮光加速、微风网络、大佬云、星岛梦、二猫云、唯兔云、U1S1、极连云、光年梯、一翻云、可信云、速界、梯子云等），复制订阅 URL 导入后即可自由切换节点并自定义分流规则；第二类是【机场自研专属客户端】（如飞猫云、无忧链接、Firefly、灵猫网络、SOGO云、闪跃、全球云、隐形人），这类服务商出于防止订阅链接被爬虫抓取封堵及降低新手售后门槛的考量，只允许下载其官网提供的定制软件凭账号密码登录，不提供明文 Clash/小火箭订阅链接，因此无法导入本页的第三方客户端或软路由。"
+      },
+      {
+        "label": "3. 关键安全警示与项目维护状态核查结论",
+        "content": "下载与安装过程中有三条关乎设备与资金安全的红线：第一，桌面与安卓开源软件只认准官方 GitHub Releases 页面下载，严禁安装来路不明的网盘修改版（曾多次发生篡改剪贴板盗取加密货币钱包地址的恶性事件）；第二，针对安卓端【NekoBox for Android】，其官方 GitHub 仓库已明确提示当前维护资源有限，并严厉警告用户“绝对不要下载 Google Play 商店中同名但已被第三方不明主体控制的 NekoBox 版本”；第三，针对桌面端【Mihomo Party】，由于项目维护状态曾出现波动，仅建议用于历史教程参考或旧配置迁移，新装机用户应优先选择社区持续高频迭代的 Clash Verge Rev、FlClash、v2rayN、Hiddify 或 Karing。"
+      }
+    ],
+    "quickNav": [
+      {
+        "text": "💻 Windows 客户端 (8款)",
+        "href": "#windows"
+      },
+      {
+        "text": "🤖 Android 安卓端 (8款)",
+        "href": "#android"
+      },
+      {
+        "text": "📱 iPhone / iPad 端 (11款)",
+        "href": "#ios"
+      },
+      {
+        "text": "🍎 macOS 苹果电脑 (9款)",
+        "href": "#macos"
+      },
+      {
+        "text": "🐧 Linux 桌面与服务器 (9款)",
+        "href": "#linux"
+      },
+      {
+        "text": "📡 OpenWrt 软路由 (5款)",
+        "href": "#openwrt"
+      },
+      {
+        "text": "📊 26款客户端横向总表",
+        "href": "#master-comparison-table"
+      },
+      {
+        "text": "📦 安装包后缀精准匹配表",
+        "href": "#arch-package-guide"
+      }
+    ]
+  },
+  "toc": [
+    {
+      "id": "direct-answer",
+      "title": "核心结论与平台速查"
+    },
+    {
+      "id": "master-comparison-table",
+      "title": "表1：全平台主流客户端总表"
+    },
+    {
+      "id": "arch-package-guide",
+      "title": "表2：安装包架构后缀匹配指南"
+    },
+    {
+      "id": "windows",
+      "title": "一、Windows 电脑客户端详解"
+    },
+    {
+      "id": "android",
+      "title": "二、Android 安卓客户端详解"
+    },
+    {
+      "id": "ios",
+      "title": "三、iPhone / iPad 客户端详解"
+    },
+    {
+      "id": "macos",
+      "title": "四、macOS 苹果电脑客户端详解"
+    },
+    {
+      "id": "linux",
+      "title": "五、Linux 桌面与服务器客户端"
+    },
+    {
+      "id": "openwrt",
+      "title": "六、OpenWrt / 软路由透明代理"
+    },
+    {
+      "id": "core-comparison",
+      "title": "七、底层内核与订阅兼容原理"
+    },
+    {
+      "id": "setup-and-security",
+      "title": "八、防毒校验与订阅导入实操"
+    },
+    {
+      "id": "decision-path",
+      "title": "九、按设备与人群选型决策树"
+    },
+    {
+      "id": "recommended-entries",
+      "title": "十、兼容订阅机场与工具入口"
+    },
+    {
+      "id": "faq",
+      "title": "十一、客户端常见报错与 FAQ"
+    },
+    {
+      "id": "data-sources",
+      "title": "十二、资料来源与待核实说明"
+    }
+  ],
+  "masterComparisonTable": {
+    "caption": "表 1：2026 全平台 22 款代表性代理客户端底层内核、支持协议、收费模式与维护状态核验总表（核实时间：2026-11-07）",
+    "headers": [
+      "客户端名称",
+      "支持操作系统",
+      "底层代理内核",
+      "核心协议支持",
+      "配置与订阅格式",
+      "收费模式与分发渠道",
+      "维护状态与推荐等级",
+      "适用人群与核心定位"
+    ],
+    "rows": [
+      {
+        "name": "Clash Verge Rev",
+        "os": "Windows / macOS / Linux",
+        "core": "Mihomo (Clash.Meta)",
+        "proto": "VLESS (Reality) / SS (2022) / Trojan / VMess / Hysteria 2 / Tuic",
+        "format": "Clash YAML 订阅、Sub-Store 链接、Merge/Script 覆写",
+        "price": "免费开源 (GitHub Releases)",
+        "status": "★★★★★ 极活跃（桌面端首选）",
+        "target": "Windows/Mac/Linux 新手与进阶用户主力首选，取代停更的旧版 CFW"
+      },
+      {
+        "name": "v2rayN",
+        "os": "Windows / macOS / Linux",
+        "core": "Xray-core / sing-box / Mihomo 多核心切换",
+        "proto": "VLESS / VMess / Trojan / SS / Hysteria 2 / Socks / HTTP",
+        "format": "通用 Base64 订阅、单节点分享链接、二维码、自定义 JSON",
+        "price": "免费开源 (GitHub Releases)",
+        "status": "★★★★★ 极活跃（多协议全能）",
+        "target": "手握多种不同协议节点、需要批量单节点真连接测速与精细路由的技术用户"
+      },
+      {
+        "name": "FlClash",
+        "os": "Windows / macOS / Android / Linux",
+        "core": "Mihomo (Clash.Meta)",
+        "proto": "VLESS / SS / Trojan / VMess / Hysteria 2 等全系 Mihomo 协议",
+        "format": "标准 Clash YAML 订阅与配置同步",
+        "price": "免费开源 (GitHub Releases)",
+        "status": "★★★★★ 活跃（跨平台轻量标杆）",
+        "target": "追求电脑与安卓手机界面完全统一、低内存占用与 Material 3 现代审美的用户"
+      },
+      {
+        "name": "Clash Nyanpasu",
+        "os": "Windows / macOS / Linux",
+        "core": "支持 Mihomo / Clash Premium / Clash Rust 多内核",
+        "proto": "视所选内核支持 VLESS / SS / Trojan / Hysteria 2",
+        "format": "Clash YAML 订阅、增强型脚本与配置链管理",
+        "price": "免费开源 (GitHub Releases)",
+        "status": "★★★★☆ 活跃（极客配置增强）",
+        "target": "喜欢现代化动画 UI、需要在不同 Clash 内核间切换测试的桌面进阶玩家"
+      },
+      {
+        "name": "Hiddify",
+        "os": "Windows / Android / iOS / macOS / Linux",
+        "core": "sing-box 核心",
+        "proto": "VLESS (Reality) / Hysteria 2 / Trojan / SS / VMess / Warp",
+        "format": "sing-box 配置、Clash 订阅、通用 Base64 节点链接",
+        "price": "免费开源 (GitHub / 商店)",
+        "status": "★★★★☆ 活跃（全平台傻瓜化）",
+        "target": "不想研究分流规则、希望全平台只需点击一个大圆按钮即可自动选路的新手"
+      },
+      {
+        "name": "Karing",
+        "os": "Windows / macOS / iOS / Android",
+        "core": "sing-box 定制增强核心",
+        "proto": "VLESS / Trojan / SS / VMess / Hysteria 2 / Tuic / WireGuard",
+        "format": "兼容 Clash / V2Ray / Stash / Shadowrocket 等多格式订阅聚合",
+        "price": "免费使用 (GitHub / 美区 App Store)",
+        "status": "★★★★☆ 活跃（跨平台新手友好）",
+        "target": "同时拥有多个机场订阅、或苹果 iOS 端不想花钱买小火箭的跨设备用户"
+      },
+      {
+        "name": "Clash Mi",
+        "os": "Windows / macOS / Android / iOS / Linux",
+        "core": "Mihomo 内核",
+        "proto": "VLESS / SS / Trojan / Hysteria 2 等 Mihomo 全协议",
+        "format": "原生 Clash YAML 配置文件与订阅管理",
+        "price": "免费 (GitHub / 美区 App Store)",
+        "status": "★★★★☆ 稳定（轻量化 Mihomo）",
+        "target": "习惯标准 Clash YAML 规则体系、需要在桌面与手机端保持一致配置逻辑的用户"
+      },
+      {
+        "name": "Mihomo Party",
+        "os": "Windows / macOS / Linux",
+        "core": "Mihomo 内核",
+        "proto": "VLESS / SS / Trojan / Hysteria 2",
+        "format": "Clash YAML 订阅与覆写管理",
+        "price": "免费开源 (GitHub)",
+        "status": "★★☆☆☆ 需关注维护状态（仅建议迁移参考）",
+        "target": "仅适合对照历史教程或迁移旧配置；新装机建议优先选 Clash Verge Rev 或 FlClash"
+      },
+      {
+        "name": "v2rayNG",
+        "os": "Android 安卓手机 / 电视盒子",
+        "core": "Xray-core",
+        "proto": "VLESS (Reality/XTLS) / VMess / Shadowsocks / Trojan / Socks",
+        "format": "通用订阅 URL、单节点剪贴板导入、二维码扫描",
+        "price": "免费开源 (GitHub Releases)",
+        "status": "★★★★★ 极活跃（安卓装机量第一）",
+        "target": "所有安卓手机、平板与 Android TV 用户的首选装机必备工具，支持分应用代理"
+      },
+      {
+        "name": "Clash Meta for Android (CMFA)",
+        "os": "Android 安卓端",
+        "core": "Mihomo (Clash.Meta)",
+        "proto": "VLESS / SS / Trojan / Hysteria 2 / VMess",
+        "format": "标准 Clash YAML 订阅与规则集 (Rule Providers)",
+        "price": "免费开源 (GitHub Archive/Releases)",
+        "status": "★★★☆☆ 存量维护（经典规则端）",
+        "target": "熟悉原版 Clash for Android (CFA) 交互界面、依赖复杂 YAML 策略组的老手"
+      },
+      {
+        "name": "sing-box 官方端 (SFA / SFI / SFM)",
+        "os": "Android (SFA) / iOS (SFI) / macOS (SFM)",
+        "core": "官方原生 sing-box 核心",
+        "proto": "VLESS / Hysteria 2 / Trojan / SS 2022 / Tuic / ShadowTLS",
+        "format": "原生 sing-box JSON 配置文件（不直接解析普通 Clash YAML）",
+        "price": "免费开源 (GitHub / App Store)",
+        "status": "★★★★★ 极活跃（官方基准内核）",
+        "target": "使用提供原生 sing-box 订阅的机场（如光速云等支持 sing-box 客户端）或自建极客"
+      },
+      {
+        "name": "NekoBox for Android",
+        "os": "Android 安卓端",
+        "core": "sing-box 核心",
+        "proto": "VLESS / VMess / Trojan / SS / Hysteria / NaiveProxy",
+        "format": "通用订阅与多协议插件扩展",
+        "price": "免费开源 (仅限 GitHub)",
+        "status": "★★☆☆☆ 维护资源受限（严禁下 Google Play 版）",
+        "target": "仅限有基础的老用户从官方 GitHub 获取；切勿安装已被第三方控制的 Play 商店同名版"
+      },
+      {
+        "name": "Shadowrocket (小火箭)",
+        "os": "iOS / iPadOS (支持 Apple Silicon Mac 运行)",
+        "core": "自研高性能全协议代理引擎",
+        "proto": "Shadowsocks / VLESS (Reality) / Trojan / VMess / Hysteria 2 / Tuic / Snell",
+        "format": "全格式通吃（通用订阅、Clash YAML、单节点链接、扫码即连）",
+        "price": "美区 App Store 买断制 ($2.99)",
+        "status": "★★★★★ 极活跃（苹果端国民级神器）",
+        "target": "95% 苹果 iPhone 与 iPad 用户的绝对首选，兼容性冠绝全网，一次购买终身更新"
+      },
+      {
+        "name": "Stash (Clash for iOS)",
+        "os": "iOS / iPadOS / tvOS (Apple TV)",
+        "core": "全面兼容 Mihomo/Clash 规则引擎",
+        "proto": "VLESS / SS / Trojan / VMess / Hysteria 2 / Snell",
+        "format": "原生 Clash YAML 配置文件、Override 覆写、JavaScript 脚本",
+        "price": "美区 App Store 买断制 ($3.99)",
+        "status": "★★★★★ 活跃（iOS 端最佳 Clash）",
+        "target": "希望在 iPhone、iPad 和 Apple TV 电视盒子上直接复用桌面端 Clash YAML 分流策略的用户"
+      },
+      {
+        "name": "Quantumult X (圈 X)",
+        "os": "iOS / iPadOS / tvOS",
+        "core": "自研高性能网络重写与分流核心",
+        "proto": "Shadowsocks / Trojan / VMess / VLESS (部分特性需核对版本) / HTTP",
+        "format": "圈 X 专用配置、Task 定时脚本、MITM 重写规则",
+        "price": "美区 App Store 买断制 ($7.99)",
+        "status": "★★★★☆ 稳定（脚本与重写旗舰）",
+        "target": "需要配合重写脚本解锁特定 App 功能（如免拔卡 TikTok 辅助、去广告）的苹果进阶玩家"
+      },
+      {
+        "name": "Surge 5 (iOS & Mac)",
+        "os": "iOS / iPadOS / macOS",
+        "core": "Surge Network Engine (商业级网络引擎)",
+        "proto": "SS / Trojan / VMess / Snell / WireGuard / Hysteria 2 / Tuic",
+        "format": "Surge 专用 `.conf` Profile、Module 模块、网关透明代理",
+        "price": "商业买断 + 订阅升级制 ($49.99–$199.99)",
+        "status": "★★★★★ 极活跃（工业级调试天花板）",
+        "target": "专业网络工程师、iOS/macOS 开发者与预算充裕追求极致抓包调试体验的发烧友"
+      },
+      {
+        "name": "Streisand / Potatso / OneClick",
+        "os": "iOS / iPadOS",
+        "core": "多协议轻量代理核心",
+        "proto": "Streisand 支持 VLESS/Hysteria；Potatso/OneClick 主打 SS/VMess/Trojan",
+        "format": "通用订阅链接与二维码导入",
+        "price": "海外 App Store 免费或低门槛提供",
+        "status": "★★★☆☆ 实用（苹果端免费备选）",
+        "target": "拥有海外 Apple ID 但暂时无法绑定美区付款方式购买小火箭的应急/轻量苹果用户"
+      },
+      {
+        "name": "v2rayA",
+        "os": "Linux (桌面 / 无头服务器 / NAS / 部分软路由)",
+        "core": "Xray-core / v2ray-core",
+        "proto": "VLESS / VMess / Shadowsocks / Trojan / Tuic",
+        "format": "浏览器访问本地 `:2017` 端口 Web 图形界面管理订阅与透明代理",
+        "price": "免费开源 (GitHub / Linux 软件源)",
+        "status": "★★★★★ 活跃（Linux 服务器神器）",
+        "target": "在 Ubuntu/Debian 服务器、群晖/飞牛 NAS 或无桌面 Linux 开发机上部署全局透明代理"
+      },
+      {
+        "name": "OpenClash",
+        "os": "OpenWrt 软路由 / 旁路由",
+        "core": "Mihomo (Clash.Meta) 内核",
+        "proto": "VLESS / SS / Trojan / Hysteria 2 / VMess 等全协议",
+        "format": "Clash YAML 订阅、第三方规则集转换、Fake-IP / Redir-Host 透明网桥",
+        "price": "免费开源 (GitHub `.ipk` / `.apk`)",
+        "status": "★★★★★ 极活跃（软路由装机量第一）",
+        "target": "需要在家庭软路由上实现全屋设备（含 PS5/Switch/智能电视）免安装客户端自动科学上网的玩家"
+      },
+      {
+        "name": "PassWall2 / PassWall",
+        "os": "OpenWrt 软路由",
+        "core": "Xray-core / sing-box 多核心自由组合",
+        "proto": "VLESS (Reality) / SS / Trojan / Hysteria 2 / VMess",
+        "format": "通用节点订阅、按局域网设备 IP/MAC 独立分流控制",
+        "price": "免费开源 (GitHub)",
+        "status": "★★★★★ 活跃（多协议分流利器）",
+        "target": "不喜欢 Clash 固定 YAML 模板、希望在软路由上把 TCP 与 UDP 分别指定给不同节点的玩家"
+      },
+      {
+        "name": "Nikki / HomeProxy",
+        "os": "OpenWrt 新一代固件 (Nikki 需 OpenWrt 24.10+)",
+        "core": "Nikki 基于 Mihomo；HomeProxy 基于 sing-box",
+        "proto": "VLESS / SS 2022 / Hysteria 2 / Trojan 全现代协议",
+        "format": "原生适配 OpenWrt `fw4` (nftables) 防火墙的轻量配置",
+        "price": "免费开源 (GitHub / ImmortalWrt 源)",
+        "status": "★★★★★ 新锐主力（现代内核首选）",
+        "target": "运行 OpenWrt 23.05 / 24.10+ 新版固件、追求极致简洁与原生 `nftables` 高性能转发的用户"
+      }
+    ]
+  },
+  "archInstallTable": {
+    "caption": "表 2：GitHub Releases 安装包文件名后缀与设备 CPU 架构精准匹配指南（防下错安装报错）",
+    "headers": [
+      "操作系统平台",
+      "您的设备硬件类型",
+      "如何查看本机架构",
+      "应下载的安装包后缀名 / 关键字",
+      "切勿下错的常见混淆项",
+      "安装后首次运行排障提示"
+    ],
+    "rows": [
+      {
+        "platform": "Windows 10 / 11",
+        "hardware": "99% 的 Intel 酷睿 / AMD 锐龙台式机与笔记本",
+        "checkCmd": "设置 → 系统 → 系统信息 → 查看“64位操作系统，基于 x64 的处理器”",
+        "correctSuffix": "`x64-setup.exe` 或 `windows-amd64.zip`",
+        "wrongSuffix": "勿下 `arm64`（普通电脑无法运行）或 `ia32/x86`（仅老旧32位系统用）",
+        "tip": "优先下载带 `setup.exe` 的安装版以自动注册 TUN 网卡驱动；若提示缺少 WebView2，从微软官网补装即可"
+      },
+      {
+        "platform": "Windows (ARM64)",
+        "hardware": "骁龙 X Elite / Surface Pro ARM 版 / 苹果 M 芯片 Parallels 虚拟机",
+        "checkCmd": "系统信息显示“基于 ARM 的处理器”",
+        "correctSuffix": "`arm64-setup.exe` 或 `windows-arm64.zip`",
+        "wrongSuffix": "若下 `x64` 版会导致虚拟网卡 TUN 服务驱动无法启动",
+        "tip": "在 Mac 的 PD 虚拟机中运行 Windows 时，务必下载 `arm64` 版本"
+      },
+      {
+        "platform": "macOS (苹果 M 芯片)",
+        "hardware": "2020 年底至今的 M1 / M2 / M3 / M4 芯片 MacBook Air/Pro、Mac mini、iMac",
+        "checkCmd": "点击左上角苹果图标  → 关于本机 → 芯片显示“Apple M1/M2/M3/M4”",
+        "correctSuffix": "`aarch64.dmg` 或 `arm64.dmg` 或 `universal.dmg`",
+        "wrongSuffix": "避免下载纯 `x64.dmg`（虽可通过 Rosetta 转译运行但耗电且影响 TUN 性能）",
+        "tip": "若弹窗提示“已损坏，无法打开”，在终端执行 `sudo xattr -r -d com.apple.quarantine /Applications/软件名.app`"
+      },
+      {
+        "platform": "macOS (旧款 Intel)",
+        "hardware": "2019 年及以前的 Intel 酷睿处理器旧款 Mac",
+        "checkCmd": "关于本机 → 处理器显示“Intel Core i5 / i7 / i9”",
+        "correctSuffix": "`x64.dmg` 或 `amd64.dmg` 或 `universal.dmg`",
+        "wrongSuffix": "绝对无法安装 `aarch64.dmg` / `arm64.dmg`（会直接提示不支持此 Mac）",
+        "tip": "首次开启系统代理或增强模式时，需在 macOS「系统设置 → 隐私与安全性」中点击允许网络扩展"
+      },
+      {
+        "platform": "Android 安卓手机/平板",
+        "hardware": "近 6 年内发布的所有主流安卓/鸿蒙手机（骁龙、天玑、麒麟）",
+        "checkCmd": "现代手机均为 64 位 ARM 架构",
+        "correctSuffix": "`arm64-v8a.apk` 或 `universal.apk`",
+        "wrongSuffix": "`armeabi-v7a.apk`（仅给十年前的老旧32位电视盒子用）、`x86_64.apk`（电脑安卓模拟器用）",
+        "tip": "下载 `arm64-v8a.apk` 体积最小且加解密效率最高；鸿蒙系统若拦截安装，先关闭“纯净模式”增强防护"
+      },
+      {
+        "platform": "Linux 桌面与服务器",
+        "hardware": "Ubuntu/Debian、Fedora/RHEL、Arch 或云服务器 VPS",
+        "checkCmd": "终端执行 `uname -m`（输出 `x86_64` 即 amd64；输出 `aarch64` 即 arm64）",
+        "correctSuffix": "Ubuntu/Debian 选 `amd64.deb`；RedHat 系选 `x86_64.rpm`；通用桌面选 `.AppImage`",
+        "wrongSuffix": "树莓派或甲骨文 ARM 云服务器需选 `arm64.deb`，切勿下成 `amd64`",
+        "tip": "无图形桌面的 Linux 服务器请直接安装 `v2rayA`，通过浏览器 `http://服务器IP:2017` 管理"
+      },
+      {
+        "platform": "OpenWrt 软路由",
+        "hardware": "x86 软路由工控机（J4125/N100）或 ARM 硬路由（MT7981/MT7986/IPQ）",
+        "checkCmd": "SSH 登录路由器执行 `opkg print-architecture` 查看具体指令集与 OpenWrt 版本",
+        "correctSuffix": "x86 软路由选 `x86_64`；MTK 红米/兆能路由选 `aarch64_cortex-a53`；OpenWrt 24.10+ 注意 `.apk` 包格式",
+        "wrongSuffix": "内核与架构不匹配会导致核心二进制文件提示 `Exec format error` 无法启动",
+        "tip": "安装前必须先确认固件是基于 `fw4 (nftables)` 还是旧版 `fw3 (iptables)`，Nikki 仅支持 OpenWrt 24.10+"
+      }
+    ]
+  },
+  "airportModeTable": {
+    "caption": "表 3：第三方通用订阅客户端 vs 机场自研专属客户端模式对比及本站 42 家代表品牌归属表（核实时间：2026-10-19）",
+    "headers": [
+      "客户端运作模式",
+      "连接与配置方式",
+      "支持自定义分流与软路由",
+      "防爬虫封堵与新手友好度",
+      "本站支持该模式的代表性机场品牌（点击名称可在下表或品牌库查看）"
+    ],
+    "rows": [
+      {
+        "mode": "模式 A：支持【第三方通用客户端】订阅导入（推荐主力）",
+        "method": "在机场后台一键复制 Clash / V2Ray / Shadowrocket 订阅 URL，粘贴至本页任意开源客户端即可拉取全部节点",
+        "custom": "完美支持（可在 Clash Verge Rev、Stash、OpenClash 软路由中自由编写 AI 策略组、Fake-IP 与广告拦截规则）",
+        "beginner": "需首次下载本页客户端并导入订阅（配合本站图文教程约 3 分钟搞定）",
+        "brands": "光速云 (TOP 1)、暮光加速 (TOP 2)、微风网络 (TOP 4)、大佬云 (TOP 5)、星岛梦 (TOP 6)、二猫云 (TOP 7)、唯兔云 (TOP 9)、宇宙云、U1S1、极连云、光年梯、一翻云、可信云、速界、梯子云、WgetCloud、白月光、FlyingBird、龙猫云、TNTCloud、青云梯、sslar 等 34 家"
+      },
+      {
+        "mode": "模式 B：仅限【机场官方自研专属客户端】（免配置封闭模式）",
+        "method": "无需寻找第三方软件，直接从机场官网下载定制版 Win/Mac/iOS/Android 客户端，输入注册邮箱与密码一键登录即连",
+        "custom": "不支持导入本页的 Clash Verge Rev、v2rayN 或 OpenWrt 软路由（SOGO云除外，其自研端宣称含软路由支持）",
+        "beginner": "极高（彻底免除复制订阅 URL、调校 DNS 与时间同步的烦恼，且隐藏了明文节点 IP 防同行爬虫举报）",
+        "brands": "飞猫云 (TOP 3)、无忧链接 (TOP 8)、Firefly (TOP 10)、灵猫网络 (TOP 13)、SOGO云 (TOP 17)、闪跃 (TOP 20)、全球云 (TOP 21)、隐形人 (TOP 27) 等 8 家（注：光速云、二猫云、极连云、光年梯、速界、梯子云同时提供“自研端 + 通用订阅”双模式）"
+      }
+    ]
+  },
+  "platforms": [
+    {
+      "id": "windows",
+      "badge": "PLATFORM 01 · WINDOWS DESKTOP",
+      "title": "一、Windows 电脑客户端深度选型与下载指南",
+      "searchIntentNote": "本节核心解决搜索词：Clash for Windows 替代品、Clash Verge Rev 下载、v2rayN 下载、Windows 机场客户端、电脑代理软件、Mihomo 客户端、VLESS Windows 客户端。",
+      "intro": "Windows 是跨国办公、AI 辅助编程（Cursor / GitHub Copilot / Claude Code）以及 4K 影音娱乐的主力生产力平台。自原版 Clash for Windows (CFW) 于 2023 年底停更后，Windows 桌面代理生态已经全面转向以 **Mihomo（原 Clash.Meta）**与 **sing-box / Xray** 为底层引擎的新一代开源图形客户端。由于旧版 CFW 完全不支持现今专线机场广泛采用的 `VLESS (Reality)`、`Hysteria 2` 以及 `Shadowsocks 2022` 协议，所有 Windows 10 / 11 用户均应立即升级至以下经核实的活跃项目。",
+      "items": [
+        {
+          "name": "Clash Verge Rev",
+          "badge": "Windows 首选推荐",
+          "core": "Mihomo (Clash.Meta) 内核",
+          "os": "Windows 10 / 11 (x64, ARM64)",
+          "downloadUrl": "https://github.com/clash-verge-rev/clash-verge-rev/releases",
+          "features": "原生中文界面、Tauri 2.0 极低内存占用、图形化订阅管理、Merge/Script 规则覆写、一键开启 Windows 服务模式 (Service Mode) 驱动 TUN 虚拟网卡。",
+          "bestFor": "90% 的 Windows 新手与进阶用户主力首选（完美替代旧版 CFW）",
+          "notes": "下载时普通电脑请认准 `Clash.Verge_x.x.x_x64-setup.exe`；首次开启 TUN 模式需在「设置 → 系统设置 → 服务模式」中点击小盾牌图标安装系统服务。"
+        },
+        {
+          "name": "v2rayN",
+          "badge": "多协议全能常青树",
+          "core": "Xray-core / sing-box / Mihomo 多核心",
+          "os": "Windows 7 / 10 / 11 (x64, ARM64)",
+          "downloadUrl": "https://github.com/2dust/v2rayN/releases",
+          "features": "全面支持 VLESS、VMess、Trojan、Shadowsocks、Hysteria 2、Tuic 等全部主流协议；支持对选中节点进行批量真连接延迟与下载速度测试；内置基于 sing-box 的 TUN 模式。",
+          "bestFor": "同时拥有多家不同协议机场订阅、需要直观查看单节点详细协议参数与批量测速的技术型用户",
+          "notes": "建议从 GitHub Releases 下载包含完整运行核心的 `v2rayN-windows-64-SelfContained.zip`（自带 .NET 运行时与核心文件，解压即用）。"
+        },
+        {
+          "name": "FlClash",
+          "badge": "极简跨平台高颜值",
+          "core": "Mihomo 内核",
+          "os": "Windows 10 / 11 (x64, ARM64)",
+          "downloadUrl": "https://github.com/chen08209/FlClash/releases",
+          "features": "基于 Flutter 构建的 Material You 现代化界面，与 Android/macOS 端操作逻辑 100% 一致；内置实时流量波形仪表盘、应用级分流与 WebDAV 跨设备配置同步。",
+          "bestFor": "追求轻巧流畅、希望在 Windows 电脑与安卓手机上使用完全相同软件界面的用户",
+          "notes": "普通电脑选择 `FlClash-x.x.x-windows-amd64-setup.exe`。"
+        },
+        {
+          "name": "Clash Nyanpasu",
+          "badge": "多内核配置增强",
+          "core": "Mihomo / Clash Premium / Clash Rust (rs)",
+          "os": "Windows 10 / 11 (x64, ARM64)",
+          "downloadUrl": "https://github.com/libnyanpasu/clash-nyanpasu/releases",
+          "features": "继承 Clash Verge 早期分支并深度重构 UI 动效，支持在设置中自由切换 Mihomo、原版 Premium 或 Rust 编写的 `clash-rs` 内核，提供强大的 JavaScript 与 Lua 预处理配置链。",
+          "bestFor": "喜欢高度自定义规则链、或需要在不同底层 Clash 内核之间切换对比性能的进阶极客",
+          "notes": "日常使用建议在内核设置中保持选中 `Mihomo` 核心以确保对 VLESS 与 Hysteria 2 的完整支持。"
+        },
+        {
+          "name": "Hiddify",
+          "badge": "全协议一键傻瓜化",
+          "core": "sing-box 核心",
+          "os": "Windows 10 / 11 (x64)",
+          "downloadUrl": "https://github.com/hiddify/hiddify-next/releases",
+          "features": "界面极度精简，导入订阅后主屏幕只有一个硕大的“点击连接”圆环按钮；底层基于 sing-box 自动完成节点健康检测与最优低延迟线路切换。",
+          "bestFor": "完全不想看节点列表、不想研究什么是策略组与 YAML 规则的纯新手用户",
+          "notes": "支持直接导入标准 Clash 订阅链接、sing-box 订阅以及通用 V2Ray 节点链接。"
+        },
+        {
+          "name": "Karing & Clash Mi",
+          "badge": "sing-box / Mihomo 双新星",
+          "core": "Karing (sing-box) / Clash Mi (Mihomo)",
+          "os": "Windows 10 / 11 (全平台同步)",
+          "downloadUrl": "https://github.com/KaringX/karing/releases",
+          "features": "同源团队维护的两款跨平台利器：Karing 依托 sing-box 核心主打新手向多订阅聚合与一键新手引导；Clash Mi 则专注于提供最纯粹轻量的 Mihomo YAML 跨平台体验。",
+          "bestFor": "拥有 Windows、Mac、iPhone、Android 全家桶设备，希望一套逻辑打通四端的用户",
+          "notes": "Clash Mi 官方仓库地址为 `github.com/KaringX/clashmi/releases`，可根据偏好二选一。"
+        }
+      ],
+      "extraWarning": "⚠️ **关于 Mihomo Party 的特别核验说明**：在部分历史教程中常提到 `Mihomo Party` 客户端。根据本站最新项目追踪，虽然 Clash Verge Rev、v2rayN、FlClash、Hiddify、Karing 和 Clash Mi 均拥有清晰活跃的跨平台维护记录，但 **Mihomo Party 的项目维护状态需单独关注，不宜未经核实就作为长期主力首选客户端**；若您正在从旧教程迁移，建议优先转入 [Clash Verge Rev](/blog/clash-verge-rev-setup-tutorial) 或 FlClash。"
+    },
+    {
+      "id": "android",
+      "badge": "PLATFORM 02 · ANDROID & HARMONYOS",
+      "title": "二、Android 安卓与鸿蒙手机客户端选型指南",
+      "searchIntentNote": "本节核心解决搜索词：v2rayNG 下载、FlClash 安卓版、Clash Meta for Android、安卓机场客户端、华为鸿蒙翻墙软件、NekoBox 安全警告。",
+      "intro": "安卓手机（含华为 HarmonyOS 兼容环境、小米澎湃 OS、OPPO、vivo 及三星等）对后台进程的电池管理较为激进，同时许多国产手机自带的浏览器与安全管家会拦截代理软件安装或抢答 DNS。因此在安卓端选型时，必须优先挑后台驻留稳定、耗电量低、支持**分应用代理（Per-App Proxy，即让微信、支付宝、高德地图直接绕过代理走国内直连）**以及具备全局 VPN (TUN) 接管能力的开源客户端。",
+      "items": [
+        {
+          "name": "v2rayNG",
+          "badge": "安卓装机量第一",
+          "core": "Xray-core",
+          "os": "Android 5.0+ / HarmonyOS (推荐 arm64-v8a)",
+          "downloadUrl": "https://github.com/2dust/v2rayNG/releases",
+          "features": "安卓生态最稳定、最省电的国民级代理软件。原生支持 VLESS (Reality)、Shadowsocks (AEAD 2022)、Trojan、VMess 等主流协议；支持剪贴板批量导入、二维码扫描、订阅自动更新与精细的「分应用代理」白名单/黑名单。",
+          "bestFor": "几乎所有安卓手机、平板与 Android TV 电视盒子用户的首选稳妥方案",
+          "notes": "进入 GitHub Releases 页面后，现代手机请直接下载文件名带有 `arm64-v8a.apk` 的安装包（体积仅约 30MB，切勿下载体积近 100MB 的 universal 全架构包）。"
+        },
+        {
+          "name": "FlClash (Android)",
+          "badge": "Material 3 现代首选",
+          "core": "Mihomo (Clash.Meta) 内核",
+          "os": "Android 8.0+",
+          "downloadUrl": "https://github.com/chen08209/FlClash/releases",
+          "features": "完美解决了原版 Clash for Android 停更后的空缺。采用原生 Android Material 3 动态取色设计，完整支持机场下发的 Clash YAML 分流策略组（如独立切换 AI 节点组、流媒体节点组），后台极度干净。",
+          "bestFor": "购买了光速云、微风网络、暮光加速等支持 Clash 订阅的机场，希望在手机上直接点选策略组的用户",
+          "notes": "下载时同样选择 `FlClash-x.x.x-android-arm64-v8a.apk`。"
+        },
+        {
+          "name": "Clash Meta for Android (CMFA)",
+          "badge": "经典规则界面",
+          "core": "Mihomo 内核",
+          "os": "Android 7.0+",
+          "downloadUrl": "https://github.com/MetaCubeX/ClashMetaForAndroid/releases",
+          "features": "完全延续了经典 Clash for Android (CFA) 的操作界面，将底层核心替换为支持 VLESS 与 Hysteria 2 的 Mihomo 内核，支持 Rule Providers 远程规则集自动更新。",
+          "bestFor": "已经高度习惯传统 CFA 界面布局、不愿适应新 UI 的安卓老玩家",
+          "notes": "目前 MetaCubeX 社区在移动端更推荐新用户尝试 FlClash 或 Clash Mi。"
+        },
+        {
+          "name": "Hiddify / Karing / Clash Mi (Android)",
+          "badge": "新手友好三剑客",
+          "core": "sing-box (Hiddify/Karing) / Mihomo (Clash Mi)",
+          "os": "Android 6.0+",
+          "downloadUrl": "https://github.com/hiddify/hiddify-next/releases",
+          "features": "Hiddify 与 Karing 基于 sing-box 内核，支持导入几乎所有格式的订阅链接并一键开启智能路由；Clash Mi 则提供极简的 Mihomo 跨平台体验。",
+          "bestFor": "觉得 v2rayNG 参数太多看不懂、想要一键导入即连的新手用户",
+          "notes": "在安卓系统设置中，建议将所使用的代理 App 电池策略设为“无限制（允许后台高耗电）”，防止锁屏后被系统杀后台断连。"
+        },
+        {
+          "name": "sing-box for Android (SFA)",
+          "badge": "官方原生内核端",
+          "core": "官方 sing-box 核心",
+          "os": "Android 8.0+",
+          "downloadUrl": "https://sing-box.sagernet.org/clients/android/",
+          "features": "由 sing-box 核心作者 SagerNet 官方维护的基准客户端，支持最新的协议特性与原生 JSON 路由规则，内存与电量控制极佳。",
+          "bestFor": "使用明确提供原生 sing-box 订阅格式的机场（如光速云支持 sing-box 导入）或进阶用户",
+          "notes": "注意：官方 SFA 客户端仅接收 sing-box 专用 JSON 配置，不支持直接粘贴普通 Clash YAML 订阅。"
+        }
+      ],
+      "extraWarning": "🚨 **关于 NekoBox for Android 的高危安全警告**：`NekoBox for Android` 曾是知名的 sing-box 系多协议安卓客户端，但**其官方 GitHub 项目已明确提示当前维护资源有限，并且特别发出严厉警告：绝对不要下载和使用 Google Play 商店中以 NekoBox 名义上架的版本（该商店条目已被不明第三方控制，存在安全风险）**！安卓栏目日常使用强烈建议优先选择 **v2rayNG、FlClash、Hiddify 或 Karing**。"
+    },
+    {
+      "id": "ios",
+      "badge": "PLATFORM 03 · IPHONE & IPAD (IOS / IPADOS)",
+      "title": "三、iPhone / iPad 客户端选型与海外 Apple ID 安全获取指南",
+      "searchIntentNote": "本节核心解决搜索词：Shadowrocket 小火箭下载、Stash 苹果版、Quantumult X 圈X、iOS 免费翻墙软件、美区 Apple ID 购买小火箭、Apple TV 代理客户端。",
+      "intro": "由于中国大陆区（国区）App Store 严格下架了所有具备跨境网络代理功能的应用程序，iPhone、iPad 以及 Apple TV 用户想要安装正版代理客户端，**唯一正规的前提是准备一个非中国大陆地区（推荐美国区 US 或香港区 HK）的 Apple ID**。在苹果生态中，得益于 iOS 系统级 `NetworkExtension`（网络扩展）API 的严格规范，各款客户端在后台省电与无缝切换 Wi-Fi/5G 方面的表现均极为出色。",
+      "items": [
+        {
+          "name": "Shadowrocket (小火箭)",
+          "badge": "iOS 国民级首选 ($2.99)",
+          "core": "自研全协议高性能引擎",
+          "os": "iOS / iPadOS 12.0+ (支持 M 芯片 Mac 兼容运行)",
+          "downloadUrl": "https://apps.apple.com/us/app/shadowrocket/id932747118",
+          "features": "苹果端装机量遥遥领先的标杆应用。通吃市面上 100% 的通用机场订阅（无论是 V2Ray Base64、Clash YAML 还是单节点二维码）；完整支持 Shadowsocks 2022、VLESS-Reality、Trojan、Hysteria 2、Tuic；内置连接延迟测试、按域名规则分流与 HTTPS 解密重写。",
+          "bestFor": "95% 的 iPhone 与 iPad 用户一步到位的终极首选",
+          "notes": "美区 App Store 买断制售价 $2.99（一次性付费，无内购订阅）；认准开发者名称为 `Shadow Launch Technology Limited`，谨防山寨同名免费假应用。"
+        },
+        {
+          "name": "Stash (Clash for iOS)",
+          "badge": "原生 Clash 生态 ($3.99)",
+          "core": "深度兼容 Mihomo / Clash 规则引擎",
+          "os": "iOS / iPadOS / tvOS (Apple TV) / macOS",
+          "downloadUrl": "https://apps.apple.com/us/app/stash-rule-based-proxy/id1596063349",
+          "features": "专为 Clash 重度用户打造的苹果端神器。无需任何订阅转换，直接原生解析机场提供的 Clash YAML 配置文件，完整保留「AI 节点组」、「Netflix 节点组」等图形化策略组卡片，并支持 Override 覆写与 Apple TV 电视端同步。",
+          "bestFor": "在电脑上习惯了 Clash Verge Rev 策略组逻辑、或拥有 Apple TV 需要在电视上看奈飞 4K 的苹果全家桶用户",
+          "notes": "美区 App Store 买断制售价 $3.99，一次购买同时解锁 iPhone、iPad 与 Apple TV 版本。"
+        },
+        {
+          "name": "Quantumult X (圈 X)",
+          "badge": "脚本与重写旗舰 ($7.99)",
+          "core": "自研高级分流与重写核心",
+          "os": "iOS / iPadOS / tvOS",
+          "downloadUrl": "https://apps.apple.com/us/app/quantumult-x/id1443988612",
+          "features": "拥有极其精致的 UI 设计与强大的 HTTP 请求重写（Rewrite）、MITM 及 JavaScript 自动化脚本生态，常用于配合社区脚本实现 App 去广告或特定区域解锁。",
+          "bestFor": "热衷于折腾自定义分流规则、重写脚本与抓包分析的 iOS 进阶发烧友",
+          "notes": "美区售价 $7.99；注意圈 X 对部分新型协议（如早期对 VLESS Reality 或 Hysteria 2）的支持节奏与小火箭存在差异，购买前请确认主力机场支持 Trojan 或 SS 协议。"
+        },
+        {
+          "name": "Surge 5",
+          "badge": "专业级网络调试工具",
+          "core": "Surge Network Engine",
+          "os": "iOS / iPadOS / macOS",
+          "downloadUrl": "https://apps.apple.com/us/app/surge-5/id1442620678",
+          "features": "苹果生态公认的网络工程天花板，提供毫秒级请求瀑布流抓包、Ponte 私有内网穿透、HTTP/3 深度控制与企业级网关策略。",
+          "bestFor": "专业开发者、网络工程师与不差钱的极客玩家",
+          "notes": "采用免费下载 + 高额功能内购订阅/买断机制（iOS 端 Pro 版约 $49.99），普通日常翻墙用户买 $2.99 的小火箭即可，无需盲目追高。"
+        },
+        {
+          "name": "Karing / Clash Mi / sing-box (SFI) / Hiddify",
+          "badge": "免费正版跨平台四选",
+          "core": "sing-box (Karing/SFI/Hiddify) / Mihomo (Clash Mi)",
+          "os": "iOS / iPadOS 15.0+",
+          "downloadUrl": "https://apps.apple.com/us/app/karing/id6472431552",
+          "features": "这四款应用在海外 App Store 均提供**完全免费且无广告**的正版下载！其中 Karing 支持直接导入 Clash 与通用订阅；Clash Mi 原生支持 Clash YAML；sing-box (SFI) 为官方基准核心。",
+          "bestFor": "拥有美区/港区免费注册的空账号、但没有海外信用卡或礼品卡购买付费小火箭的用户",
+          "notes": "对于零预算苹果用户，直接登录美区 App Store 免费下载 `Karing` 或 `Clash Mi` 是目前最安全、体验最好的方案。"
+        },
+        {
+          "name": "Streisand / Potatso / OneClick",
+          "badge": "轻量免费备选",
+          "core": "多协议轻量核心",
+          "os": "iOS / iPadOS",
+          "downloadUrl": "https://apps.apple.com/us/app/streisand/id6450534064",
+          "features": "Streisand 免费支持 VLESS (Reality)、VMess、Trojan、Hysteria 2 等现代协议；Potatso 与 OneClick 则适合导入传统的 Shadowsocks、VMess 与 Trojan 订阅链接。",
+          "bestFor": "作为小火箭之外的免费轻量备用工具",
+          "notes": "实际售价与上架状态以您登录的 App Store 所属国家/地区为准。"
+        }
+      ],
+      "extraWarning": "🔒 **iOS 用户防锁机生死铁律**：无论您使用的是借来的共享海外 Apple ID 还是购买的成品号，**只允许打开桌面上的蓝色「App Store」图标进行登录下载，绝对严禁在系统的「设置 (Settings) → 顶部 Apple 账户 / iCloud」中登录任何非本人注册的陌生 Apple ID**！一旦在系统设置中登录了不法分子的 iCloud 账号并开启查找我的 iPhone，手机会被远程锁定勒索赎金。"
+    },
+    {
+      "id": "macos",
+      "badge": "PLATFORM 04 · MACOS (APPLE SILICON & INTEL)",
+      "title": "四、macOS 苹果电脑客户端选型与 M 系列 / Intel 芯片适配指南",
+      "searchIntentNote": "本节核心解决搜索词：Mac 机场客户端、Clash Verge Rev Mac 版、ClashX Pro 替代品、Apple Silicon M1/M2/M3/M4 代理软件、macOS 提示软件已损坏无法打开解决。",
+      "intro": "与 Windows 端类似，早年在 Mac 用户中广为流传的 `ClashX` 与 `ClashX Pro` 早已停止维护，不仅无法识别现代专线的 `VLESS` 与 `Hysteria 2` 节点，在最新的 macOS Sequoia / Sonoma 系统上还常出现睡眠唤醒后断网的 Bug。在 macOS 平台上下载客户端时，**最关键的一步是分清您的 Mac 搭载的是苹果自研的 Apple Silicon（M1 / M2 / M3 / M4）芯片还是旧款 Intel 芯片**，从而选择正确的 `.dmg` 安装包架构。",
+      "items": [
+        {
+          "name": "Clash Verge Rev for macOS",
+          "badge": "Mac 主力首选",
+          "core": "Mihomo (Clash.Meta) 内核",
+          "os": "macOS 11.0+ (提供 aarch64 与 x64 独立安装包)",
+          "downloadUrl": "https://github.com/clash-verge-rev/clash-verge-rev/releases",
+          "features": "完美融合 macOS 顶部状态栏快捷菜单、原生深色毛玻璃外观、支持一键开启服务模式接管 Mac 全局 TUN 虚拟网卡，睡眠唤醒秒恢复连接。",
+          "bestFor": "所有 MacBook Air / Pro、Mac mini、Mac Studio 用户替代旧版 ClashX 的第一选择",
+          "notes": "M1/M2/M3/M4 芯片请下载 `Clash.Verge_x.x.x_aarch64.dmg`；旧款 Intel 芯片请下载 `Clash.Verge_x.x.x_x64.dmg`。"
+        },
+        {
+          "name": "FlClash / Clash Nyanpasu for macOS",
+          "badge": "现代轻量双雄",
+          "core": "Mihomo 内核 (Nyanpasu 支持多核心)",
+          "os": "macOS 12.0+ (arm64 / x64)",
+          "downloadUrl": "https://github.com/chen08209/FlClash/releases",
+          "features": "FlClash 提供极其丝滑的 Flutter 桌面体验与极低内存占用；Clash Nyanpasu 则提供丰富的配置链预处理与多内核切换能力。",
+          "bestFor": "追求高颜值现代化 UI 与多端体验统一的 Mac 用户",
+          "notes": "FlClash 在 Mac 下对应文件名为 `FlClash-x.x.x-macos-arm64.dmg`（M芯片）与 `amd64.dmg`（Intel芯片）。"
+        },
+        {
+          "name": "v2rayN / Hiddify / Karing / Clash Mi (macOS)",
+          "badge": "多协议与全平台同步",
+          "core": "Xray / sing-box / Mihomo",
+          "os": "macOS 11.0+",
+          "downloadUrl": "https://github.com/2dust/v2rayN/releases",
+          "features": "著名的 v2rayN 现已正式推出跨平台版本，支持在 macOS 上管理 Xray 与 sing-box 多核心；Hiddify、Karing 与 Clash Mi 则提供零门槛的订阅导入体验。",
+          "bestFor": "从 Windows 转向 Mac 的多协议用户或追求极简一键连接的新手",
+          "notes": "若您的 Mac 是 M1/M2/M3/M4 芯片，实际上也可以直接在 Mac App Store 登录美区账号下载运行 iOS 版的 **Shadowrocket（小火箭）** 或 **Stash**！"
+        },
+        {
+          "name": "Surge Mac 5 & sing-box for macOS (SFM)",
+          "badge": "网关级与官方基准",
+          "core": "Surge Engine / 原生 sing-box",
+          "os": "macOS 12.0+",
+          "downloadUrl": "https://nssurge.com/",
+          "features": "Surge Mac 支持将 Mac mini 变成家庭局域网的高性能旁路由网关（Gateway Mode）与 DHCP 服务器；SFM 则是 sing-box 官方在 Mac App Store 与 GitHub 发布的原生客户端。",
+          "bestFor": "使用 Mac mini 作为家庭 7×24 小时家庭服务器/软路由网关的进阶玩家",
+          "notes": "SFM 可直接从美区 Mac App Store 免费下载，或从 GitHub 下载独立 DMG 版本（解锁更多系统底层权限）。"
+        }
+      ],
+      "extraWarning": "🛠️ **macOS 提示“软件已损坏，无法打开”或“无法验证开发者”30秒解决办法**：由于 GitHub 开源软件作者通常未每年向苹果缴纳 $99 的商业开发者公证费，macOS Gatekeeper 会默认拦截首次打开。您只需将软件拖入 `应用程序 (Applications)` 文件夹后，打开系统自带的「终端 (Terminal)」，复制粘贴命令 `sudo xattr -r -d com.apple.quarantine /Applications/Clash\\ Verge.app`（把软件名替换为实际名称，或输入空格后直接把应用程序里的图标拖进终端窗口），回车并输入开机密码即可永久正常打开。"
+    },
+    {
+      "id": "linux",
+      "badge": "PLATFORM 05 · LINUX DESKTOP & HEADLESS SERVER",
+      "title": "五、Linux 桌面与无桌面服务器（Headless）客户端指南",
+      "searchIntentNote": "本节核心解决搜索词：Ubuntu 翻墙客户端、Linux Clash 下载、v2rayA 透明代理教程、Debian 服务器挂代理拉取 GitHub/Docker、AppImage 代理软件。",
+      "intro": "无论是日常使用 Ubuntu、Debian、Fedora、Arch Linux、Linux Mint 桌面发行版的开发者，还是在远程无图形界面的 Linux 主机、群晖/飞牛 NAS 或开发机上需要拉取 GitHub 源码、HuggingFace 大模型权重与 Docker 镜像的工程师，2026 年的 Linux 代理客户端都已经摆脱了“纯手敲命令行改配置文件”的繁琐阶段。选型时只需区分您的设备**“有没有图形桌面（GUI）”**即可。",
+      "items": [
+        {
+          "name": "v2rayA (Web UI 跨平台神器)",
+          "badge": "无桌面服务器 & Linux 首选",
+          "core": "Xray-core / v2ray-core",
+          "os": "Ubuntu / Debian / Arch / RedHat / Alpine / Docker (x64, arm64)",
+          "downloadUrl": "https://github.com/v2rayA/v2rayA/releases",
+          "features": "专为 Linux 打造的客户端天花板！它以系统后台服务（systemd daemon）形式运行，不依赖任何桌面环境；启动后只需在局域网任意电脑浏览器访问 `http://Linux主机IP:2017`，即可在清爽的 Web 网页中导入订阅、选择节点，并一键开启基于 `tproxy` 或 `redirect` 的系统全局透明代理。",
+          "bestFor": "所有无图形桌面的 Linux 服务器、远程开发主机、群晖/绿联/飞牛 NAS Docker 容器以及桌面 Linux 用户",
+          "notes": "支持通过官方 APT/YUM 软件源、Docker 镜像或直接下载 `.deb` / `.rpm` 二进制包安装。"
+        },
+        {
+          "name": "Clash Verge Rev / FlClash / Clash Nyanpasu (Linux)",
+          "badge": "Linux 图形桌面三主力",
+          "core": "Mihomo (Clash.Meta) 内核",
+          "os": "Ubuntu / Debian (`.deb`)、Fedora/RHEL (`.rpm`)、通用 (`.AppImage`)",
+          "downloadUrl": "https://github.com/clash-verge-rev/clash-verge-rev/releases",
+          "features": "三款桌面主力客户端均同步提供原生 Linux 构建版本，支持系统托盘图标、Clash YAML 策略组切换与 Linux `tun` 虚拟网卡全局接管。",
+          "bestFor": "使用 Ubuntu Desktop、Linux Mint、Deepin、Fedora 等带 GNOME / KDE 桌面环境的个人电脑用户",
+          "notes": "下载时请根据发行版选择：Ubuntu/Debian 系选 `amd64.deb`（用 `sudo dpkg -i` 安装）；Fedora/CentOS 系选 `x86_64.rpm`；若遇依赖冲突可直接使用免安装的 `.AppImage`（赋予 `chmod +x` 权限即可运行）。"
+        },
+        {
+          "name": "v2rayN / Hiddify / Karing / Clash Mi / sing-box (Linux)",
+          "badge": "多协议桌面扩展",
+          "core": "Xray / sing-box / Mihomo",
+          "os": "Linux x86_64 / aarch64",
+          "downloadUrl": "https://github.com/2dust/v2rayN/releases",
+          "features": "v2rayN 自 7.x 版本起通过 Avalonia UI 正式支持 Linux 桌面（提供 `.deb` 与 `.AppImage` 包）；Hiddify、Karing 与 Clash Mi 同样提供跨平台 Linux 安装包；sing-box 则可通过官方 APT/DNF 源直接作为 systemd 守护进程运行。",
+          "bestFor": "习惯 Windows 端 v2rayN 操作界面、并迁移至 Linux 桌面工作的开发者",
+          "notes": "在树莓派（Raspberry Pi）或 ARM 架构 Linux 开发板上，请务必下载带有 `arm64` 或 `aarch64` 标识的安装包。"
+        }
+      ],
+      "extraWarning": "💡 **Linux 终端命令行代理环境变量小贴士**：如果您在 Linux 桌面只开启了客户端的「系统代理（HTTP 端口如 7897）」，GNOME/KDE 浏览器会自动走代理，但终端里的 `curl`、`wget`、`git` 默认不会读取桌面代理。此时要么在客户端中直接开启 **TUN 虚拟网卡模式**，要么在终端执行 `export https_proxy=http://127.0.0.1:7897 http_proxy=http://127.0.0.1:7897 all_proxy=socks5://127.0.0.1:7897`。"
+    },
+    {
+      "id": "openwrt",
+      "badge": "PLATFORM 06 · OPENWRT & TRANSPARENT GATEWAY",
+      "title": "六、OpenWrt / 软路由透明代理客户端选型与前置依赖核查",
+      "searchIntentNote": "本节核心解决搜索词：OpenClash 安装、PassWall2 教程、Nikki OpenWrt 24.10、HomeProxy 配置、软路由透明代理机场推荐、旁路由科学上网。",
+      "intro": "当家里拥有多台手机、电脑、iPad、Apple TV、索尼 PS5、任天堂 Switch 甚至智能电视时，在每台设备上分别安装客户端不仅繁琐，而且游戏主机根本不支持安装代理 App。通过在 x86 工控机（如 N100/J4125）或刷了 OpenWrt / ImmortalWrt 固件的路由器上部署**透明代理客户端**，即可让连入家庭 Wi-Fi 的所有设备“零配置”自动实现国内外精准分流与流媒体解锁。**注意：只有支持“通用订阅链接”的机场（如光速云、暮光加速、微风网络、星岛梦、二猫云、唯兔云、一翻云等）才能导入软路由**，仅限专属客户端的机场无法在路由器上使用。",
+      "items": [
+        {
+          "name": "OpenClash",
+          "badge": "软路由装机量第一",
+          "core": "Mihomo (Clash.Meta) 内核",
+          "os": "OpenWrt / ImmortalWrt / 华硕官改 / LEDE",
+          "downloadUrl": "https://github.com/vernesong/OpenClash/releases",
+          "features": "软路由界功能最强大、生态最完善的图形化 LuCI 插件。完整支持 Mihomo 内核的所有现代协议（VLESS Reality、Hysteria 2、SS 2022），内置 Fake-IP 增强模式、第三方规则集覆写、按局域网设备 MAC 地址绕过代理以及大陆白名单自动更新。",
+          "bestFor": "绝大多数 x86 软路由与大内存 ARM 硬路由用户的首选主力插件",
+          "notes": "安装 `.ipk` 主程序后，需在插件设置中下载对应的 `Meta (Mihomo)` 内核二进制文件（根据路由器 CPU 架构选择 `linux-amd64` 或 `linux-arm64`）。"
+        },
+        {
+          "name": "PassWall2 / PassWall",
+          "badge": "多节点独立分流利器",
+          "core": "Xray-core / sing-box / Mihomo 组合",
+          "os": "OpenWrt / ImmortalWrt",
+          "downloadUrl": "https://github.com/xiaorouji/openwrt-passwall2/releases",
+          "features": "不同于 OpenClash 依赖整份 YAML 配置文件，PassWall2 允许用户将订阅中的所有节点拉平管理，并在界面上直观地将「AI 分流」指定给日本节点、将「Netflix」指定给新加坡节点、将「日常网页」指定给香港节点，且支持 TCP 与 UDP 走不同节点。",
+          "bestFor": "手握多家机场订阅、喜欢在路由器后台自由拼装不同节点分流规则的软路由玩家",
+          "notes": "PassWall2 默认采用基于 Xray/sing-box 的原生分流引擎，配置比初代 PassWall 更加清晰。"
+        },
+        {
+          "name": "Nikki (原 OpenWrt-Mihomo)",
+          "badge": "OpenWrt 24.10+ 现代新锐",
+          "core": "Mihomo 内核 (原生 nftables)",
+          "os": "OpenWrt 24.10 及以上版本 (fw4 防火墙)",
+          "downloadUrl": "https://github.com/nikkinikki-org/OpenWrt-nikki/releases",
+          "features": "专为新一代 OpenWrt 固件打造的现代化轻量级 Mihomo 透明代理插件。抛弃了老旧沉重的歷史兼容包袱，100% 原生基于 `fw4 (nftables)` 构建透明转发规则，界面极度清爽，运行效率与稳定性极高。",
+          "bestFor": "已升级至 OpenWrt 24.10+ 或最新 ImmortalWrt 固件、嫌弃 OpenClash 选项过于繁杂的新一代软路由用户",
+          "notes": "⚠️ 硬性前置条件：**Nikki 项目明确要求路由器固件必须为 OpenWrt 24.10 及以上版本**，旧版 21.02/22.03 固件请勿强行安装。"
+        },
+        {
+          "name": "HomeProxy",
+          "badge": "ImmortalWrt 官方 sing-box",
+          "core": "sing-box 核心",
+          "os": "OpenWrt 23.05 / 24.10+ / ImmortalWrt",
+          "downloadUrl": "https://github.com/immortalwrt/homeproxy",
+          "features": "由 ImmortalWrt 社区官方维护的新一代 sing-box 路由代理插件，深度集成于新版 LuCI 界面，资源消耗极低，适合性能有限的百元级 ARM 无线路由器。",
+          "bestFor": "使用 ImmortalWrt 固件且偏爱 sing-box 内核的路由器玩家",
+          "notes": "同样要求固件使用 `fw4 (nftables)` 防火墙体系。"
+        }
+      ],
+      "extraWarning": "🔧 **软路由安装前的 4 项必检工程清单**：路由器环境与 Windows/Android 截然不同，动手安装插件前必须通过 SSH 终端确认：1. **OpenWrt 主版本号**（如 21.02、23.05 还是 24.10+，决定包管理器是传统的 `opkg` 还是全新的 `apk`）；2. **CPU 指令集架构**（`x86_64`、`aarch64_cortex-a53` 还是 `mipsel`）；3. **防火墙框架**（是新版 `fw4 / nftables` 还是旧版 `fw3 / iptables`，切勿混装）；4. **闪存可用空间（`/overlay`）**（Mihomo 与 Xray 核心解压后需占 20MB–40MB 空间，小闪存硬路由需先扩容或挂载 U 盘）。"
+    }
+  ],
+  "coreTechChapter": {
+    "id": "core-comparison",
+    "badge": "CHAPTER 07 · KERNEL & SUBSCRIPTION PRINCIPLES",
+    "title": "七、底层代理内核原理：Mihomo、Xray 与 sing-box 究竟有什么区别？",
+    "intro": "为什么本页列出了二三十款名字各异的客户端，但它们的“运行核心”一栏翻来覆去只有 **Mihomo (Clash.Meta)**、**Xray-core** 和 **sing-box** 这三个名字？理解“图形外壳（GUI）”与“底层内核（Core）”的分离架构，能帮您在遇到订阅导入失败或协议不兼容时瞬间定位病因。",
+    "subsections": [
+      {
+        "id": "kernel-gui-separation",
+        "title": "7.1 图形外壳（GUI）与代理内核（Core）的分工机制",
+        "paragraphs": [
+          "在现代开源代理工具链中，几乎所有软件都遵循“前后端分离”设计：您在电脑或手机屏幕上看到的窗口、按钮、主题颜色与订阅列表属于**图形外壳（GUI 客户端）**；而真正负责在后台与机场国内 BGP 入口建立加密握手、执行 `VLESS` / `Shadowsocks` 加解密、拦截系统 DNS 请求以及创建 TUN 虚拟网卡的，是一个没有界面的命令行可执行文件——即**代理内核（Core）**。",
+          "这就解释了为什么 **Clash Verge Rev、FlClash、Clash Nyanpasu、Clash Mi 和软路由上的 OpenClash、Nikki** 虽然长相完全不同，但导入同一份机场订阅后的节点支持度与分流效果却完全一致——因为它们底层调用的全都是同一个 **Mihomo 内核**。同理，**Hiddify 与 Karing** 底层调用的是 **sing-box 内核**；而 **v2rayNG 与 v2rayA** 默认调用的则是 **Xray-core**。"
+        ]
+      },
+      {
+        "id": "kernel-three-giants",
+        "title": "7.2 三大开源内核（Mihomo vs Xray vs sing-box）的选型边界",
+        "paragraphs": [
+          "**1. Mihomo 内核（原名 Clash.Meta，当前社区绝对主力）：** 它是原版 Clash 闭源内核停更后，由开源社区全面接力重构的规则分流王者。其最大优势在于**完美的 YAML 策略组生态**——机场主可以在下发的订阅文件中预先写好「自动优选」、「AI 专线（ChatGPT/Claude）」、「Netflix 4K」、「国内直连」等数十个策略组，用户导入后无需自己写一行代码，就能享受到极其精准的国内外自动分流与 Fake-IP 零延迟解析。同时，Mihomo 已完整支持 VLESS (XTLS-Reality)、Hysteria 2、Tuic 与 Shadowsocks 2022，是目前兼容机场数量最多的全能内核。",
+          "**2. Xray-core（Project X 旗舰核心）：** 它是 `VLESS` 协议与 `XTLS-Vision`、`REALITY` 抗封锁技术的发明者与官方基准实现。Xray 的强项在于极致的单连接吞吐性能、最纯正的 VLESS 协议栈以及灵活的底层路由表，因此在安卓端装机量第一的 `v2rayNG` 与桌面多协议神器 `v2rayN` 中被作为默认核心。",
+          "**3. sing-box（新一代通用代理平台）：** 由早期安卓端 SagerNet 核心作者采用 Go 语言从零编写的现代化内核。sing-box 从设计之初就内置了极其高效的跨平台 TUN 虚拟网卡栈与全协议支持（尤其是对 Hysteria 2、ShadowTLS、Tuic 等新锐协议以及 iOS/Android 移动端的省电优化）。不过，原生 sing-box 采用严格的 JSON 配置格式，若要导入传统机场的 Clash YAML 订阅，建议通过自带格式转换外壳的 `Karing`、`Hiddify` 或直接使用机场后台提供的 sing-box 专用订阅链接（如 [光速云](/brands/guangsu-cloud) 等主流品牌已原生提供 sing-box 订阅入口）。关于各协议在 IEPL/IPLC 专线与公网中转下的底层表现差异，请深入阅读本站的 [IEPL/IPLC 专线网络拓扑与代理协议全解指南](/guide)。"
+        ]
+      }
+    ]
+  },
+  "securityAndSetupChapter": {
+    "id": "setup-and-security",
+    "badge": "CHAPTER 08 · SECURITY & 5-STEP SETUP",
+    "title": "八、实操教程：从零安全下载、防劫持校验到订阅导入的 5 步标准流程",
+    "intro": "针对首次接触第三方代理客户端的用户，或者换了新电脑/新手机需要重新部署环境的读者，请严格遵循以下 5 个标准步骤完成安装与配置，可在 3 分钟内跑通高速专线连接并避开 99% 的安全陷阱。",
+    "steps": [
+      {
+        "stepNum": "STEP 01",
+        "title": "第一步：核对您购买的机场是否提供“通用订阅链接”",
+        "detail": "登录您购买的机场官网后台（仪表盘 Dashboard），寻找名为「一键订阅」、「复制订阅地址」或「导入到 Clash / Shadowrocket」的按钮。如果您使用的是光速云、暮光加速、微风网络、大佬云、星岛梦、二猫云、唯兔云、U1S1、极连云、光年梯、一翻云、可信云、速界、梯子云等品牌，均会直接提供标准订阅链接；若您购买的是飞猫云、无忧链接、Firefly、灵猫网络、SOGO云、闪跃、全球云或隐形人，请直接在机场官网后台下载其官方专属客户端登录，无需继续配置本页的第三方软件。"
+      },
+      {
+        "stepNum": "STEP 02",
+        "title": "第二步：对照【表 2】在官方 GitHub Releases 下载正确架构的安装包",
+        "detail": "点击本页对应客户端卡片上的「官方下载 ↗」按钮，浏览器将直接跳转至该项目在 `github.com` 的官方 `Releases` 发布页（或 Apple App Store）。向下滚动找到最新的稳定版本号（Latest），展开底部的 `Assets`（资源文件列表），对照前文【表 2】下载与您电脑/手机 CPU 架构严格匹配的安装包（例如 Windows 10/11 台式机下载 `x64-setup.exe`，苹果 M1/M2/M3/M4 电脑下载 `aarch64.dmg`，安卓手机下载 `arm64-v8a.apk`）。对于高敏用户，可顺手核对 Assets 列表中附带的 `sha256` 哈希校验值，确保安装包未被中间人篡改。"
+      },
+      {
+        "stepNum": "STEP 03",
+        "title": "第三步：复制订阅 URL（非浏览器打开）并导入客户端配置槽",
+        "detail": "在机场后台点击「复制 Clash 订阅链接」（或在 v2rayNG / 小火箭中点击「复制通用订阅」）。**切记：订阅链接是一串供代理软件在后台拉取加密配置的代码接口，不要直接把它粘贴到浏览器地址栏里打开！** 打开安装好的客户端（以 Clash Verge Rev 为例），点击左侧菜单的「订阅 (Profiles)」，在顶部输入框中粘贴刚才复制的以 `https://` 开头的订阅链接，点击「导入 (Import)」，并在下方生成的配置卡片上点击选中使其高亮生效（如需详细截图指引，请阅读 [Clash Verge Rev 从零导入订阅与分流图文教程](/blog/clash-verge-rev-setup-tutorial)）。"
+      },
+      {
+        "stepNum": "STEP 04",
+        "title": "第四步：在「代理」面板设置分流模式（Rule 规则模式）与 AI 专属节点",
+        "detail": "点击客户端左侧的「代理 (Proxies)」面板，顶部确保选中 **「规则 (Rule)」** 模式（切勿长期挂在「全局 Global」模式，否则访问淘宝、B站、微信也会绕道海外消耗套餐流量并变慢）。在展开的策略组列表中：将主节点组设为延迟最低的「香港 IEPL 01」或「自动测速优选」；找到专门的「AI / OpenAI / Claude」策略组，手动将其点选固定为 **日本 (JP)、新加坡 (SG)、美国 (US) 或台湾 (TW)** 的原生解锁节点（避开不支持 OpenAI 的普通香港本土 IP）。"
+      },
+      {
+        "stepNum": "STEP 05",
+        "title": "第五步：开启「系统代理」验证连通性，按需启用「TUN 虚拟网卡」",
+        "detail": "最后回到客户端左侧的「设置 (Settings)」面板，打开 **「系统代理 (System Proxy)」** 开关。此时打开 Chrome 或 Edge 浏览器访问 `youtube.com` 与 `chatgpt.com`，即可体验秒开 4K 视频与流畅对话（您也可以对比本站 [真实测速图库](/speedtest) 中的峰值速率检验本地表现）。如果您还需要在命令行终端运行 `git`/`npm`、使用 Cursor 编程或玩外服端游，再额外安装服务模式并点亮 **「TUN 模式（虚拟网卡）」** 开关即可。"
+      }
+    ]
+  },
+  "decisionBranches": [
+    {
+      "id": "client-branch-win-mac",
+      "badge": "分支 A · Windows 与 Mac 桌面办公主力",
+      "title": "日常使用电脑查资料、看 4K 视频、高频调用 ChatGPT / Claude / Cursor",
+      "condition": "运行 Windows 10/11 或 macOS 11+，已购买支持通用订阅的专线机场（如光速云、微风、暮光、星岛梦等），希望获得最稳定的自动分流与最少的心智负担。",
+      "techChoice": "首选安装【Clash Verge Rev】或【FlClash】（底层均为 Mihomo 内核），日常常驻开启「系统代理 + Rule 规则模式 + Fake-IP」，遇到终端或独立桌面应用不走代理时开启「TUN 模式」。",
+      "recommendations": [
+        {
+          "name": "Clash Verge Rev",
+          "link": "#windows",
+          "note": "Windows 与 macOS 桌面端综合体验第一，完美承接原版 CFW 与 ClashX 用户。"
+        },
+        {
+          "name": "v2rayN",
+          "link": "#windows",
+          "note": "适合需要同时管理多个不同协议机场、或喜欢批量测试单节点真连接吞吐的进阶用户。"
+        }
+      ]
+    },
+    {
+      "id": "client-branch-mobile",
+      "badge": "分支 B · 苹果 iPhone/iPad 与安卓手机端",
+      "title": "移动端刷 X (Twitter)、看 YouTube/Netflix、使用 ChatGPT 手机客户端",
+      "condition": "需要在手机与蜂窝移动网络（5G）下保持低耗电后台不断连，并确保国内微信、支付宝、美团等 App 100% 直连不受影响。",
+      "techChoice": "iOS 端使用美区 Apple ID 购买【Shadowrocket（小火箭，$2.99）】或【Stash（$3.99）】（零预算选免费的【Karing】）；Android 端安装【v2rayNG（arm64-v8a）】或【FlClash】并开启分应用代理绕过国内 App。",
+      "recommendations": [
+        {
+          "name": "Shadowrocket / Stash",
+          "link": "#ios",
+          "note": "苹果生态最成熟稳定的双王牌，支持扫码与全格式订阅一键导入。"
+        },
+        {
+          "name": "v2rayNG / FlClash",
+          "link": "#android",
+          "note": "安卓端最省电稳定的开源组合，切记只从 GitHub Releases 下载 arm64-v8a.apk。"
+        }
+      ]
+    },
+    {
+      "id": "client-branch-zero-config",
+      "badge": "分支 C · 极度讨厌折腾配置的纯新手小白",
+      "title": "不想去 GitHub 找安装包、不想买美区 Apple ID、不想学什么是订阅链接",
+      "condition": "觉得复制订阅 URL、辨别 CPU 架构后缀、配置 DNS 过于复杂，只想注册一个账号密码、在官网下载软件登录后点一下开关就能上网。",
+      "techChoice": "直接选购提供【官方自研一键客户端】的专线机场（或选择同时支持“自研客户端 + 通用订阅”双模式的机场），彻底省去寻找和配置第三方软件的步骤。",
+      "recommendations": [
+        {
+          "name": "光速云 / 梯子云（双模式支持）",
+          "link": "/brands/guangsu-cloud",
+          "note": "既提供新手一键登录的自研客户端，又保留 Clash/小火箭通用订阅链接，进退自如。"
+        },
+        {
+          "name": "飞猫云 / Firefly / SOGO云",
+          "link": "/brands/feimao",
+          "note": "纯专属客户端模式，下载官方软件输入账号密码即连，香港专线实测均超 480Mbps–540Mbps。"
+        }
+      ]
+    },
+    {
+      "id": "client-branch-router-linux",
+      "badge": "分支 D · 家庭全屋透明代理（软路由 / Apple TV / Linux 服务器）",
+      "title": "家里有 PS5/Switch/电视盒子需要免软件翻墙，或在 Linux 服务器上拉取海外资源",
+      "condition": "拥有 OpenWrt 软路由/旁路由、Apple TV 电视盒子或 Ubuntu/Debian 开发服务器，需要在网关层统一接管网络流量。",
+      "techChoice": "OpenWrt 软路由首选【OpenClash】、【PassWall2】或 OpenWrt 24.10+ 专用的【Nikki】；无桌面 Linux 服务器首选 Web 管理的【v2rayA】；Apple TV 端首选 tvOS 版【Stash】。机场必须选购支持通用订阅且不限设备数的 IEPL/IPLC 品牌。",
+      "recommendations": [
+        {
+          "name": "OpenClash / Nikki / v2rayA",
+          "link": "#openwrt",
+          "note": "软路由与 Linux 服务器透明代理黄金组合，安装前务必核对 CPU 架构与 fw4/nftables 依赖。"
+        },
+        {
+          "name": "星岛梦 / 二猫云 / 唯兔云",
+          "link": "/brands/xingdaomeng",
+          "note": "支持通用订阅且明确标注“不限设备连接数”，非常适合部署在家庭软路由上供全家设备共享。"
+        }
+      ]
+    }
+  ],
+  "conversionCards": [
+    {
+      "badge": "全客户端满血兼容 · TOP 1 双专线主推",
+      "name": "光速云 (Guangsu Cloud)",
+      "slug": "guangsu-cloud",
+      "suitableFor": "需要同时支持 Clash Verge Rev、Shadowrocket、v2rayN、sing-box、Surge 等全系第三方客户端，且同时提供官方自研客户端的个人与办公用户。",
+      "pricing": "年付轻量版 ¥99/年（折合 ¥8.25/月，69GB/月）；月付极速版 ¥25/月（168GB/月，全节点 ×1 倍率）；致敬斯诺克永久包 ¥147 一次性（247GB 不过期）。专属优惠码：AMM。",
+      "limitations": "ChatGPT 与 Gemini 需在客户端策略组中手动切换至可用节点；特惠与特殊商品不支持退款，建议先用月付或轻量档测试。",
+      "verifiedAt": "2026-10-19（套餐与订阅格式核验） / 2026-08-11（香港 22ms/529Mbps 测速）",
+      "primaryAction": {
+        "text": "查看光速云评测与支持客户端列表",
+        "href": "/brands/guangsu-cloud"
+      },
+      "externalAction": {
+        "text": "前往光速云官网获取订阅 ↗",
+        "href": "https://sahude.gsyvipaff.com/#/?code=keqgvT5Y"
+      }
+    },
+    {
+      "badge": "多端同时在线 · 全平台通用订阅",
+      "name": "暮光加速 (Twilight) & 微风网络 (Breeze)",
+      "slug": "muguang",
+      "suitableFor": "手头同时拥有 Windows 电脑、MacBook、iPhone 与安卓手机，需要在本页下载多款第三方客户端并导入同一份订阅协同使用的用户。",
+      "pricing": "暮光加速：年付 ¥109（折 ¥9.1/月 70G）、月付 ¥20（120G），优惠码 muguang5555；微风网络：年付 ¥137（100G/月）、月付 ¥27（200G），优惠码 flat888。",
+      "limitations": "暮光加速公开促销较少；微风网络入门档每月 100GB 对重度 4K 下载用户需注意流量余量。",
+      "verifiedAt": "2026-10-19（套餐核验） / 2026-08-11（香港 509Mbps / 546Mbps 实测）",
+      "primaryAction": {
+        "text": "对比 42 家机场订阅兼容性",
+        "href": "/brands"
+      },
+      "externalAction": {
+        "text": "阅读 Clash Verge Rev 配置教程",
+        "href": "/blog/clash-verge-rev-setup-tutorial"
+      }
+    },
+    {
+      "badge": "免找第三方软件 · 专属客户端代表",
+      "name": "飞猫云 (Feimao) & Firefly",
+      "slug": "feimao",
+      "suitableFor": "不想在本页下载和配置复杂的 Clash YAML 或购买美区小火箭，希望直接在机场官网下载专属软件、输入账号密码一键连接的新手用户。",
+      "pricing": "飞猫云：学生年付 ¥84（折 ¥7/月 50G）、月付 ¥25（150G），优惠码 feimao6666；Firefly：年付 ¥96（折 ¥8/月 60G）、月付 ¥25（150G），优惠码 firefly80。",
+      "limitations": "仅限使用官方提供的专属客户端，不提供明文订阅 URL，因此无法导入本页的 Clash Verge Rev 或 OpenWrt 软路由。",
+      "verifiedAt": "2026-10-19（客户端限制与价格核验）",
+      "primaryAction": {
+        "text": "查看飞猫云详细评测",
+        "href": "/brands/feimao"
+      },
+      "externalAction": {
+        "text": "查看 Top 10 机场综合排行榜",
+        "href": "/ranking"
+      }
+    }
+  ],
+  "faqs": [
+    {
+      "q": "1. 为什么我把机场的订阅链接导入旧版 Clash for Windows (CFW) 或 ClashX 后，节点列表是空的或者报错？",
+      "a": "明确结论：这是因为您电脑上运行的旧版原版 Clash 内核早已在 2023 年底停更，**完全不认识 2025–2026 年主流专线机场采用的 VLESS (Reality)、Hysteria 2 以及 Shadowsocks 2022 现代加密协议**。当旧内核遇到不认识的协议字段时，会直接跳过所有节点或抛出 `unsupported cipher / proxy type` 错误。解决方法非常简单：卸载电脑上的旧版 CFW 或 ClashX，从本页第一章（#windows）或第四章（#macos）免费下载基于新一代 **Mihomo (Clash.Meta) 内核**的 **Clash Verge Rev** 或 **FlClash**，重新粘贴同一条订阅链接即可 100% 正常刷出全部节点。"
+    },
+    {
+      "q": "2. 为什么飞猫云、SOGO云、Firefly、无忧链接、灵猫网络、闪跃等机场后台找不到“复制 Clash 订阅链接”按钮？",
+      "a": "明确结论：因为这些品牌采用的是【自研专属客户端封闭模式】（见上方表 3），官方出于防止明文订阅接口被恶意爬虫批量抓取封堵、以及免除新手配置软件麻烦的双重考量，**不向用户开放第三方通用订阅链接**。如果您购买了这 8 家机场，无需在本页下载 Clash 或小火箭，直接登录该机场官网的“使用教程/软件下载”栏目，下载其官方提供的 Windows、macOS、Android 或 iOS 专属客户端，用注册邮箱和密码登录即可一键连接。如果您必须使用 Clash Verge Rev 或软路由，请选购光速云、暮光加速、微风网络、星岛梦、二猫云、唯兔云、一翻云等明确支持通用订阅的品牌。"
+    },
+    {
+      "q": "3. 在 GitHub Releases 下载客户端时，文件列表里有十几个安装包，我到底该点哪一个？",
+      "a": "明确结论：只需记住您设备的系统与芯片架构对应关系（详见上方 #arch-package-guide 表 2）：① **普通 Windows 10/11 电脑**（Intel 或 AMD 处理器）认准带有 `x64-setup.exe` 或 `windows-amd64` 的文件；② **苹果 M1/M2/M3/M4 芯片 Mac** 认准带有 `aarch64.dmg` 或 `arm64.dmg` 的文件；③ **旧款 Intel 芯片 Mac** 认准带有 `x64.dmg` 的文件；④ **安卓与鸿蒙手机**认准带有 `arm64-v8a.apk` 的文件；⑤ **Ubuntu/Debian Linux** 认准 `amd64.deb`。千万不要下载带有 `.sha256`、`.sig`（这些是校验文本文件，不是安装包）或架构不符的文件。"
+    },
+    {
+      "q": "4. 苹果 iPhone 没有美区信用卡买不了 $2.99 的 Shadowrocket（小火箭），有没有正规免费的 iOS 客户端替代？",
+      "a": "明确结论：有！只要您免费注册或拥有一个非中国大陆地区（如美区或港区）的空 Apple ID，无需绑定任何银行卡或充值礼品卡，即可直接在海外 App Store 免费下载正版无广告的 **Karing**、**Clash Mi**、**sing-box (SFI)**、**Hiddify** 或 **Streisand**（见第三章 #ios）。其中 **Karing** 与 **Clash Mi** 可以直接导入机场的 Clash YAML 与通用订阅链接，日常刷网页、看 4K 视频与用 ChatGPT 的体验与付费小火箭相差无几。再次提醒：登录他人提供的海外 Apple ID 时，**只准在桌面 App Store 内登录，严禁在系统「设置 / iCloud」中登录**。"
+    },
+    {
+      "q": "5. 为什么安卓端不建议从 Google Play 商店下载 NekoBox？还有哪些客户端需要注意维护状态？",
+      "a": "明确结论：根据本站核实的《2026 机场代理客户端大全》官方仓库声明，**NekoBox for Android 官方项目已明确提示维护资源受限，并特别发出安全警告：不要使用 Google Play 上同名但已被第三方不明主体控制的 NekoBox 版本**，以防恶意代码篡改或隐私泄露。安卓用户应优先从官方 GitHub Releases 下载持续活跃维护的 **v2rayNG**、**FlClash**、**Hiddify** 或 **Karing**。同理，桌面端的 **Mihomo Party** 仅建议用于历史教程对照与配置迁移，新装机用户建议首选 **Clash Verge Rev** 或 **FlClash**。"
+    },
+    {
+      "q": "6. 客户端成功导入了订阅，节点延迟也显示绿色的 25ms，但为什么浏览器还是打不开外网，或者连国内百度都打不开了？",
+      "a": "明确结论：90% 是由以下三个本地设置冲突引起的，按顺序排查 1 分钟即可恢复：① **检查电脑系统时间是否精确同步**（若电脑时间与标准北京时间误差超过 60 秒，TLS 证书校验与部分协议握手会直接失败，请在系统时间设置中点击“立即同步”）；② **检查浏览器是否安装了旧的代理扩展插件**（如 SwitchyOmega、零星 VPN 插件，它们会劫持浏览器的代理端口导致与桌面客户端冲突，请禁用或设为 `[系统代理]`）；③ **如果关闭代理软件后连国内百度都打不开**，说明上次非正常关机导致 Windows 注册表残留了 `127.0.0.1` 代理指向，只需重新打开 Clash Verge Rev 点亮一次「系统代理」再正常关闭，或在 Windows「设置 → 网络和 Internet → 代理」中手动关闭“使用代理服务器”即可。"
+    },
+    {
+      "q": "7. 在 Windows 或 macOS 上，什么时候只开「系统代理（System Proxy）」，什么时候需要开启「TUN 模式（虚拟网卡）」？",
+      "a": "明确结论：日常使用 Chrome/Edge 浏览器看网页、看 YouTube/Netflix、用网页版 ChatGPT 时，**只需开启「系统代理」即可**，它最省资源且绝不干扰国内微信传文件或局域网共享。只有当您遇到**不遵守系统代理设置的独立软件**（例如终端命令行 `git`/`npm`/`curl`、Cursor 编辑器部分插件、Docker、外服游戏客户端或特定桌面 App）无法连接海外服务器时，才需要开启 **「TUN 模式」** 将全系统网卡流量强制接管（详见 [专线拓扑与协议指南第五章](/guide#client-and-dns)）。"
+    },
+    {
+      "q": "8. 我想在家里软路由（OpenWrt）上配置 OpenClash、PassWall2 或 Nikki，为什么买某些机场无法导入？",
+      "a": "明确结论：软路由透明代理插件有两个硬性前提：第一，在**机场层面**，必须购买提供明文通用订阅 URL（Clash YAML 或 V2Ray 订阅）且支持多设备同时在线的机场（如光速云、暮光加速、微风网络、星岛梦、二猫云、唯兔云、一翻云等），仅限专属客户端的机场（如飞猫云、Firefly、闪跃）无法提取节点放入软路由；第二，在**路由器固件层面**，必须提前核对 OpenWrt 版本、CPU 架构与防火墙类型，例如新锐插件 **Nikki 明确要求 OpenWrt 24.10 及以上版本（`fw4 / nftables`）**，旧版固件则应使用 OpenClash 或 PassWall2（见第六章 #openwrt）。"
+    }
+  ],
+  "dataSources": {
+    "id": "data-sources",
+    "badge": "CHAPTER 12 · SOURCES & VERIFICATION GAPS",
+    "title": "十二、数据来源、项目仓库核验时间与待核实资料缺口说明",
+    "intro": "为保证本客户端下载与配置大全的严谨性与可追溯性，杜绝推荐已停更跑路或被篡改的恶意软件链接，特将本页引用的全部原始资料库、核验日期及客观存在的资料边界说明如下：",
+    "sources": [
+      {
+        "title": "1. 《2026 机场代理客户端大全》原始核验档案（核实时间：2026-11-07）",
+        "detail": "完整涵盖 Windows（8款）、Android（8款）、iPhone/iPad（11款）、macOS（9款）、Linux（9款）及 OpenWrt 软路由（5款）六大平台客户端的功能定位、底层内核与维护警示（含 Mihomo Party 维护状态说明、NekoBox Google Play 风险警告及 Nikki 对 OpenWrt 24.10+ 的版本要求）。"
+      },
+      {
+        "title": "2. 官方 GitHub Releases 与 Apple App Store 实时分发链接",
+        "detail": "本页所有下载按钮均 100% 指向各开源项目的官方 GitHub Releases 源码发布仓库（如 `clash-verge-rev/clash-verge-rev`、`2dust/v2rayN`、`2dust/v2rayNG`、`chen08209/FlClash`、`hiddify/hiddify-next`、`KaringX/karing`、`v2rayA/v2rayA`、`vernesong/OpenClash`、`nikkinikki-org/OpenWrt-nikki` 等）及美国区 Apple App Store 官方商店页，绝不经过任何第三方中转下载站。"
+      },
+      {
+        "title": "3. 本站 42 家机场品牌客户端兼容矩阵（核实时间：2026-10-19）",
+        "detail": "基于《42家机场品牌清单》与《光速云品牌信息》，逐一核对了 34 家支持第三方通用订阅的机场与 8 家仅限官方自研专属客户端的机场，确保读者在选客户端前先明确自身订阅属性。完整品牌档案见 [42 家机场品牌大全](/brands)。"
+      }
+    ],
+    "gaps": [
+      {
+        "label": "待核实缺口 1：各地区 Apple App Store 实时汇率定价与临时上下架变动",
+        "content": "Shadowrocket ($2.99)、Stash ($3.99)、Quantumult X ($7.99) 及 Surge 5 的标价以美区（US）App Store 核验时为准。若读者使用港区（HK）、日区（JP）、台区（TW）或英区账号登录，实际显示币种、含税价格及免费应用（如 Streisand、OneClick、Potatso）的地区可访问性可能随苹果商店政策动态调整，请以登录后的 App Store 实时页面为准。"
+      },
+      {
+        "label": "待核实缺口 2：部分活跃开源客户端的小版本号与依赖变更",
+        "content": "Clash Verge Rev、FlClash、v2rayN、Karing、Nikki 等活跃开源项目通常每 1–3 周就会在 GitHub 发布新的小版本修复包。因此本页在【表 2】中提供的是通用架构匹配规则（如 `x64-setup.exe`、`aarch64.dmg`、`arm64-v8a.apk`），未写死单一固定小版本号，读者点击进入 GitHub Releases 后选择顶部标有 `Latest` 绿标的版本即可。"
+      },
+      {
+        "label": "待核实缺口 3：特定国产定制安卓 ROM 与非标软路由魔改固件兼容性",
+        "content": "部分深度定制的政企管控手机、儿童手表系统、老旧 32 位电视盒子（Android 4.x）以及厂商闭源魔改的 OpenWrt 固件（缺失 `kmod-tun` 或 `nftables` 内核模块）可能无法正常创建虚拟网卡。遇到此类特殊硬件环境，建议优先在主流 Windows/macOS/标准 Android 设备上验证订阅可用性。"
+      }
+    ]
+  }
+}

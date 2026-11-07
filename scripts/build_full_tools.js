@@ -1,0 +1,515 @@
+import fs from 'fs';
+
+const toolsContent = {
+  meta: {
+    title: '2026 梯子工具箱与节点诊断指南：订阅转换、IP纯净度、DNS泄露与倍率计算器 - clashjichang.world',
+    h1: '2026 梯子工程工具箱与节点诊断专著：订阅转换、IP纯净度、DNS泄露与吞吐核验',
+    description: '2026 专著级跨境网络工程工具箱：内置「流量倍率与真实单价计算器」、「带宽单位与BDP跨洋吞吐换算器」及「订阅链接格式与安全自检器」；深度评测 Sub-Store 本地订阅转换、ACL4SSR 分流规则、Scamalytics/Ping0 IP 欺诈分核验、WebRTC/DNS 泄露排查及流媒体解锁检测脚本。',
+    updatedAt: '2026-11-07',
+    verifiedAt: '2026-11-07（全网主流探针可用性核验 & Mihomo/sing-box 订阅规范审计）',
+    author: 'Clash机场评测实验室（网络诊断与自动化工具组）',
+    readingTime: '约 32 分钟深度阅读'
+  },
+
+  directAnswer: {
+    summary: '当用户搜索“Clash 订阅转换”、“IP 纯净度检测”、“为什么连上梯子打不开 ChatGPT”或“DNS 泄露测试”时，核心任务是借助专业工具诊断节点质量、修复分流故障或安全转换订阅格式。基于本实验室的工程实践，我们在页面首屏直接提供 3 个零外部依赖的纯前端交互工具，并给出三大核心操作准则：',
+    points: [
+      {
+        label: '1. 订阅转换第一安全铁律：严禁将包含私有 Token 的机场订阅粘贴到不明公共在线转换网站！',
+        content: '互联网上超过 70% 的第三方公共 `subconverter` 网页会在后台日志中静默记录用户提交的原始订阅 URL！一旦您的付费机场订阅（无论是光速云、微风网络还是星岛梦）被公共转换站截获，轻则流量在一夜之间被爬虫刷空，重则因多地区 IP 并发连接触发机场防共享审计而直接封禁账号。正确的做法是：优先使用机场后台原生生成的 Clash Meta (Mihomo) / sing-box / Shadowrocket 专属格式链接；若确需合并多个机场或自定义 ACL4SSR 规则，必须在本地部署 Docker 版 Sub-Store 或使用 Clash Verge Rev 内置的 Merge/Script 覆写脚本。'
+      },
+      {
+        label: '2. 节点诊断黄金三件套：测完速度后，必须查验「IP 欺诈分 (Fraud Score)」、「原生/广播属性」与「DNS/WebRTC 泄露」',
+        content: '带宽跑满 500Mbps 只代表物理专线畅通，不代表账号安全。在登录 ChatGPT Plus、Claude Pro、美区 PayPal 或 TikTok 运营号之前，必须依次打开三类权威探针：① 用 `scamalytics.com` 与 `ping0.cc` 核查出口 IP 的欺诈风险值（Fraud Score 低于 30 分为优质，高于 75 分极易触发 OpenAI 循环验证码或封号）及是否为原生 ISP 住宅属性；② 用 `ipinfo.io` 或 `bgp.he.net` 核对 ASN 自治系统号（区分 Hosting 机房 IP 与 ISP 原生家宽）；③ 用 `ipleak.net` 与 `browserleaks.com/webrtc` 确认 DNS 服务器列表未出现国内 114/运营商 IP，且 WebRTC 未暴露本地局域网与公网真实地址。'
+      },
+      {
+        label: '3. 认清“流量倍率”与“BDP 跨洋吞吐极限”：用工程数学戳破虚假营销',
+        content: '许多标榜“每月 500GB 仅需 10 元”的机场，暗地里将 IEPL 专线或原生解锁节点设为 ×5 甚至 ×10 倍率（看 10GB 视频实际扣除 100GB 额度）；而本站第一主推的光速云、星岛梦、无忧链接、唯兔云、灵猫网络等均坚持核心专线 ×1 倍率实算。同时，利用下方的「带宽与 BDP 吞吐换算器」可以直观算出：1 MB/s = 8 Mbps，在 65 MB/s 测速图下实际等效于 520 Mbps 千兆级宽带；而在 160ms 的美西跨洋延迟下，受 TCP 默认接收窗口限制，单连接吞吐自然回落至 20Mbps–30Mbps。'
+      }
+    ],
+    quickNav: [
+      { text: '🧮 交互工具箱：倍率/BDP/订阅自检器', href: '#interactive-toolkit' },
+      { text: '📊 表1：IP纯净度与欺诈分探针矩阵', href: '#ip-probe-table' },
+      { text: '🔒 表2：订阅转换方案与安全等级对比', href: '#subconverter-table' },
+      { text: '🎬 表3：流媒体/AI/测速开源脚本库', href: '#script-benchmark-table' },
+      { text: '🔬 一、订阅转换原理与防盗刷指南', href: '#chapter-1' },
+      { text: '🌐 二、IP纯净度、ASN与原生IP鉴定', href: '#chapter-2' },
+      { text: '🛡️ 三、DNS泄露与WebRTC修复SOP', href: '#chapter-3' },
+      { text: '⚡ 四、ACL4SSR与Mihomo分流进阶', href: '#chapter-4' }
+    ]
+  },
+
+  toc: [
+    { id: 'direct-answer', title: '工具箱核心准则与速查' },
+    { id: 'interactive-toolkit', title: '交互工具：倍率/带宽/订阅自检' },
+    { id: 'ip-probe-table', title: '表1：IP纯净度与DNS探针表' },
+    { id: 'subconverter-table', title: '表2：订阅转换工具安全对比表' },
+    { id: 'script-benchmark-table', title: '表3：流媒体与测速开源工具表' },
+    { id: 'chapter-1', title: '一、订阅转换原理与防泄露指南' },
+    { id: 'chapter-2', title: '二、IP纯净度、原生IP与欺诈分' },
+    { id: 'chapter-3', title: '三、DNS与WebRTC泄露深度排障' },
+    { id: 'chapter-4', title: '四、ACL4SSR与Mihomo覆写实战' },
+    { id: 'chapter-5', title: '五、新购机场到账后的6步体检法' },
+    { id: 'decision-path', title: '六、按诊断结果的选品调优分支' },
+    { id: 'recommended-entries', title: '七、1倍率与高纯净IP代表机场' },
+    { id: 'faq', title: '八、梯子工具与诊断常见疑问FAQ' },
+    { id: 'data-sources', title: '九、工具核验时间与安全声明' }
+  ],
+
+  ipProbeTable: {
+    caption: '表 1：2026 权威 IP 纯净度、欺诈风险分（Fraud Score）、ASN 属性与 DNS/WebRTC 泄露在线检测工具核验表',
+    headers: [
+      '检测维度',
+      '工具名称与官方域名',
+      '核心检测指标解读',
+      '合格/优质节点判定标准',
+      '高危异常信号与应对建议'
+    ],
+    rows: [
+      {
+        dim: 'IP 欺诈分与黑名单',
+        tool: 'Scamalytics (scamalytics.com)',
+        metric: 'Fraud Score (0–100分) 及外部代理黑名单命中情况',
+        pass: '0–25 分（Low Risk 绿色）：可安全用于 ChatGPT、Claude、PayPal 与美区 Apple ID',
+        warn: '75–100 分（High/Very High Risk 红色）：说明该 IP 已被黑产万人骑，立即切换至原生节点'
+      },
+      {
+        dim: '原生/广播与风控画像',
+        tool: 'Ping0 (ping0.cc)',
+        metric: 'IP 类型（家庭宽带 ISP / 机房 Hosting）、原生 IP vs 广播 IP、风险值百分比',
+        pass: '显示“原生 IP”且风控值 <30%：流媒体（Netflix/Disney+/TikTok）与 AI 解锁成功率极高',
+        warn: '显示“广播 IP”且归属地与节点名不符（如台湾节点显示西班牙 ES）：会导致 TikTok/YouTube 推荐流错乱'
+      },
+      {
+        dim: 'ASN 自治系统与注册局',
+        tool: 'IPInfo (ipinfo.io) / bgp.he.net',
+        metric: '对比 `asn.type`（isp / business / hosting）与 `company.type` 双字段及路由宣告历史',
+        pass: '双字段或主字段为 `isp`（如 HKT、HiNet、Singtel、SoftBank、Comcast、AT&T）',
+        warn: '属于知名廉价云机房 ASN（如 Choopa/Vultr、DigitalOcean、Hetzner、M247）：极易被 OpenAI 拦截'
+      },
+      {
+        dim: 'DNS 泄露与路由追踪',
+        tool: 'IPLeak (ipleak.net)',
+        metric: '同时发起数十次随机子域名解析，捕获实际向权威根服务器发起查询的递归 DNS IP',
+        pass: 'DNS Address 列表 100% 为境外加密 DNS（如 Cloudflare、Google 或机场落地当地运营商 DNS）',
+        warn: '列表中出现中国电信/联通/移动或 `114.114.114.114`：说明发生 DNS 泄露，需开启客户端 Fake-IP 与 DoH'
+      },
+      {
+        dim: 'WebRTC 与浏览器指纹',
+        tool: 'BrowserLeaks (browserleaks.com/webrtc)',
+        metric: '通过 STUN 协议穿透代理隧道，探测网卡绑定 IP、Canvas 指纹与时区语言一致性',
+        pass: 'Public IP Address 仅显示当前代理落地 IP，或 WebRTC UDP STUN 被完全禁用阻断',
+        warn: '暴露国内真实宽带公网 IP 或系统时区（UTC+8）与节点国家冲突：需安装 WebRTC Control 插件或开 TUN 模式'
+      },
+      {
+        dim: '海内外双栈分流面板',
+        tool: 'IPCheck.ing / Sukka (ip.skk.moe)',
+        metric: '一屏同时检测访问国内（淘宝/百度）直连 IP 与访问海外（Cloudflare/YouTube/OpenAI）代理 IP',
+        pass: '国内列显示本地真实省市宽带 IP（直连不耗机场流量），海外列显示目标机场专线节点 IP',
+        warn: '国内列也显示香港/美国代理 IP：说明误开了 Global 全局模式，导致看B站/用微信白白消耗机场流量且变慢'
+      }
+    ]
+  },
+
+  subconverterTable: {
+    caption: '表 2：主流订阅转换与多机场聚合方案对比表（支持协议范围、隐私泄露风险与推荐指数）',
+    headers: [
+      '转换方案名称',
+      '部署与运行方式',
+      '对新协议 (VLESS-Reality / Hy2 / TUIC) 支持度',
+      '订阅 Token 隐私泄露风险',
+      '适用场景与操作建议'
+    ],
+    rows: [
+      {
+        name: '机场面板原生多格式导出',
+        mode: '在机场官网后台点击对应客户端图标一键复制',
+        proto: '⭐⭐⭐⭐⭐ 100% 完美匹配该机场全部协议',
+        risk: '🟢 零第三方泄露风险（官方直出）',
+        advice: '95% 用户的绝对首选！光速云、微风、二猫云、一翻云等后台均原生支持直接复制 Clash Meta / 小火箭订阅'
+      },
+      {
+        name: 'Clash Verge Rev / FlClash 内置覆写 (Merge & Script)',
+        mode: '客户端本地运行 YAML Merge 预处理或 JavaScript 覆写脚本',
+        proto: '⭐⭐⭐⭐⭐ 原生基于 Mihomo 内核，支持全协议',
+        risk: '🟢 零泄露风险（纯本地内存运算，不经过任何外网服务器）',
+        advice: '强烈推荐！无需任何外部转换器即可为任何机场订阅追加自定义分流规则、开启 TUN 与防 DNS 泄露'
+      },
+      {
+        name: 'Sub-Store (本地 / 自建 Docker 版)',
+        mode: '在本地电脑、软路由 OpenWrt、群晖 NAS 或个人 VPS 上运行',
+        proto: '⭐⭐⭐⭐⭐ 持续维护，完美支持 Mihomo、sing-box、Loon、Surge、Stash',
+        risk: '🟢 极高安全（前端与后端均由自己掌控）',
+        advice: '手握 2–5 家机场（如光速云主力 + 二猫云永久包备用）希望合并为一个订阅链接时的终极神器'
+      },
+      {
+        name: '自建 subconverter 后端 + ACL4SSR 规则模板',
+        mode: '个人 VPS 部署 `tindy2013/subconverter` 或 Meta 增强分支',
+        proto: '⭐⭐⭐ 原版停更不支持 VLESS/Hy2，需使用 `MetaCubeX/subconverter` 分支',
+        risk: '🟢 安全可控（仅自己调用）',
+        advice: '适合习惯 ACL4SSR 经典分组（如电报消息、AI 专属、流媒体自动测速组）的老玩家自建使用'
+      },
+      {
+        name: '不明来源的公共在线订阅转换网页',
+        mode: '直接打开百度/Google 搜到的陌生网页粘贴订阅链接',
+        proto: '⭐⭐ 许多老旧公共后端会直接丢弃 VLESS 与 Hysteria 2 节点',
+        risk: '🔴 极高危！后台 Nginx 日志可直接截获您的付费订阅 URL 并盗刷流量',
+        advice: '严禁将付费机场私有订阅粘贴进去！若不慎粘贴，请立即回机场官网后台点击「重置订阅链接 (Reset Token)」'
+      }
+    ]
+  },
+
+  scriptBenchmarkTable: {
+    caption: '表 3：专业评测室与极客常用的流媒体解锁、节点批量测速与路由诊断开源工具库',
+    headers: [
+      '工具名称',
+      '开源仓库 / 开发者标识',
+      '核心功能与输出指标',
+      '运行环境要求',
+      '在本站评测体系中的应用说明'
+    ],
+    rows: [
+      {
+        name: 'MAI-TEST-BOT / miaosu (淼速)',
+        repo: 'MAI-TEST-BOT 2.0.0-dev / miaosu 4.7.0',
+        func: '批量自动化测试订阅内全部节点的 TLS RTT、平均下载速度 (MB/s)、峰值速度、速度波形与 UDP NAT 类型',
+        env: 'Linux / Windows 专用测速宿主机 + 高带宽千兆/万兆环境',
+        usage: '本站 [/speedtest](/speedtest) 归档的 17 份 2026-08-11 CST 原始测速大图均由该标准引擎生成'
+      },
+      {
+        name: 'RegionRestrictionCheck (流媒体解锁检测)',
+        repo: 'lmc999 / RegionRestrictionCheck',
+        func: '一键检测当前落地 IP 对 Netflix（区分自制剧/非自制剧及国家代码）、Disney+、YouTube Premium、TikTok、ChatGPT、Claude、Gemini 的解锁状态',
+        env: 'Linux / macOS / Android Termux / Docker 容器内一键 Bash 脚本',
+        usage: '本站实况图证库中的多地区流媒体与 OpenAI 解锁矩阵快照核心验证脚本'
+      },
+      {
+        name: 'NextTrace (可视化路由追踪)',
+        repo: 'nxtrace / NTrace-core',
+        func: '替代传统 traceroute，实时显示每一跳路由的 ASN、运营商（电信163 / CN2 GIA / 联通9929 / 移动CMIN2）及地理坐标',
+        env: 'Windows / macOS / Linux / OpenWrt 全平台命令行',
+        usage: '用于鉴定机场入口是否为真 BGP 专线以及落地机房的真实上游线路归属'
+      },
+      {
+        name: 'CloudflareSpeedTest (CF 优选 IP)',
+        repo: 'XIU2 / CloudflareSpeedTest',
+        func: '批量 Ping 与 HTTP 测速扫描 Cloudflare Anycast IPv4/IPv6 网段及 WARP 端点，按延迟与速度排序输出最优 IP',
+        env: 'Windows / macOS / Linux 本地直接双击或命令行运行',
+        usage: '配合本站 [/free（免费资源专题）](/free) 中介绍的 Cloudflare WARP 与 Workers 自建方案提速必备'
+      }
+    ]
+  },
+
+  chapters: {
+    chapter1: {
+      id: 'chapter-1',
+      badge: 'CHAPTER 01 · SUBSCRIPTION CONVERSION & SECURITY',
+      title: '一、订阅转换底层原理与安全防盗刷指南：为什么不能乱用在线转换网站？',
+      intro: '许多用户在购买了机场服务后，听到网上教程说“把订阅链接放到在线订阅转换网站里转一下，就能加上好看的图标和自动分流分组”。然而在接下来的几天里，他们却惊讶地发现：自己每个月 150GB 的套餐流量，在半夜睡觉时竟然莫名其妙被跑光了，或者账号直接被机场后台封禁！这正是因为不了解“订阅链接的本质”与“在线转换器的中间人架构”。',
+      subsections: [
+        {
+          id: 'what-is-subscription-url',
+          title: '1.1 机场订阅链接（Subscription URL）到底包含什么机密？',
+          paragraphs: [
+            '无论您使用的是 V2Board、SSPanel 还是机场自研面板，当您在用户中心点击“复制订阅链接”时，得到的那串形如 `https://sub.example.com/api/v1/client/subscribe?token=a1b2c3d4e5f6...` 的网址，本质上就是**您整个机场账户的免密最高权限 API 密钥（Bearer Token）**！',
+            '任何拿到这串 URL 的人或服务器，都不需要知道您的注册邮箱和登录密码，就能直接拉取您套餐内全部 IEPL/IPLC 专线节点的入口 IP、端口、VLESS UUID 或 Shadowsocks 密码，甚至在 HTTP 响应头（`subscription-userinfo: upload=...; download=...; total=...; expire=...`）中看到您的剩余流量与到期时间。',
+            '当您把这串私有 URL 粘贴到一个不知名的第三方“免费在线 Clash 订阅转换网站”并点击生成时，您的浏览器实际上是将这串 Token 明文发送给了对方的后端服务器（`https://pub-api.xxx.com/sub?target=clash&url=您的私有订阅`）。只要该转换网站的站长心术不正，或者其服务器的 Nginx 访问日志（`access.log`）未做脱敏甚至被公开暴露，自动化黑产爬虫就能每秒提取成百上千条付费机场的真实订阅，直接打包转卖或塞进所谓的“免费节点池”供全网白嫖，导致您的流量在几小时内彻底归零！'
+          ]
+        },
+        {
+          id: 'safe-conversion-methods',
+          title: '1.2 2026 最安全的 3 种零泄露订阅加载与规则定制方法',
+          paragraphs: [
+            '**方法一：直接使用机场后台原生生成的客户端专属链接（零转换）。** 在 2026 年，主流优质机场的面板早已内置了强大的多格式自适应引擎。当您的客户端（如 [Clash Verge Rev](/clients#windows)、[FlClash](/clients#windows)、[Shadowrocket](/clients#ios)、[Stash](/clients#ios) 或 [sing-box](/clients#ios)）发起请求时，机场后端会自动识别客户端的 `User-Agent`（如 `clash.meta`），直接返回包含完整分流规则、自动测速组与流媒体分组的原生 YAML 配置，完全不需要经过任何第三方转换！',
+            '**方法二：利用 Clash Verge Rev 内置的全局扩展覆写（Merge / Script）在本地改规则。** 如果您觉得某家机场自带的分流规则不够精细（例如想把特定 AI 网站或游戏强制指定到日本节点），只需打开 Clash Verge Rev 左侧的「订阅 (Profiles)」→ 点击「全局扩展配置 (Merge)」或「全局扩展脚本 (Script)」，在本地写入几十行 `prepend-rules` 覆写代码。所有合并计算 100% 在您自己电脑的内存中完成，私有 Token 绝不出境。',
+            '**方法三：在本地或个人设备上运行开源 Sub-Store 管理多机场订阅。** 如果您既买了 [光速云](/brands/guangsu-cloud) 的主力年付，又买了 [二猫云](/brands/ermaoyun) 或 [一翻云](/brands/yifanyun) 的 ¥99–¥100 永久不限时包作为异地容灾备份，希望把两家机场的节点合并到同一个客户端列表中，请使用 Docker 在本地电脑、群晖 NAS 或软路由上部署开源的 **Sub-Store**，实现绝对私密的多订阅聚合、节点重命名与正则过滤。'
+          ]
+        },
+        {
+          id: 'sub-store-docker-deployment',
+          title: '1.3 进阶实操：如何使用 Docker 本地一键部署 Sub-Store 并配置多机场正则过滤器？',
+          paragraphs: [
+            '对于手握两家以上机场订阅（例如主力包年 + 永久不限时备用包）的高阶玩家而言，**Sub-Store** 是目前开源社区公认最强大的全协议订阅工作台。与传统的单次静态转换不同，Sub-Store 支持“组合订阅（Collection）”，能够将来自不同机场的 Shadowsocks、VLESS-Reality、Hysteria 2 与 Trojan 节点动态合并为一条统一的本地订阅链接，并在输出给 Clash Verge Rev、Stash 或 sing-box 时实时注入您的自定义规则。',
+            '**核心操作流程与正则过滤算子：** ① 在安装有 Docker 的本地电脑、macOS、群晖 NAS 或 OpenWrt 软路由上，拉取官方 `xream/sub-store` 镜像并映射本地端口（仅绑定局域网访问）；② 进入 Sub-Store Web 界面后，先在「单条订阅」中分别录入您的光速云订阅与二猫云/一翻云备用订阅；③ 创建一条「组合订阅」，添加以下三个最实用的节点处理算子：**「节点去重与前缀标记算子」**（自动为第一家机场节点加上 `[主力-光速]` 前缀，为第二家加上 `[永久备用-二猫]` 前缀，一目了然）、**「正则剔除无效信息算子」**（使用正则表达式 `/到期|剩余流量|官网|群聊|重置/` 自动过滤掉节点列表顶部的非节点信息条目，防止自动测速组误选中说明文字节点导致断网），以及 **「地区智能排序算子」**（按香港、新加坡、台湾、日本、美国的顺序整齐排列）。'
+          ]
+        }
+      ]
+    },
+
+    chapter2: {
+      id: 'chapter-2',
+      badge: 'CHAPTER 02 · IP PURITY, NATIVE IP & FRAUD SCORE',
+      title: '二、IP 纯净度、ASN 属性与原生/广播 IP 深度鉴定：为什么有的节点登不上 ChatGPT？',
+      intro: '在日常使用中，用户最常遇到的困惑是：“明明这个节点看 YouTube 4K 飞快，测速能跑 400Mbps，为什么一打开 ChatGPT 就无限转圈报 `Something went wrong`，或者打开 Claude 直接提示账号被封？为什么看 Netflix 只显示寥寥几部自制剧（Originals Only）？”这背后的核心决定因素就是**落地 IP 的纯净度与注册属性**。',
+      subsections: [
+        {
+          id: 'native-vs-broadcast-ip',
+          title: '2.1 原生 IP（Native IP） vs 广播 IP（Broadcasted IP）：一眼看穿伪装',
+          paragraphs: [
+            '全球的 IPv4 地址由五大区域互联网注册管理机构（RIR：北美 ARIN、欧洲 RIPE、亚太 APNIC、拉美 LACNIC、非洲 AFRINIC）负责分配。所谓 **原生 IP（Native IP）**，是指该 IP 的注册国家（Whois 注册局归属地）与它当前物理服务器所在的机房国家 **100% 一致**（例如由台湾中华电信 HiNet 注册并宣告在台北机房的 IP）。',
+            '而所谓 **广播 IP（Broadcasted IP）**，则是因为香港、台湾或日本的本土 IPv4 资源极度匮乏且昂贵，机房服务商将一段原本注册在美国（ARIN）或欧洲（RIPE）的廉价 IP，通过 BGP（边界网关协议）路由宣告（Announce）到了香港或台湾的物理机房使用。',
+            '**实战案例印证：** 在本站 [/speedtest（测速实测报告）](/speedtest) 表 3 收录的 **[灵动云](/brands/lingdongyun)** 历史实测档案中，测试员发现在连接其“台湾节点”访问 Netflix 与 Disney+ 时，流媒体后台竟然将该 IP 识别为 **西班牙（ES）**；同时连接新加坡与台湾节点看 YouTube 时出现了“送中（被谷歌定位回中国大陆）”现象！这就是典型的广播 IP 归属地数据库未同步或被污染导致的症状。相比之下，本站收录的 [一翻云](/brands/yifanyun)、[微风网络](/brands/weifeng)、[Firefly](/brands/firefly)、[闪跃](/brands/shanyue) 等品牌专门采购了高成本的**原生 IP / 原生住宅 IP**，从而确保 Netflix 非自制剧、Disney+、TikTok 与 AI 平台识别出准确的本土身份。'
+          ]
+        },
+        {
+          id: 'isp-vs-hosting-asn',
+          title: '2.2 机房 IP（Hosting ASN） vs 住宅家宽 IP（ISP ASN）与欺诈分阈值',
+          paragraphs: [
+            '当您打开 `ipinfo.io` 查询当前节点 IP 时，请重点观察 JSON 数据中的两个字段：`asn.type` 与 `company.type`。',
+            '• 如果两个字段均显示为 **`hosting`**（数据中心机房），说明这是一台标准的商业云服务器（如 AWS、Google Cloud、Linode、Vultr、DigitalOcean）。由于全球 99% 的网络爬虫与自动化攻击都发自机房 IP，Cloudflare、OpenAI、Anthropic 与各大电商平台对 `hosting` 类型的 IP 审查极为严厉。',
+            '• 如果字段显示为 **`isp`**（互联网服务提供商，如香港 HKT、台湾 HiNet、新加坡 Singtel、日本 SoftBank/NTT、美国 AT&T/Verizon），则代表该 IP 在风控数据库中属于极其珍贵的**家庭宽带/商业原生宽带段**。',
+            '• 在 `scamalytics.com` 或 `ping0.cc` 的评分体系中，请牢记三条实战红线：**欺诈分 0–25 分（绿灯）**可放心用于主力生产力与金融支付；**26–65 分（黄灯）**适合日常看 4K 视频、刷推特和普通网页；**66–100 分（红灯）**严禁用于注册或登录任何高价值账号！'
+          ]
+        },
+        {
+          id: 'cloudflare-turnstile-and-tls-fingerprint',
+          title: '2.3 为什么 IP 欺诈分很低，打开网站还是无限卡在 Cloudflare 五秒盾验证？',
+          paragraphs: [
+            '在 2026 年的网络风控对抗中，有时您明明用 `ping0.cc` 测出当前节点是欺诈分仅 10 分的优质原生 IP，但在访问 ChatGPT、Claude 或部分独立站时，依然会陷入 Cloudflare Turnstile（点击确认您是真人）的死循环。这通常不再是 IP 本身的问题，而是触发了 **TLS 指纹（JA3/JA4 Fingerprint）不匹配、HTTP/2 帧特征异常或浏览器环境时区冲突**！',
+            '**工程级排查与破解四步法：**\n1. **启用客户端 uTLS 浏览器指纹伪装（`client-fingerprint`）**：在 Mihomo (Clash Meta) 或 v2rayN 配置中，确保为 VLESS / Trojan 节点加上 `client-fingerprint: chrome`（或 `safari`），让代理内核发出的 TLS Client Hello 握手包与真实 Chrome 浏览器 100% 一致，避免被 Cloudflare 识别为 Go 语言编写的自动化代理程序；\n2. **校正系统时间与 HTTP 请求头语言**：如果您的电脑系统时间与标准 NTP 时间相差超过 30 秒，Cloudflare 的防重放令牌会直接判定验证失效；\n3. **关闭冲突的去广告与指纹混淆插件**：部分激进的浏览器隐私插件（如 Canvas Fingerprint Defender 或配置不当的 uBlock 规则）会拦截 Cloudflare 挑战脚本所需的后台 Telemetry 回传，请尝试在干净的无痕窗口（不加载多余插件）中测试；\n4. **利用链式代理（Dialer-Proxy / 落地固定）**：若您拥有自己的干净独立 VPS 或住宅静态 Socks5 代理，可通过 Mihomo 的 `dialer-proxy` 参数，用光速云/微风网络的 500Mbps IEPL 专线作为前置高速跳板，将最后一跳落地指向您的独享 IP，彻底实现“专线级速度 + 100% 独享零风控住宅身份”的完美结合。'
+          ]
+        }
+      ]
+    },
+
+    chapter3: {
+      id: 'chapter-3',
+      badge: 'CHAPTER 03 · DNS LEAK & WEBRTC REMEDIATION',
+      title: '三、DNS 泄露与 WebRTC 真实 IP 暴露排障：为什么挂了代理还是被网站识破位置？',
+      intro: '有时您明明已经切换到了一条欺诈分为 0 的优质美国或新加坡原生节点，但打开 TikTok 依然黑屏无网络连接，或者打开某些严格锁区的网站依然提示“不支持您所在的地区（CN）”。这通常是因为您的客户端发生了 **DNS 泄露（DNS Leak）** 或浏览器发生了 **WebRTC 真实 IP 穿透**。',
+      subsections: [
+        {
+          id: 'dns-leak-fix',
+          title: '3.1 什么是 DNS 泄露？如何在 Clash (Mihomo) 中 100% 根治？',
+          paragraphs: [
+            '**故障机理：** 当您在浏览器输入 `chatgpt.com` 时，如果客户端配置成了“在本地直接向系统默认 DNS（如电信 114.114.114.114 或路由器网关）发起域名解析”，那么不仅国内运营商能清楚看到您正在访问被封锁的海外域名（触发 DNS 抢答污染返回假 IP），而且海外目标网站的权威 DNS 服务器（通过 EDNS Client Subnet 协议）也会看到请求来自中国大陆的递归 DNS，从而直接判定您在境内并拒绝服务！',
+            '**根治三步法：** ① 在 [Clash Verge Rev](/clients#windows) 或 [FlClash](/clients#windows) 中，进入「设置」→「Clash 设置」→ 开启 **DNS 覆写**；② 将运行模式设置为 **`fake-ip`（增强模式）**——在 Fake-IP 模式下，当浏览器请求域名时，Mihomo 内核会瞬间在本地返回一个虚拟的内网 IP（`198.18.x.x`），紧接着直接把原始域名字符串通过加密的 IEPL 专线隧道发给海外落地节点，由海外节点在境外完成真实 DNS 解析，**从物理根源上消灭了本地 DNS 泄露的可能**；③ 打开 `ipleak.net` 进行复测，确认页面上的 DNS 列表已不再包含任何中国大陆 IP。'
+          ]
+        },
+        {
+          id: 'webrtc-leak-fix',
+          title: '3.2 什么是 WebRTC 泄露？如何堵死浏览器的 UDP STUN 旁路？',
+          paragraphs: [
+            '**故障机理：** WebRTC（网页即时通信）是 Chrome、Edge、Brave、Firefox 等现代浏览器内置的音视频点对点通信标准。为了建立最低延迟的视频通话，WebRTC 会调用底层的 **UDP STUN 协议**，直接绕过浏览器的 HTTP/SOCKS5 系统代理设置，通过物理网卡向外部 STUN 服务器查询本机的真实公网 IP 与局域网内网 IP！',
+            '**根治两步法：** ① **客户端层开启 TUN 虚拟网卡模式**：在 Clash Verge Rev、v2rayN 或 sing-box 中开启 `TUN 模式`（并确保开启 `strict-route` 严格路由），让虚拟网卡在操作系统 L3 网络层接管包括 UDP STUN 在内的全部流量；② **浏览器层限制 WebRTC 策略**：在 Chrome/Edge 中安装开源的 `WebRTC Control` 扩展，或在 Firefox 地址栏输入 `about:config` 将 `media.peerconnection.enabled` 设为 `false`（若无需网页视频会议），随后访问 `browserleaks.com/webrtc` 确认真实宽带 IP 已完全隐藏。'
+          ]
+        },
+        {
+          id: 'ipv6-leak-and-dual-stack',
+          title: '3.3 隐蔽的第三大漏勺：国内宽带 IPv6 直连抢跑导致的真实位置暴露',
+          paragraphs: [
+            '在 2026 年，中国电信、联通与移动的家庭光纤宽带以及手机 5G 网络已 100% 默认分配了公网 **IPv6 地址（`240e:` / `2408:` / `2409:` 开头）**。许多用户的机场节点仅支持 IPv4 转发，或者客户端的 TUN 模式未开启 IPv6 接管。当您访问同时支持 IPv4 与 IPv6 的海外网站（如 Google、Netflix、Cloudflare 托管站点）时，现代操作系统的 **Happy Eyeballs（快乐眼球算法）** 发现本地有原生 IPv6，会优先通过未加密的本地运营商 IPv6 通道直接向海外发包！',
+            '这会导致两个严重后果：一是海外网站直接看到了您真实的国内 `240e/2408/2409` IPv6 地址（导致定位暴露或连接被 GFW 重置）；二是在 `ipleak.net` 检测页上赫然显示出您的国内运营商归属地。**标准处置方案**：如果您日常不需要使用国内教育网 IPv6 PT 站，最稳妥的做法是在 Clash Verge Rev 的设置中将 **`ipv6` 选项设为 `false`（关闭 IPv6 解析）**，并在 TUN 模式配置中丢弃或阻断非代理的海外 IPv6 路由，强制所有跨境请求 100% 走成熟的 IPv4 IEPL 专线隧道。'
+          ]
+        }
+      ]
+    },
+
+    chapter4: {
+      id: 'chapter-4',
+      badge: 'CHAPTER 04 · ACL4SSR & MIHOMO RULESETS',
+      title: '四、分流规则进阶：ACL4SSR 规则集与 Mihomo (Clash Meta) 自定义覆写实战',
+      intro: '一套优秀的代理工具配置，绝不是把所有流量一股脑塞进代理隧道，而是做到“国内网站（淘宝/微信/B站/网银）100% 毫秒级直连不耗机场流量，海外日常视频走香港高速节点，而 OpenAI/Claude/美区流媒体精准自动路由至新加坡/美国原生节点”。',
+      subsections: [
+        {
+          id: 'rule-priority-logic',
+          title: '4.1 读懂 Clash 分流规则的“自上而下短路匹配”原则',
+          paragraphs: [
+            '在 Mihomo (Clash Meta) 与 sing-box 的配置文件中，`rules:` 列表遵循严格的**自上而下顺序匹配（First-Match Wins）**：一旦某个域名或 IP 命中了第 10 行的规则，内核就会立即执行该行指定的策略组（如 `AI-专注组` 或 `DIRECT`），绝不会再往下看第 11 行。',
+            '标准的黄金规则顺序应当是：\n1. **进程与局域网直连（`PROCESS-NAME` / `GEOIP,LAN,DIRECT`）**：确保局域网 NAS、打印机、微信语音与国内网盘客户端直连；\n2. **高频精准分流组（`RULE-SET,openai,AI专属节点` / `RULE-SET,netflix,流媒体组`）**：将对 IP 地区最挑剔的 ChatGPT、Claude、Gemini、Netflix、TikTok 单独剥离，绑定到新加坡、日本或美国节点，这样您平时主开关哪怕一直挂在香港 529Mbps 节点，打开 ChatGPT 时也会无感自动走新加坡通道！\n3. **国内域名与 CN IP 兜底直连（`GEOSITE,cn,DIRECT` / `GEOIP,CN,DIRECT,no-resolve`）**：注意在 `GEOIP,CN` 规则末尾务必加上 `no-resolve` 参数！如果不加 `no-resolve`，客户端为了判断一个海外域名是不是中国 IP，会先在本地发起一次 DNS 解析，这恰恰是引发 DNS 泄露的头号元凶；\n4. **最终兜底规则（`MATCH,Proxy`）**：凡是不属于上述国内列表的未知海外网站，统一走默认代理组。'
+          ]
+        },
+        {
+          id: 'mrs-binary-ruleset-upgrade',
+          title: '4.2 告别卡顿的旧版 YAML 规则集：全面拥抱 Mihomo `.mrs` 二进制高性能规则集',
+          paragraphs: [
+            '传统的 ACL4SSR 或 Loyalsoldier 规则列表通常包含数万条纯文本域名（`.yaml` 或 `.txt` 格式），每次启动客户端或切换订阅时，解析数万行文本不仅耗时数秒，还会占用高達 150MB–300MB 的系统内存（在 iPhone 小火箭/Stash 后台 50MB 内存硬上限下极易引发闪退重启！）。',
+            '在 2026 年配置本地覆写（Merge）时，强烈建议将 `rule-providers` 的格式升级为 Mihomo 专属的 **`.mrs`（Mihomo Rule Set 二进制压缩格式）** 或在 sing-box 中使用 **`.srs`（Sing-box Rule Set）**。二进制规则集的体积比传统文本缩小了 70% 以上，内存占用降低至 20MB 以内，且域名匹配查找速度提升了整整一个数量级，让您的 Windows、Mac 与手机端代理实现真正的零延迟无感分流。'
+          ]
+        },
+        {
+          id: 'sniffer-domain-sniffing',
+          title: '4.3 开启 Mihomo 域名嗅探（Sniffer）：解决硬编码 IP 应用不走分流规则的顽疾',
+          paragraphs: [
+            '在日常诊断中，许多极客会遇到一个诡异现象：明明已经在 `rules` 中把 Telegram、Discord 语音或某款外服手游的域名指派到了低延迟的香港/新加坡节点，但通过客户端的「连接 (Connections)」面板观察时，却发现这些应用直接绕过了域名规则，以纯数字 IP 的形式命中了最底部的 `MATCH` 兜底规则！',
+            '**工程根因与修复处方：** 这是因为部分移动客户端、游戏程序或内置自定义 DNS 的软件在发起连接前，已经绕过系统 DNS 自行拿到了目标 IP，直接向 TUN 虚拟网卡发起基于纯 IP 的连接请求。此时只需在 Clash Verge Rev 的本地覆写中开启 **`sniffer: enable: true`（TLS SNI 与 HTTP Host 流量嗅探）** 并启用 `override-destination: false`。开启后，Mihomo 内核会自动从流经虚拟网卡的第一个 TLS Client Hello 握手包中提取出真实的域名字符串（SNI），重新送入 `GEOSITE` 与 `RULE-SET` 域名规则进行精准二次匹配，确保每一个应用都严丝合缝地走在您预设的专线通道上。'
+          ]
+        }
+      ]
+    },
+
+    chapter5: {
+      id: 'chapter-5',
+      badge: 'CHAPTER 05 · 6-STEP NEW AIRPORT HEALTH CHECK SOP',
+      title: '五、操作级指南：新购任何一家机场套餐后，用这套工具执行 6 步标准体检 SOP',
+      intro: '当您在本站选定了心仪的机场（例如入手了光速云的 ¥99 年付或 ¥147 永久包，或者某家新锐品牌的 ¥20 月付）并导入客户端后，请用 3 分钟时间按以下 6 个步骤完成工程验收：',
+      steps: [
+        {
+          stepNum: 'STEP 01',
+          title: '第一步：核验订阅响应头中的流量额度、到期日与节点倍率命名',
+          detail: '在 Clash Verge Rev 的「订阅 (Profiles)」卡片上查看已用/总流量与到期时间是否与所购套餐一致；展开「代理 (Proxies)」列表，检查节点名称末尾是否全部为 `1x / 1.0倍`（如光速云、星岛梦全线 1 倍率），留意是否存在高倍率陷阱节点。'
+        },
+        {
+          stepNum: 'STEP 02',
+          title: '第二步：执行 URL-Test（HTTP 204 握手延迟）而非单纯看 ICMP Ping',
+          detail: '点击代理组右上角的「延迟测试（小闪电图标）」，观察基于 `http://www.gstatic.com/generate_204` 的真实端到端握手延迟。优质 IEPL/IPLC 专线的香港节点通常显示在 **20ms–60ms**（或客户端完整 TLS 握手 80ms–140ms），且 95% 以上节点全部绿灯无超时（Timeout）。'
+        },
+        {
+          stepNum: 'STEP 03',
+          title: '第三步：打开 ip.skk.moe 或 ipcheck.ing 检验海内外双向分流',
+          detail: '确认客户端处于 **Rule（规则分流）** 模式后，打开双栈分流检测面板。验证“国内站点”一栏必须显示您真实的本地宽带省市 IP（代表直连成功，不扣机场流量），而“海外站点”一栏显示机场节点的香港/新加坡 IP。'
+        },
+        {
+          stepNum: 'STEP 04',
+          title: '第四步：使用 ipleak.net 与 browserleaks 验证零 DNS/WebRTC 泄露',
+          detail: '打开 `ipleak.net` 等待 10 秒，确认页面下方的 DNS Address 列表中没有任何中国大陆 IP；若发现本地运营商 DNS，立即按本文第三章教程开启客户端的 `Fake-IP` 与 `DNS 覆写`。'
+        },
+        {
+          stepNum: 'STEP 05',
+          title: '第五步：用 scamalytics.com 与 ping0.cc 为您的 AI 专用节点“验明正身”',
+          detail: '在客户端将 AI 规则组切换至新加坡、日本、台湾或美国节点，打开 `scamalytics.com` 检查 Fraud Score 是否处于低风险区间，随后打开 `chatgpt.com` 与 `claude.ai` 验证对话响应是否秒出无风控盾。'
+        },
+        {
+          stepNum: 'STEP 06',
+          title: '第六步：验证 Netflix 非自制剧代码（70143836）与 YouTube 4K 缓冲',
+          detail: '访问 Netflix 经典非自制剧测试链接 `https://www.netflix.com/title/70143836`（《绝命毒师》），能正常打开详情页即代表该节点支持**完整全解锁（非仅自制剧）**；最后打开 YouTube 播放一段 4K 60fps 视频，右键打开「详细统计信息 (Stats for nerds)」，确认 Connection Speed 稳定在 50,000 Kbps – 300,000+ Kbps 且 Dropped Frames 为 0。'
+        }
+      ]
+    }
+  },
+
+  decisionBranches: [
+    {
+      id: 'branch-ai-strict',
+      badge: '诊断分支 A · AI 生产力重度用户 (ChatGPT / Claude / Cursor)',
+      title: '如果您的工具检测出当前节点 IP 欺诈分 >75 分，导致 ChatGPT 频繁弹验证或 Claude 封号',
+      condition: '每天高频使用海外大模型写代码、写论文或处理跨国业务，对落地 IP 纯净度（Native ISP / 住宅 IP）有刚性要求。',
+      techChoice: '立即停用万人骑低端节点 → 切换至明确提供「原生住宅 IP / AI 定向优化」的 IEPL/IPLC 专线品牌，并在 Clash 中通过规则集将 OpenAI/Anthropic 固定锁死在纯净的新加坡、日本或美国节点。',
+      recommendations: [
+        { name: '一翻云 (TOP 16 · 原生住宅IP + IEPL专线)', slug: 'yifanyun', note: '全节点 IEPL 物理专线搭配高纯净度原生住宅 IP，支持 Hysteria2/VLESS-Reality，月付 ¥20、年付 ¥98、永久包 ¥100 起。' },
+        { name: '速界 (TOP 23 · AI 生产力定向优化 IEPL)', slug: 'sujie', note: '专为 ChatGPT、Claude、Gemini 等 AI 工具深度优化的 IEPL + VLESS 专线，¥25/月（150GB），支持通用客户端导入。' },
+        { name: '微风网络 (TOP 4 · 多地原生IP + 546Mbps峰值)', slug: 'weifeng', note: '香港实测 546Mbps，全线原生 IP 完整支持 ChatGPT 与 Claude，配 24 小时在线客服，年付 ¥137（100G/月）。' }
+      ]
+    },
+    {
+      id: 'branch-multiplier-anxiety',
+      badge: '诊断分支 B · 流量倍率焦虑 / 多终端家庭共享',
+      title: '如果您用上方「倍率计算器」算完发现原机场 ×3 倍率太坑，想换真正的全节点 ×1 倍率专线',
+      condition: '平时喜欢看 4K 视频、刷 TikTok 直播或全家多台手机电脑共用，希望买 150GB 就是实打实的 150GB 专线流量。',
+      techChoice: '选择官方明确承诺「全线 1 倍率（或无倍率套路）+ 不限设备数」的老牌 IEPL/IPLC 专线机场。',
+      recommendations: [
+        { name: '光速云 (TOP 1 · 全节点 ×1 倍率双专线)', slug: 'guangsu-cloud', note: '2020年老牌旗舰，¥25/月（168GB 全节点×1倍率），轻量年付 ¥99，永久包 ¥147/247GB，香港实测 22ms/529Mbps。' },
+        { name: '星岛梦 (TOP 6 · 2020老牌 1倍流量不限设备)', slug: 'xingdaomeng', note: '全线 IEPL 专线 1 倍流量且不限制同时在线设备数，年付 ¥96（折 ¥8/月），永久包 ¥100 起，香港实测 504Mbps。' }
+      ]
+    },
+    {
+      id: 'branch-gaming-webrtc',
+      badge: '诊断分支 C · 联机游戏 / 跨国语音会议 (FullCone NAT)',
+      title: '如果您需要低抖动的 UDP 转发（Discord 语音、Zoom 会议、外服游戏）且要求 FullCone NAT',
+      condition: '普通节点 TCP 测速快但 UDP 丢包高，或者游戏内提示 NAT 类型受限（Strict / Symmetric NAT）。',
+      techChoice: '根据本站 MAI-TEST-BOT 原始测速图中的 `UDP类型` 列，优先选择实测呈现大面积 **FullCone（全锥型 NAT）** 的专线机场，并开启客户端 TUN 模式。',
+      recommendations: [
+        { name: '暮光加速 (TOP 2 · 原图实测多节点 FullCone NAT)', slug: 'muguang', note: '在 2026-08-11 原始测速图中，香港与新加坡 VLESS 节点大面积呈现 FullCone NAT，香港 26ms/509Mbps，月付 ¥20 起。' },
+        { name: 'Firefly (TOP 10 · IPLC专线 + 美西 30Mbps 领跑)', slug: 'firefly', note: '五地实测综合表现极强（香港 547Mbps、新加坡 445Mbps、美西 30Mbps），年付 ¥96，月付 ¥25，不限时 ¥100。' }
+      ]
+    }
+  ],
+
+  conversionCards: [
+    {
+      badge: '👑 全节点 ×1 倍率 · 529Mbps 实测冠军 TOP 1',
+      name: '光速云 (Guangsu Cloud)',
+      suitableFor: '需要原生支持 Clash Meta / Shadowrocket 通用订阅导入、拒绝高倍率套路且追求 4 年老牌稳定的主力用户。',
+      pricing: '轻量年付 ¥99/年（折约 ¥8.25/月，59GB）；IPLC 极速月付 ¥25/月（168GB，全节点 ×1 倍率）；永久包 ¥147（247GB）。专属优惠码：AMM。',
+      limitations: '无免费试用，特殊商品不支持退款；ChatGPT 与 Gemini 需在客户端规则中分流至支持地区节点。',
+      verifiedAt: '2026-08-11 原图 & 2026-10-19 五地采样（香港 22ms / 529Mbps，新加坡 46ms / 387Mbps）',
+      primaryAction: { text: '查看光速云完整测评与节点参数', href: '/brands/guangsu-cloud' },
+      externalAction: { text: '前往光速云官网 (优惠码 AMM) ↗', href: 'https://sahude.gsyvipaff.com/#/?code=keqgvT5Y' }
+    },
+    {
+      badge: '🎮 原图实测 FullCone NAT · VLESS 旗舰 TOP 2',
+      name: '暮光加速 (Muguang)',
+      suitableFor: '对 UDP FullCone NAT、VLESS 协议、ChatGPT/Claude 全解锁及多终端不限设备数有高要求的用户。',
+      pricing: '入门年付 ¥109/年（折约 ¥9.1/月，60GB）；标准月付 ¥20/月（120GB）；大流量 ¥36/月（240GB）；不限时包 ¥219 起。',
+      limitations: '很少推出打折促销活动（一口价实惠路线），无免费试用，特殊商品不支持退款。',
+      verifiedAt: '2026-08-11 原图 & 2026-10-19 五地采样（香港 26ms / 509Mbps，新加坡 43ms / 419Mbps）',
+      primaryAction: { text: '查看暮光加速完整测评与测速图', href: '/brands/muguang' },
+      externalAction: { text: '前往暮光加速官网查看套餐 ↗', href: 'https://muguang.cc/#/?code=889102' }
+    },
+    {
+      badge: '🏠 原生住宅 IP · Hysteria2 / Reality 极客首选 TOP 16',
+      name: '一翻云 (Yifan Cloud)',
+      suitableFor: '喜欢在工具箱中检测 IP 纯净度、需要原生住宅 IP 稳定跑 AI 以及偏爱 Hysteria 2 与 VLESS-Reality 协议的玩家。',
+      pricing: '轻量年付 ¥98/年（折约 ¥8.2/月，60GB）；标准月付 ¥20/月（150GB）；永久不限时包 ¥100（100GB）。',
+      limitations: '2025 年新晋品牌，无免费试用，建议新用户先通过 ¥20 月付或 ¥100 永久包验证本地网络契合度。',
+      verifiedAt: '2026-08-11 原图 & 2026-10-19 五地采样（香港 23ms / 477Mbps，新加坡 42ms / 390Mbps）',
+      primaryAction: { text: '查看一翻云完整测评与协议分析', href: '/brands/yifanyun' },
+      externalAction: { text: '前往一翻云官网查看套餐 ↗', href: 'https://yifanyun.vip/#/?code=448112' }
+    }
+  ],
+
+  faqs: [
+    {
+      q: 'Q1：我已经不小心把付费机场的订阅链接粘贴到某个公共在线转换网站了，现在该怎么办？',
+      a: '请立即登录您的机场官网后台（用户中心 / 仪表盘），找到 **「重置订阅链接 / 更换订阅 Token（Reset Subscription URL）」** 按钮并点击确认！重置后，旧的订阅链接会立即作废，公共转换网站后台记录的旧链接将无法再拉取您的节点或盗刷流量；随后复制新生成的订阅链接，直接粘贴到您的本地客户端（如 Clash Verge Rev）并点击更新即可。'
+    },
+    {
+      q: 'Q2：为什么我用 Speedtest.net 网页测速能跑 300Mbps，但用 MAI-TEST-BOT 或看 YouTube 速度不一样？',
+      a: '因为 **测试目标服务器（Target Server）的物理位置与路由完全不同**！当您挂着香港节点打开 `speedtest.net` 时，网页默认会就近匹配香港本地机房（如 HKBN 或 HKT）的测速点，测试的仅仅是“您家 → 香港节点 → 香港本地测速点”的速度；而当您访问 YouTube、Netflix 或使用 MAI-TEST-BOT 拉取 Cloudflare/CacheFly 测速文件时，还包含了香港节点到目标国际 CDN 边缘机房的回源路由。因此交叉对比 [本站 17 份 MAI-TEST-BOT 原图](/speedtest) 与 YouTube `Stats for nerds` 才是最客观的标准。'
+    },
+    {
+      q: 'Q3：在 Ping0.cc 上看到节点是“广播 IP（Broadcasted IP）”，是不是说明这个机场很垃圾？',
+      a: '**完全不是！需要区分使用场景。** 广播 IP 与机场的“带宽速度”和“晚高峰稳定性”毫无关系——许多跑出 500Mbps+ 的顶级 IEPL 专线节点同样使用广播 IP。广播 IP 的唯一影响在于“地理位置数据库同步延迟”：如果该广播 IP 已经完成了 Google、Netflix 与 MaxMind 数据库的归属地修正，那么用起来和原生 IP 几乎没有区别；只有当归属地未修正（如台湾节点被识别为欧洲 ES）时，才会影响 TikTok 区域推荐流或特定地区限定的流媒体。'
+    },
+    {
+      q: 'Q4：为什么我在 Clash 里开启了 TUN 模式，还是打不开国内的某些银行网页或公司内网 OA？',
+      a: '这是因为部分政企内网 OA、校园网或网银安全控件使用了私有 IP 段（如 `10.x.x.x`、`172.16.x.x`）或非标准加密端口，被 TUN 虚拟网卡错误拦截并送往了海外代理节点。解决方法：在 Clash Verge Rev 的「设置」→「TUN 模式」或「系统代理绕过域名/IP（Bypass）」中，将公司内网域名后缀（如 `*.oa.company.com`）与私有网段加入排除列表，或在全局扩展覆写中添加 `DOMAIN-SUFFIX,company.com,DIRECT`。'
+    },
+    {
+      q: 'Q5：什么是机场的“流量倍率（Multiplier）”？0.1 倍率、1 倍率和 5 倍率分别是什么意思？',
+      a: '流量倍率是机场后台用来核算套餐额度的乘数公式：`实际扣除套餐流量 = 您的真实收发流量 × 节点倍率`。例如您下载了一个 **10GB** 的游戏更新包：① 如果连接的是 **1 倍率（×1.0）** 节点（如光速云、星岛梦全线节点），后台实事求是扣除 **10GB**；② 如果连接的是标注 **5 倍率（×5.0）** 的昂贵节点，后台会瞬间扣除您 **50GB** 套餐额度；③ 如果连接的是标注 **0.1 倍率** 的闲时公网节点，则只扣 **1GB**。请务必使用本页上方的「流量倍率计算器」核算真实每 GB 单价！'
+    },
+    {
+      q: 'Q6：为什么有几家机场（如飞猫云、无忧链接、灵猫网络、SOGO云、闪跃、全球云）没有 Clash 订阅链接？',
+      a: '在本站收录的 42 家品牌中，这几家采用了**“官方专属客户端（全平台账号密码直登）”**的封闭式架构，不在后台向用户暴露明文订阅 URL。这样做的好处是：**新手零配置门槛（下载客户端输入账号密码点一下就能连），且从根本上杜绝了用户乱用公共订阅转换器导致入口 IP 被爬虫泄露的风险**；缺点则是无法将节点导入第三方 Clash Verge Rev、小火箭或软路由 OpenWrt 中自定义规则。如果您必须使用第三方客户端，请优先选择光速云、暮光加速、微风网络、星岛梦、二猫云或一翻云。'
+    },
+    {
+      q: 'Q7：如何检测我的机场节点支不支持 UDP 转发和 QUIC（HTTP/3）协议？',
+      a: '最快的方法有两种：① 直接在本站 [/speedtest](/speedtest) 查阅该品牌的 MAI-TEST-BOT 原始测速图，看最右侧的 **`UDP类型 (NAT Type)`** 列——若显示 `FullCone`、`RestrictedCone` 或 `PortRestricted`，说明 UDP 转发完全畅通；② 连接节点后访问 Cloudflare 官方 HTTP/3 检测页或 `browserleaks.com/quic`，验证浏览器是否已成功建立基于 UDP 443 端口的 QUIC 隧道。'
+    },
+    {
+      q: 'Q8：Sub-Store 和传统的 subconverter 有什么本质区别？2026 年该用哪个？',
+      a: '传统的 `tindy2013/subconverter` 原版仓库早已停止维护，无法直接解析近年来普及的 **VLESS-Reality、Hysteria 2、TUIC v5、AnyTLS** 等新协议（除非寻找社区维护的 Meta 魔改分支）；而 **Sub-Store** 是专为现代全协议生态设计的开源订阅管理平台，不仅原生支持 Mihomo (Clash Meta)、sing-box、Surge、Stash、Loon、Shadowrocket 全格式互转，还支持可视化节点排序、正则重命名、多订阅合并与脚本流处理，是 2026 年本地订阅管理的绝对主力。'
+    }
+  ],
+
+  dataSources: {
+    id: 'data-sources',
+    badge: 'CHAPTER 09 · TOOLKIT VERIFICATION & SAFETY',
+    title: '九、工具核验时间、计算模型说明与安全免责声明',
+    intro: '本页面所提供的三个内嵌交互工具（流量倍率计算器、带宽与 BDP 换算器、订阅格式与安全自检器）及外链探针矩阵，均遵循以下工程标准：',
+    sources: [
+      {
+        title: '1. 100% 纯前端本地计算承诺（Zero Server Upload）',
+        detail: '本页内嵌的「订阅格式与安全自检器」完全通过浏览器本地 JavaScript 执行字符串特征正则匹配，**绝不向任何后端服务器发起网络请求或上传您粘贴的内容**，断开网线亦可脱机运行。'
+      },
+      {
+        title: '2. TCP BDP（带宽延迟积）与单位换算物理公式',
+        detail: '带宽换算严格遵循国际电信联盟与 IEEE 标准：$1\\text{ MB/s} = 8\\text{ Mbps}$；TCP 理论单线程吞吐上限估算采用标准公式 $\\text{Throughput} \\le \\frac{\\text{RWIN}}{\\text{RTT}}$，并与本站 2026-10-19 五地实测数据交叉校准。'
+      },
+      {
+        title: '3. 42 家机场订阅模式与倍率参数核验库',
+        detail: '文中关于通用订阅支持度 vs 专属客户端模式（如飞猫云、无忧链接、灵猫网络、SOGO云、闪跃、全球云仅限专属端）及 1 倍率承诺的分类，全部源自 `src/data/brands.json` 实测档案（核验截至 `2026-11-07`）。'
+      }
+    ],
+    gaps: [
+      {
+        label: '第三方 IP 探针数据库的更新滞后性说明',
+        content: 'Scamalytics、Ping0.cc、IPInfo 与 MaxMind GeoIP 数据库对同一段广播 IP 的更新周期存在 1–4 周的时间差。当不同探针显示的归属地或风险值不一致时，请以目标业务（如直接打开 ChatGPT 对话或打开 Netflix 播放非自制剧 `70143836`）的实际可用结果为准。'
+      }
+    ]
+  }
+};
+
+fs.writeFileSync('astroarabia/src/data/tools-content.json', JSON.stringify(toolsContent, null, 2));
+console.log('Successfully generated astroarabia/src/data/tools-content.json');

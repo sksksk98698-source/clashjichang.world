@@ -5,40 +5,72 @@ interface Props {
 const { variant = 'light' } = Astro.props;
 const isDark = variant === 'dark';
 const currentPath = Astro.url.pathname.replace(/\/$/, '') || '/';
+
 const navigation = [
-  { href: '/#features', label: 'ليش AstroArabia؟', path: '/' },
-  { href: '/agency', label: 'للشركات', path: '/agency' },
-  { href: '/saas', label: 'للمنتجات', path: '/saas' },
-  { href: '/portfolio', label: 'الأعمال', path: '/portfolio' },
-  { href: '/landing', label: 'صفحات الهبوط', path: '/landing' },
-  { href: '/docs', label: 'للمطورين', path: '/docs' },
-  { href: '/blog', label: 'المدونة', path: '/blog' },
-  { href: '/agency#quote', label: 'كلّمنا', path: '/agency' },
+  { href: '/', label: '首页', path: '/' },
+  { href: '/brands', label: '42家机场品牌库', path: '/brands' },
+  { href: '/speedtest', label: '测速实测报告', path: '/speedtest' },
+  { href: '/ranking', label: 'Top 10 推荐榜', path: '/ranking' },
+  { href: '/clients', label: '客户端大全', path: '/clients' },
+  { href: '/guide', label: '专线与协议科普', path: '/guide' },
 ];
-const isCurrentItem = (item: (typeof navigation)[number]) =>
-  !item.href.includes('#') && currentPath === item.path;
+
+const topicDropdown = [
+  { href: '/free', label: '🎁 免费资源与平替核验', desc: 'CF WARP 优选 · 147元永久包核算', path: '/free' },
+  { href: '/tools', label: '🛠️ 梯子诊断与订阅工具箱', desc: '倍率计算器 · IP纯净度 · DNS防泄', path: '/tools' },
+  { href: '/warnings', label: '🚨 跑路预警与避坑雷达', desc: '42家同源站群 · 5.6元同构盘识别', path: '/warnings' },
+  { href: '/faq', label: '📚 机场百科全书 FAQ', desc: '6大专区 48 问 · AI与4K排障速查', path: '/faq' },
+];
+
+const isCurrentItem = (item: { href: string; path: string }) =>
+  !item.href.includes('#') && (currentPath === item.path || (item.path !== '/' && currentPath.startsWith(item.path)));
+
+const isTopicActive = topicDropdown.some((t) => isCurrentItem(t));
 ---
 
 <header
-  class={`site-header sticky top-0 z-40 border-b shadow-sm backdrop-blur-xl ${isDark ? 'site-header-dark border-white/10 bg-[#102a2b]/90 shadow-black/10' : 'border-line bg-paper/90 shadow-black/5'}`}
+  class={`site-header sticky top-0 z-40 border-b shadow-sm backdrop-blur-xl ${
+    isDark
+      ? 'site-header-dark border-white/10 bg-[#102a2b]/95 shadow-black/10'
+      : 'border-line bg-paper/95 shadow-black/5'
+  }`}
   data-header
 >
   <div class="container flex min-h-20 items-center justify-between gap-3 sm:gap-5">
     <a
       href="/"
-      class={`shrink-0 font-heading text-lg font-bold tracking-tight sm:text-xl ${isDark ? 'text-white' : 'text-ink'}`}
-      aria-label="AstroArabia - الصفحة الرئيسية"
+      class={`shrink-0 font-heading text-lg font-bold tracking-tight sm:text-xl flex items-center gap-2 ${
+        isDark ? 'text-white' : 'text-ink'
+      }`}
+      aria-label="Clash 机场评测导航首页"
     >
-      Astro<span class={isDark ? 'text-coral-bright' : 'text-moss'}>Arabia</span>
+      <span class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-moss text-white font-black text-sm shadow-sm">
+        ✈
+      </span>
+      <span>
+        Clash<span class={isDark ? 'text-coral-bright' : 'text-moss'}>机场</span>
+      </span>
+      <span class="hidden xl:inline-block text-[11px] font-mono px-2 py-0.5 rounded-full border border-moss/30 bg-moss/10 text-moss dark:text-coral-bright">
+        clashjichang.world
+      </span>
     </a>
+
     <nav
-      aria-label="التنقل الرئيسي"
-      class={`hidden items-center gap-6 text-sm font-semibold lg:flex ${isDark ? 'text-white/70' : 'text-muted'}`}
+      aria-label="全站主导航"
+      class={`hidden items-center gap-4 xl:gap-5 text-sm font-semibold lg:flex ${
+        isDark ? 'text-white/70' : 'text-muted'
+      }`}
     >
       {
         navigation.map((item) => (
           <a
-            class={`transition-colors hover:text-moss ${isCurrentItem(item) ? (isDark ? 'text-white' : 'text-moss') : ''}`}
+            class={`transition-colors hover:text-moss dark:hover:text-coral-bright whitespace-nowrap ${
+              isCurrentItem(item)
+                ? isDark
+                  ? 'text-white font-bold'
+                  : 'text-moss font-bold'
+                : ''
+            }`}
             href={item.href}
             aria-current={isCurrentItem(item) ? 'page' : undefined}
           >
@@ -46,74 +78,117 @@ const isCurrentItem = (item: (typeof navigation)[number]) =>
           </a>
         ))
       }
+
+      <!-- Desktop Dropdown for 4 New Topic Hubs -->
+      <div class="relative group">
+        <button
+          type="button"
+          class={`inline-flex items-center gap-1 rounded-xl border px-3 py-1.5 text-xs xl:text-sm font-bold transition-colors whitespace-nowrap ${
+            isTopicActive
+              ? 'border-moss bg-moss/15 text-moss dark:text-emerald-300'
+              : isDark
+                ? 'border-white/15 bg-white/5 text-white hover:border-emerald-400'
+                : 'border-moss/30 bg-moss/5 text-moss hover:bg-moss/10'
+          }`}
+          aria-expanded="false"
+        >
+          <span>实用工具与避坑</span>
+          <span class="text-[10px] transition-transform group-hover:rotate-180">▼</span>
+        </button>
+
+        <!-- Crawl-friendly static links inside hover/focus dropdown -->
+        <div
+          class={`invisible opacity-0 group-hover:visible group-hover:opacity-100 group-focus-within:visible group-focus-within:opacity-100 transition-all duration-150 absolute right-0 top-full pt-2 w-72 z-50`}
+        >
+          <div
+            class={`rounded-2xl border p-2.5 shadow-2xl grid gap-1.5 ${
+              isDark ? 'border-white/10 bg-[#102a2b] text-white' : 'border-line bg-white text-ink'
+            }`}
+          >
+            {
+              topicDropdown.map((sub) => (
+                <a
+                  href={sub.href}
+                  aria-current={isCurrentItem(sub) ? 'page' : undefined}
+                  class={`block rounded-xl p-2.5 transition-colors hover:bg-moss/10 ${
+                    isCurrentItem(sub) ? 'bg-moss/15 ring-1 ring-moss/30' : ''
+                  }`}
+                >
+                  <div class="text-xs font-bold text-ink dark:text-white">{sub.label}</div>
+                  <div class="text-[11px] text-muted mt-0.5 font-normal">{sub.desc}</div>
+                </a>
+              ))
+            }
+          </div>
+        </div>
+      </div>
     </nav>
-    <div class="flex items-center gap-2">
+
+    <div class="flex items-center gap-3">
+      <a
+        href="https://sahude.gsyvipaff.com/#/?code=keqgvT5Y"
+        target="_blank"
+        rel="nofollow sponsored noopener"
+        class="hidden sm:inline-flex items-center justify-center rounded-xl bg-gradient-to-r from-emerald-600 to-teal-700 hover:from-emerald-500 hover:to-teal-600 text-white text-xs sm:text-sm font-bold px-4 py-2.5 shadow-md shadow-emerald-900/20 transition-all hover:-translate-y-0.5 whitespace-nowrap"
+      >
+        <span>首选主推 · 光速云</span>
+        <span class="ml-1 opacity-80 text-xs">8元/月起</span>
+      </a>
+
+      <!-- Mobile navigation menu -->
       <details class="relative lg:hidden">
         <summary
-          class={`cursor-pointer list-none rounded-xl border px-3 py-2 text-sm font-bold ${isDark ? 'border-white/20 text-white' : 'border-line text-moss'}`}
-          ><span aria-hidden="true">☰</span><span class="sr-only">القائمة</span></summary
+          class={`cursor-pointer list-none rounded-xl border px-3 py-2 text-sm font-bold ${
+            isDark ? 'border-white/20 text-white' : 'border-line text-moss'
+          }`}
+          aria-label="打开移动端导航菜单"
         >
+          <span aria-hidden="true">☰</span>
+        </summary>
         <nav
-          aria-label="التنقل للجوال"
-          class={`absolute end-0 top-12 z-20 grid min-w-44 gap-1 rounded-2xl border p-2 text-sm font-semibold shadow-xl ${isDark ? 'border-white/10 bg-[#102a2b] text-white/80' : 'border-line bg-white text-muted'}`}
+          aria-label="移动端折叠导航"
+          class={`absolute right-0 top-12 z-50 grid min-w-64 gap-1 rounded-2xl border p-3 text-sm font-semibold shadow-2xl ${
+            isDark ? 'border-white/10 bg-[#102a2b] text-white' : 'border-line bg-white text-ink'
+          }`}
         >
+          <div class="px-2 py-1 text-[10px] font-mono uppercase tracking-wider text-muted">核心评测导航</div>
           {
             navigation.map((item) => (
               <a
-                class={`rounded-lg px-3 py-2 transition-colors ${isCurrentItem(item) ? (isDark ? 'border-s-2 border-coral-bright bg-white/10 text-white' : 'border-s-2 border-moss bg-paper text-moss') : isDark ? 'text-white/55 hover:bg-white/10 hover:text-white' : 'text-muted hover:bg-paper hover:text-moss'}`}
+                class={`rounded-lg px-3 py-1.5 text-xs transition-colors hover:bg-moss/10 ${
+                  isCurrentItem(item) ? 'bg-moss/15 text-moss font-bold' : ''
+                }`}
                 href={item.href}
-                aria-current={isCurrentItem(item) ? 'page' : undefined}
               >
                 {item.label}
               </a>
             ))
           }
+          <div class="border-t border-line/50 dark:border-white/10 my-1"></div>
+          <div class="px-2 py-1 text-[10px] font-mono uppercase tracking-wider text-moss dark:text-emerald-300">实用工具与避坑专题</div>
+          {
+            topicDropdown.map((sub) => (
+              <a
+                class={`rounded-lg px-3 py-1.5 text-xs transition-colors hover:bg-moss/10 ${
+                  isCurrentItem(sub) ? 'bg-moss/15 text-moss font-bold' : ''
+                }`}
+                href={sub.href}
+              >
+                {sub.label}
+              </a>
+            ))
+          }
+          <div class="border-t border-line/50 dark:border-white/10 my-1"></div>
+          <a
+            href="https://sahude.gsyvipaff.com/#/?code=keqgvT5Y"
+            target="_blank"
+            rel="nofollow sponsored noopener"
+            class="rounded-lg bg-moss px-3 py-2 text-center text-white font-bold text-xs"
+          >
+            首选推荐 · 光速云直达 (优惠码 AMM)
+          </a>
         </nav>
       </details>
-      <button
-        type="button"
-        class={`theme-toggle theme-toggle-btn grid h-10 w-10 place-items-center rounded-xl border transition ${isDark ? 'border-white/20 text-white/80 hover:border-coral-bright hover:text-white' : 'border-line text-muted hover:border-moss hover:text-moss'}`}
-        data-theme-toggle
-        aria-label="تفعيل الوضع الليلي"
-        title="تبديل الوضع الليلي"
-        ><span class="theme-toggle-icon" aria-hidden="true"></span><span class="sr-only">تبديل الوضع الليلي</span></button
-      >
-      <a
-        href="/agency#quote"
-        class="rounded-full bg-moss px-3.5 py-2.5 text-sm font-bold text-white transition-colors hover:bg-moss-dark sm:px-5"
-        ><span class="text-xl font-normal leading-none" aria-hidden="true">↗</span><span
-          class="hidden sm:inline"
-        >
-          خلّنا نبدأ</span
-        ><span class="sr-only">خلّنا نبدأ</span></a
-      >
     </div>
   </div>
 </header>
-<script>
-  const themeButton = document.querySelector('[data-theme-toggle]');
-  const savedTheme = localStorage.getItem('astroarabia-theme');
-  const preferredTheme: 'light' | 'dark' = window.matchMedia('(prefers-color-scheme: dark)').matches
-    ? 'dark'
-    : 'light';
-  const setTheme = (theme: 'light' | 'dark') => {
-    document.documentElement.dataset.theme = theme;
-    document.documentElement.classList.toggle('dark', theme === 'dark');
-    themeButton?.setAttribute(
-      'aria-label',
-      theme === 'dark' ? 'تفعيل الوضع النهاري' : 'تفعيل الوضع الليلي',
-    );
-  };
-  const initialTheme: 'light' | 'dark' =
-    savedTheme === 'dark' || savedTheme === 'light' ? savedTheme : preferredTheme;
-  setTheme(initialTheme);
-  themeButton?.addEventListener('click', () => {
-    const nextTheme = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
-    localStorage.setItem('astroarabia-theme', nextTheme);
-    setTheme(nextTheme);
-  });
-  const header = document.querySelector('[data-header]');
-  const updateHeader = () => header?.classList.toggle('is-scrolled', window.scrollY > 12);
-  updateHeader();
-  window.addEventListener('scroll', updateHeader, { passive: true });
-</script>

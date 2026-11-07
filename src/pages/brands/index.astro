@@ -1,0 +1,231 @@
+---
+import BaseLayout from '@layouts/BaseLayout.astro';
+import BrandCard from '@components/BrandCard.astro';
+import brandsData from '../../data/brands.json';
+
+const allBrands = brandsData;
+const speedtestCount = allBrands.filter((b) => b.hasSpeedtest).length;
+
+const breadcrumbSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: '首页', item: 'https://clashjichang.world' },
+    { '@type': 'ListItem', position: 2, name: '42家机场品牌库', item: 'https://clashjichang.world/brands' }
+  ]
+};
+
+const collectionPageSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'CollectionPage',
+  name: '42家主流 Clash 机场品牌库 | 价格参数与真实测速对比',
+  url: 'https://clashjichang.world/brands',
+  description: '收录 42 家主流机场品牌真实价格、线路架构、支持协议与节点测速数据。'
+};
+
+const itemListSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'ItemList',
+  name: '42家主流 Clash 机场品牌大全',
+  description: '收录 42 家主流机场品牌真实价格、线路架构、支持协议与节点测速数据。',
+  numberOfItems: allBrands.length,
+  itemListElement: allBrands.map((brand, index) => ({
+    '@type': 'ListItem',
+    position: index + 1,
+    item: {
+      '@type': 'Product',
+      name: brand.name,
+      url: `https://clashjichang.world/brands/${brand.slug}`,
+      description: brand.description,
+      offers: {
+        '@type': 'Offer',
+        priceCurrency: 'CNY',
+        price: brand.priceStr.match(/\d+(\.\d+)?/)?.[0] || '10',
+        availability: 'https://schema.org/InStock'
+      }
+    }
+  }))
+};
+---
+
+<BaseLayout
+  title="42家主流 Clash 机场品牌库 | 价格参数与真实测速对比 - clashjichang.world"
+  description="收录42家主流机场品牌：光速云、暮光加速、飞猫云、微风网络等。提供实时搜索、协议筛选（VLESS/SS/Trojan）、线路过滤（IEPL/IPLC/BGP）及16+份真实节点测速大图。"
+  schema={[breadcrumbSchema, collectionPageSchema, itemListSchema]}
+>
+  <div class="border-b border-line dark:border-white/10 bg-paper/50 dark:bg-black/20 py-3">
+    <div class="container flex items-center gap-2 text-xs text-muted">
+      <a href="/" class="hover:text-moss dark:hover:text-white">首页</a>
+      <span>/</span>
+      <span class="text-ink dark:text-white font-medium">42家机场品牌库</span>
+    </div>
+  </div>
+  <div class="py-12 border-b border-line dark:border-white/10 bg-paper/60 dark:bg-black/20">
+    <div class="container">
+      <div class="max-w-3xl">
+        <div class="inline-flex items-center gap-2 rounded-full border border-moss/30 bg-moss/10 px-3 py-0.5 text-xs font-semibold text-moss dark:text-emerald-300 mb-4">
+          <span>权威数据库 · 共计 {allBrands.length} 家品牌</span>
+        </div>
+        <h1 class="font-heading text-3xl sm:text-5xl font-black text-ink dark:text-white tracking-tight">
+          42 家机场品牌库与综合参数大盘
+        </h1>
+        <p class="mt-4 text-sm sm:text-base text-muted leading-relaxed">
+          提取全网主流机场品牌，整理统一的线路架构、门槛价格、协议类型、优惠码与测速事实。所有资料源自真实开通与实测，未核实项统一标明“待核实”，拒绝编造。
+        </p>
+      </div>
+
+      <!-- Live Search & Filter Bar -->
+      <div class="mt-8 rounded-2xl border border-line dark:border-white/10 bg-white dark:bg-[#102a2b] p-4 sm:p-6 shadow-sm">
+        <div class="flex flex-col md:flex-row gap-4 items-stretch md:items-center justify-between">
+          <!-- Search box -->
+          <div class="relative flex-1">
+            <span class="absolute inset-y-0 left-3 flex items-center text-muted pointer-events-none">
+              🔍
+            </span>
+            <input
+              id="brand-search-input"
+              type="text"
+              placeholder="搜索品牌名称、协议（如 VLESS）、线路类型（如 IEPL）..."
+              class="w-full rounded-xl border border-line dark:border-white/10 bg-paper dark:bg-black/30 pl-10 pr-4 py-2.5 text-sm text-ink dark:text-white placeholder:text-muted focus:border-moss focus:outline-none"
+            />
+          </div>
+
+          <!-- Quick Filters -->
+          <div class="flex flex-wrap gap-2 items-center" id="filter-buttons">
+            <button
+              data-filter="all"
+              class="filter-btn active rounded-xl bg-moss text-white px-3.5 py-2 text-xs font-bold transition-all"
+            >
+              全部 ({allBrands.length})
+            </button>
+            <button
+              data-filter="speedtest"
+              class="filter-btn rounded-xl border border-line dark:border-white/10 bg-paper dark:bg-white/5 hover:border-moss px-3.5 py-2 text-xs font-medium text-ink dark:text-white transition-all"
+            >
+              附真实测速 ({speedtestCount})
+            </button>
+            <button
+              data-filter="vless"
+              class="filter-btn rounded-xl border border-line dark:border-white/10 bg-paper dark:bg-white/5 hover:border-moss px-3.5 py-2 text-xs font-medium text-ink dark:text-white transition-all"
+            >
+              VLESS 协议
+            </button>
+            <button
+              data-filter="iepl"
+              class="filter-btn rounded-xl border border-line dark:border-white/10 bg-paper dark:bg-white/5 hover:border-moss px-3.5 py-2 text-xs font-medium text-ink dark:text-white transition-all"
+            >
+              IEPL / IPLC 专线
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Brands Grid -->
+  <section class="py-12">
+    <div class="container">
+      <div id="brands-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {allBrands.map((brand) => (
+          <BrandCard brand={brand} />
+        ))}
+      </div>
+
+      <!-- Empty state -->
+      <div id="empty-state" class="hidden py-16 text-center">
+        <span class="text-4xl block mb-2">🔎</span>
+        <h3 class="font-heading text-lg font-bold text-ink dark:text-white">未找到匹配的机场品牌</h3>
+        <p class="text-xs text-muted mt-1">请尝试更换搜索关键词或重置筛选条件</p>
+        <button
+          id="reset-filter-btn"
+          class="mt-4 rounded-xl bg-moss px-4 py-2 text-xs font-bold text-white"
+        >
+          重置所有筛选
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <script is:inline>
+    const searchInput = document.getElementById('brand-search-input');
+    const filterBtns = document.querySelectorAll('.filter-btn');
+    const brandCards = document.querySelectorAll('[data-brand-item]');
+    const emptyState = document.getElementById('empty-state');
+    const resetBtn = document.getElementById('reset-filter-btn');
+
+    let currentFilter = 'all';
+    let searchQuery = '';
+
+    function applyFilters() {
+      let visibleCount = 0;
+      brandCards.forEach((card) => {
+        const name = card.getAttribute('data-name') || '';
+        const protocols = card.getAttribute('data-protocols') || '';
+        const line = card.getAttribute('data-line') || '';
+        const hasSpeedtest = card.getAttribute('data-hasspeedtest') === 'true';
+
+        const matchesQuery = !searchQuery || name.includes(searchQuery) || protocols.includes(searchQuery) || line.includes(searchQuery);
+
+        let matchesFilter = true;
+        if (currentFilter === 'speedtest') {
+          matchesFilter = hasSpeedtest;
+        } else if (currentFilter === 'vless') {
+          matchesFilter = protocols.includes('vless');
+        } else if (currentFilter === 'iepl') {
+          matchesFilter = line.includes('iepl') || line.includes('iplc') || line.includes('专线');
+        }
+
+        if (matchesQuery && matchesFilter) {
+          card.style.display = 'flex';
+          visibleCount++;
+        } else {
+          card.style.display = 'none';
+        }
+      });
+
+      if (emptyState) {
+        if (visibleCount === 0) {
+          emptyState.classList.remove('hidden');
+        } else {
+          emptyState.classList.add('hidden');
+        }
+      }
+    }
+
+    if (searchInput) {
+      searchInput.addEventListener('input', (e) => {
+        searchQuery = e.target.value.trim().toLowerCase();
+        applyFilters();
+      });
+    }
+
+    filterBtns.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        filterBtns.forEach((b) => {
+          b.classList.remove('bg-moss', 'text-white', 'font-bold');
+          b.classList.add('border', 'border-line', 'dark:border-white/10', 'bg-paper', 'dark:bg-white/5', 'text-ink', 'dark:text-white');
+        });
+        btn.classList.add('bg-moss', 'text-white', 'font-bold');
+        btn.classList.remove('border', 'border-line', 'dark:border-white/10', 'bg-paper', 'dark:bg-white/5', 'text-ink', 'dark:text-white');
+        currentFilter = btn.getAttribute('data-filter') || 'all';
+        applyFilters();
+      });
+    });
+
+    if (resetBtn) {
+      resetBtn.addEventListener('click', () => {
+        if (searchInput) searchInput.value = '';
+        searchQuery = '';
+        currentFilter = 'all';
+        filterBtns.forEach((b) => {
+          if (b.getAttribute('data-filter') === 'all') {
+            b.classList.add('bg-moss', 'text-white', 'font-bold');
+          } else {
+            b.classList.remove('bg-moss', 'text-white', 'font-bold');
+          }
+        });
+        applyFilters();
+      });
+    }
+  </script>
+</BaseLayout>

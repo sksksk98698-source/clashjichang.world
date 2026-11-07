@@ -1,20 +1,8 @@
-# AstroArabia
+# Clash 机场 (clashjichang.world)
+> 专业 Clash 机场评测、IPLC/IEPL 专线测速数据库与多平台客户端配置知识库
 
-> An Arabic-first, RTL-ready Astro theme for agencies, SaaS products, portfolios, documentation, landing pages, and blogs.
-
-AstroArabia is a free and open-source static-first theme built with Astro and Tailwind CSS. It is designed for Arabic websites, uses native right-to-left layouts, and includes reusable components, dark mode, SEO metadata, and Markdown blog content.
-
-## Links
-
-- [Live demo](https://astroarabia.pages.dev/): Browse the complete deployed theme.
-- [Source repository](https://github.com/almahers/astroarabia): Installation instructions, source code, and contribution guide.
-- [Documentation demo](https://astroarabia.pages.dev/docs/): Technical documentation layout.
-- [Agency demo](https://astroarabia.pages.dev/agency/): Agency and services layout.
-- [SaaS demo](https://astroarabia.pages.dev/saas/): Product and SaaS layout.
-- [Portfolio demo](https://astroarabia.pages.dev/portfolio/): Portfolio layout.
-- [Landing page demo](https://astroarabia.pages.dev/landing/): Landing page layout.
-- [Blog demo](https://astroarabia.pages.dev/blog/): Arabic Markdown blog layout.
-
-## Usage
-
-Use the source repository to install and customize the theme. The public demo is intended for browsing the available layouts and components.
+- 官网：https://clashjichang.world
+- 核心内容：收录 42 家主流机场品牌真实参数、16+ 份节点真实测速报告、第三方代理客户端下载与配置指南。
+- 主推机场：光速云（IEPL双专线、VLESS协议、2020年起稳定运营、月均低至8元起）。
+- 测评标准：拒绝虚假刷速，严格遵循 2026 最新网络测速与流媒体/AI 解锁实测。
+- 客户端支持：Clash Verge Rev、v2rayN、Shadowrocket、sing-box、FlClash、Hiddify 等全平台配置。

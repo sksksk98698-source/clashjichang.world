@@ -1,0 +1,183 @@
+---
+interface Props {
+  brand: {
+    rank: number;
+    name: string;
+    fullName?: string;
+    slug: string;
+    isFeatured?: boolean;
+    affLink: string;
+    couponCode?: string;
+    year?: string;
+    priceStr: string;
+    priceNote?: string;
+    lineType: string;
+    protocols: string[];
+    highlights?: string[];
+    speedtestImg?: string;
+    hasSpeedtest?: boolean;
+    description: string;
+    plans?: any[];
+    testResults?: Array<{ node: string; latency: string; download: string }>;
+  };
+}
+
+const { brand } = Astro.props;
+const topNodes = (brand.testResults || []).slice(0, 3);
+---
+
+<div
+  class={`group relative flex flex-col justify-between rounded-2xl transition-all duration-300 p-6 ${
+    brand.isFeatured
+      ? 'border-2 border-emerald-500/70 bg-gradient-to-b from-emerald-50/70 via-white to-white dark:from-emerald-950/35 dark:via-[#102a2b] dark:to-[#102a2b] shadow-lg shadow-emerald-600/10 hover:border-emerald-500 hover:shadow-xl hover:-translate-y-1'
+      : 'border border-line bg-white dark:border-white/10 dark:bg-[#102a2b] hover:border-moss/50 hover:shadow-xl hover:-translate-y-1'
+  }`}
+  data-brand-item
+  data-name={brand.name.toLowerCase()}
+  data-protocols={brand.protocols.join(',').toLowerCase()}
+  data-line={brand.lineType.toLowerCase()}
+  data-hasspeedtest={brand.hasSpeedtest ? 'true' : 'false'}
+>
+  <div>
+    <!-- Row 1: Rank + Featured Badge + Speedtest Badge -->
+    <div class="flex items-center justify-between gap-2 mb-3.5">
+      <div class="flex items-center gap-2 min-w-0">
+        <span
+          class={`inline-flex items-center justify-center font-mono text-xs font-bold rounded-lg px-2.5 py-1 shrink-0 ${
+            brand.rank === 1
+              ? 'bg-amber-400 text-amber-950 font-black shadow-xs'
+              : brand.rank <= 3
+              ? 'bg-emerald-600 text-white font-bold'
+              : brand.rank <= 10
+              ? 'bg-moss/15 text-moss dark:text-emerald-300 font-bold'
+              : 'bg-gray-100 text-gray-600 dark:bg-white/10 dark:text-gray-300'
+          }`}
+        >
+          TOP {brand.rank}
+        </span>
+        {brand.isFeatured && (
+          <span class="inline-flex items-center gap-1 rounded-full bg-emerald-500/15 border border-emerald-500/30 px-2.5 py-0.5 text-[11px] font-bold text-emerald-700 dark:text-emerald-300 shrink-0">
+            ★ 第一主推
+          </span>
+        )}
+        {brand.year && !brand.isFeatured && (
+          <span class="text-[11px] text-muted font-mono truncate">
+            {brand.year}
+          </span>
+        )}
+      </div>
+
+      {brand.hasSpeedtest && (
+        <span class="inline-flex items-center gap-1.5 rounded-full bg-blue-500/10 text-blue-700 dark:text-blue-300 border border-blue-500/20 px-2.5 py-0.5 text-[11px] font-semibold shrink-0">
+          <span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span>
+          附真实测速
+        </span>
+      )}
+    </div>
+
+    <!-- Row 2: Brand Name & Price Box (Never squeezes title!) -->
+    <div class="flex items-center justify-between gap-3 pb-3.5 mb-3.5 border-b border-line/60 dark:border-white/10">
+      <div class="min-w-0 flex-1">
+        <h3 class="font-heading text-xl font-black tracking-tight text-ink dark:text-white group-hover:text-moss dark:group-hover:text-coral-bright transition-colors truncate">
+          <a href={`/brands/${brand.slug}`} class="block truncate">
+            {brand.name}
+          </a>
+        </h3>
+        {brand.priceNote && (
+          <p class="text-[11px] text-muted mt-1 truncate" title={brand.priceNote}>
+            {brand.priceNote}
+          </p>
+        )}
+      </div>
+
+      <div class="text-right shrink-0 pl-3 border-l border-line/60 dark:border-white/10">
+        <span class="text-[10px] text-muted block leading-none mb-1">起步参考价</span>
+        <span class="font-black text-base sm:text-lg text-coral dark:text-coral-bright font-mono whitespace-nowrap leading-none">
+          {brand.priceStr}
+        </span>
+      </div>
+    </div>
+
+    <!-- Row 3: Line & Protocol Tags -->
+    <div class="flex flex-wrap items-center gap-1.5 mb-3.5">
+      <span class="rounded-md bg-moss/10 dark:bg-moss/25 text-moss dark:text-emerald-300 px-2.5 py-1 text-xs font-bold leading-none">
+        {brand.lineType}
+      </span>
+      {brand.protocols.slice(0, 2).map((p) => (
+        <span class="rounded-md bg-paper dark:bg-white/5 border border-line/80 dark:border-white/10 text-ink/80 dark:text-gray-300 px-2 py-1 text-[11px] font-mono leading-none">
+          {p}
+        </span>
+      ))}
+      {brand.couponCode && (
+        <span class="rounded-md bg-amber-500/10 text-amber-800 dark:text-amber-300 border border-amber-500/30 px-2 py-1 text-[11px] font-mono font-bold leading-none">
+          券码: {brand.couponCode}
+        </span>
+      )}
+    </div>
+
+    <!-- Row 4: Description -->
+    <p class="text-xs text-muted leading-6 line-clamp-3 mb-4">
+      {brand.description || '2026 主流机场节点，支持多端客户端导入与规则分流。'}
+    </p>
+
+    <!-- Row 5: Speedtest Thumbnail & Mini Node Stats -->
+    {brand.speedtestImg ? (
+      <div class="mb-4 overflow-hidden rounded-xl border border-line dark:border-white/10 bg-paper/60 dark:bg-black/20">
+        <a href={`/brands/${brand.slug}#speedtest`} class="block group/img relative overflow-hidden">
+          <img
+            src={brand.speedtestImg}
+            alt={`${brand.name} 节点测速实测图`}
+            width="600"
+            height="338"
+            class="h-28 w-full object-cover object-top transition-transform duration-300 group-hover/img:scale-105"
+            loading="lazy"
+            decoding="async"
+          />
+          <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent flex items-end justify-between p-2.5">
+            <span class="text-[11px] text-white font-mono font-medium flex items-center gap-1">
+              🔍 2026 实测截图 · 点击查看
+            </span>
+            {topNodes[0] && (
+              <span class="text-[10px] bg-emerald-500/90 text-white font-mono font-bold px-1.5 py-0.5 rounded">
+                {topNodes[0].node} {topNodes[0].download}
+              </span>
+            )}
+          </div>
+        </a>
+      </div>
+    ) : topNodes.length > 0 ? (
+      <div class="mb-4 rounded-xl border border-line/70 dark:border-white/10 bg-paper/60 dark:bg-white/5 p-2.5 grid grid-cols-3 gap-2 text-center">
+        {topNodes.map((n) => (
+          <div class="text-[11px]">
+            <span class="text-muted block text-[10px] truncate">{n.node}</span>
+            <span class="font-mono font-bold text-ink dark:text-white">{n.download}</span>
+          </div>
+        ))}
+      </div>
+    ) : null}
+  </div>
+
+  <!-- Row 6: Bottom CTA Actions -->
+  <div class="pt-3.5 border-t border-line/60 dark:border-white/10 flex items-center justify-between gap-3 mt-auto">
+    <a
+      href={`/brands/${brand.slug}`}
+      class="text-xs font-bold text-moss dark:text-emerald-400 hover:underline flex items-center gap-1"
+    >
+      <span>深度测评与套餐</span>
+      <span>→</span>
+    </a>
+
+    <a
+      href={brand.affLink || `/brands/${brand.slug}`}
+      target={brand.affLink ? '_blank' : undefined}
+      rel={brand.affLink ? 'nofollow sponsored noopener' : undefined}
+      class={`rounded-xl px-4 py-2 text-xs font-bold transition-all text-center shrink-0 ${
+        brand.isFeatured
+          ? 'bg-emerald-600 hover:bg-emerald-500 text-white shadow-md shadow-emerald-900/20'
+          : 'bg-moss hover:bg-moss-dark text-white'
+      }`}
+    >
+      官网直达 ↗
+    </a>
+  </div>
+</div>

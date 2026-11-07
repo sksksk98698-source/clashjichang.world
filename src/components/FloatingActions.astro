@@ -1,0 +1,49 @@
+---
+---
+<div class="fixed bottom-6 right-6 z-40 flex flex-col items-end gap-3 pointer-events-auto">
+  <!-- Speed CTA to Featured Brand -->
+  <a
+    href="https://sahude.gsyvipaff.com/#/?code=keqgvT5Y"
+    target="_blank"
+    rel="nofollow sponsored noopener"
+    class="group flex items-center gap-2 rounded-full bg-[#102a2b] border border-emerald-500/40 text-white pl-4 pr-3 py-2 shadow-xl hover:shadow-emerald-900/30 hover:scale-105 transition-all text-xs font-semibold backdrop-blur-md"
+    aria-label="查看首选主推机场光速云"
+  >
+    <span class="flex h-2 w-2 relative">
+      <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+      <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+    </span>
+    <span>首选主推 · 光速云</span>
+    <span class="bg-emerald-600/80 text-[11px] px-2 py-0.5 rounded-full font-mono text-emerald-100 group-hover:bg-emerald-500">
+      ¥8/月起
+    </span>
+  </a>
+
+  <!-- Back to top button -->
+  <button
+    id="back-to-top-btn"
+    type="button"
+    aria-label="返回顶部"
+    class="hidden p-2.5 rounded-full bg-white dark:bg-[#102a2b] border border-line dark:border-white/20 text-ink dark:text-white shadow-lg hover:bg-paper dark:hover:bg-black/40 transition-all cursor-pointer"
+  >
+    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M5 15l7-7 7 7"></path>
+    </svg>
+  </button>
+</div>
+
+<script is:inline>
+  const bttBtn = document.getElementById('back-to-top-btn');
+  if (bttBtn) {
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 400) {
+        bttBtn.classList.remove('hidden');
+      } else {
+        bttBtn.classList.add('hidden');
+      }
+    });
+    bttBtn.addEventListener('click', () => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  }
+</script>

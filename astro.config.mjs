@@ -4,9 +4,14 @@ import sitemap from '@astrojs/sitemap';
 import astroToc from 'astro-toc-smol';
 
 export default defineConfig({
-  site: 'https://example.com',
+  site: 'https://clashjichang.world',
   trailingSlash: 'never',
-  integrations: [sitemap(), astroToc({ articleSelector: '#article-content' })],
+  integrations: [
+    sitemap({
+      filter: (page) => !page.includes('/admin') && !page.includes('/404')
+    }),
+    astroToc({ articleSelector: '#article-content' })
+  ],
   build: { inlineStylesheets: 'always' },
   vite: {
     plugins: [tailwindcss()]

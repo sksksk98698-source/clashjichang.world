@@ -1,0 +1,77 @@
+---
+import BaseLayout from '@layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="404 页面未找到 | Clash机场评测导航 - clashjichang.world"
+  description="抱歉，您访问的页面不存在或已被移动。请通过下方核心专题导航返回 Clash机场评测主站。"
+  robots="noindex, nofollow"
+>
+  <section class="container max-w-4xl py-20 sm:py-28 text-center">
+    <div class="inline-flex items-center gap-2 rounded-full border border-coral/30 bg-coral/10 px-3.5 py-1 text-xs font-mono font-bold text-coral dark:text-coral-bright mb-4">
+      <span>HTTP 404 · PAGE NOT FOUND</span>
+    </div>
+
+    <h1 class="font-heading text-3xl sm:text-5xl font-black text-ink dark:text-white tracking-tight">
+      抱歉，您访问的页面不存在
+    </h1>
+
+    <p class="mt-4 text-sm sm:text-base text-muted max-w-xl mx-auto leading-relaxed">
+      您输入的网址可能拼写有误，或该页面已完成路径归档。请直接前往以下核心评测栏目继续浏览：
+    </p>
+
+    <div class="mt-8 flex flex-wrap items-center justify-center gap-3">
+      <a
+        href="/"
+        class="rounded-xl bg-moss hover:bg-moss-dark text-white font-bold px-6 py-3 text-sm shadow-md transition-all"
+      >
+        ← 返回首页
+      </a>
+      <a
+        href="/brands"
+        class="rounded-xl border border-line dark:border-white/15 bg-white dark:bg-white/5 hover:border-moss text-ink dark:text-white font-bold px-6 py-3 text-sm transition-all"
+      >
+        浏览 42 家机场品牌库
+      </a>
+      <a
+        href="/ranking"
+        class="rounded-xl border border-line dark:border-white/15 bg-white dark:bg-white/5 hover:border-moss text-ink dark:text-white font-bold px-6 py-3 text-sm transition-all"
+      >
+        查看 Top 10 推荐榜
+      </a>
+    </div>
+
+    <div class="mt-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 text-left">
+      <a href="/speedtest" class="rounded-2xl border border-line dark:border-white/10 bg-white dark:bg-[#102a2b] p-5 hover:border-moss transition-all block">
+        <span class="text-xs font-bold text-moss dark:text-emerald-300">📊 测速实测证据库</span>
+        <h2 class="font-heading text-base font-bold text-ink dark:text-white mt-1">17 份原始节点测速大图</h2>
+        <p class="text-xs text-muted mt-1">MAI-TEST-BOT 标准采样与五地延迟峰值对比</p>
+      </a>
+      <a href="/clients" class="rounded-2xl border border-line dark:border-white/10 bg-white dark:bg-[#102a2b] p-5 hover:border-moss transition-all block">
+        <span class="text-xs font-bold text-moss dark:text-emerald-300">💻 客户端大全</span>
+        <h2 class="font-heading text-base font-bold text-ink dark:text-white mt-1">Windows / Mac / iOS / 安卓下载</h2>
+        <p class="text-xs text-muted mt-1">Clash Verge Rev、FlClash、小火箭官方纯净渠道</p>
+      </a>
+      <a href="/guide" class="rounded-2xl border border-line dark:border-white/10 bg-white dark:bg-[#102a2b] p-5 hover:border-moss transition-all block">
+        <span class="text-xs font-bold text-moss dark:text-emerald-300">🌐 专线与协议指南</span>
+        <h2 class="font-heading text-base font-bold text-ink dark:text-white mt-1">IEPL / IPLC 与 VLESS 深度科普</h2>
+        <p class="text-xs text-muted mt-1">看懂晚高峰不丢包原理与主流协议选型</p>
+      </a>
+      <a href="/free" class="rounded-2xl border border-line dark:border-white/10 bg-white dark:bg-[#102a2b] p-5 hover:border-moss transition-all block">
+        <span class="text-xs font-bold text-moss dark:text-emerald-300">🎁 免费资源与平替</span>
+        <h2 class="font-heading text-base font-bold text-ink dark:text-white mt-1">CF WARP 优选与百元永久包核算</h2>
+        <p class="text-xs text-muted mt-1">零成本方案安全边界与 147 元永久套餐拆解</p>
+      </a>
+      <a href="/tools" class="rounded-2xl border border-line dark:border-white/10 bg-white dark:bg-[#102a2b] p-5 hover:border-moss transition-all block">
+        <span class="text-xs font-bold text-moss dark:text-emerald-300">🛠️ 梯子诊断工具箱</span>
+        <h2 class="font-heading text-base font-bold text-ink dark:text-white mt-1">流量倍率计算器与 IP 纯净度探针</h2>
+        <p class="text-xs text-muted mt-1">纯本地 YAML 安全自检与 DNS 泄露排障</p>
+      </a>
+      <a href="/warnings" class="rounded-2xl border border-line dark:border-white/10 bg-white dark:bg-[#102a2b] p-5 hover:border-moss transition-all block">
+        <span class="text-xs font-bold text-moss dark:text-emerald-300">🚨 跑路预警雷达</span>
+        <h2 class="font-heading text-base font-bold text-ink dark:text-white mt-1">42 家同源站群关系与避坑指南</h2>
+        <p class="text-xs text-muted mt-1">5.6 元同构低价盘识别与双机场异构备份</p>
+      </a>
+    </div>
+  </section>
+</BaseLayout>
